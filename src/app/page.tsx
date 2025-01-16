@@ -1,10 +1,38 @@
 import Navbar from "@/components/Navbar";
+import { Box, Progress, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
 export default function Home() {
   return (
-    <main>
+    <main style={{ padding: "50px", display: "flex", flexDirection: "column", gap: "20px" }}>
       <Navbar />
-      <h1>Home</h1>
+      <Box width="200px" bg="lavender" textAlign="center">
+        Here are some ChakraUI examples: <br />
+        <br />
+        This is a box with Chakra! Basically just a div
+      </Box>
+      A progress bar...
+      <Progress value={50} width="200px" />A tab list...
+      <Tabs width="200px">
+        <TabList>
+          <Tab>One</Tab>
+          <Tab>Two</Tab>
+          <Tab>Three</Tab>
+        </TabList>
+
+        <TabPanels>
+          <TabPanel>
+            <p>one!</p>
+          </TabPanel>
+          <TabPanel>
+            <p>two!</p>
+          </TabPanel>
+          <TabPanel>
+            <p>three!</p>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+      The main thing to know is just to use in-line styling, and for most traditional css elements there is a Chakra UI
+      equivalent!
     </main>
   );
 }
