@@ -33,7 +33,7 @@ The Central Coast Heritage Tree Foundation team consists of 14 Cal Poly students
 - [Sam Phan](https://www.linkedin.com/) - Software Developer
 - [Emi Dinh](https://www.linkedin.com/) - Software Developer
 - [Mio Nakagawa](https://www.linkedin.com/in/mio-nakagawa-a61a06204/) - Software Developer
-- [Jodi Yamane](https://www.linkedin.com/) - Software Developer
+- [Jodi Yamane](https://www.linkedin.com/in/jodi-yamane-615708253?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BpnOSh4HiQrebNTSHpbL7KQ%3D%3D) - Software Developer
 - [Brandon Eng](https://www.linkedin.com/) - Software Developer
 - [Thomas Le](https://www.linkedin.com/) - Software Developer
 
