@@ -3,8 +3,10 @@ import { Box, FormControl, FormLabel, FormErrorMessage, Input, Button } from "@c
 import { useState } from "react";
 import "../fonts/fonts.css";
 
+type FormFields = "name" | "username" | "password" | "phoneNumber" | "email";
+
 export default function CreateAccount() {
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<Record<FormFields, { value: string; touched: boolean }>>({
     name: { value: "", touched: false },
     username: { value: "", touched: false },
     password: { value: "", touched: false },
@@ -12,21 +14,21 @@ export default function CreateAccount() {
     email: { value: "", touched: false },
   });
 
-  const handleInputChange = (field) => (e) => {
+  const handleInputChange = (field: FormFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormState({
       ...formState,
       [field]: { ...formState[field], value: e.target.value },
     });
   };
 
-  const handleBlur = (field) => () => {
+  const handleBlur = (field: FormFields) => () => {
     setFormState({
       ...formState,
       [field]: { ...formState[field], touched: true },
     });
   };
 
-  const isError = (field) => formState[field].touched && formState[field].value === "";
+  const isError = (field: FormFields) => formState[field].touched && formState[field].value === "";
 
   return (
     <div
