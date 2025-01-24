@@ -78,7 +78,7 @@ export default function CreateAccount() {
             }}
           />
         </Box>
-        <p style={{ color: "#596334", textAlign: "center", marginTop: "10px", paddingTop: "70px" }}>
+        <p style={{ color: "#33333", textAlign: "center", marginTop: "10px", paddingTop: "70px" }}>
           Sign in to continue to your <br /> CCHTF dashboard
         </p>
         <FormControl
