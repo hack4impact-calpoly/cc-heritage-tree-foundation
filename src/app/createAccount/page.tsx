@@ -44,7 +44,7 @@ export default function CreateAccount() {
           backgroundColor: "white",
           justifySelf: "center",
           width: "500px",
-          marginTop: "10vh",
+          marginTop: "15vh",
           borderRadius: "41px",
           fontFamily: "Inter",
           paddingBottom: "40px",
@@ -56,7 +56,7 @@ export default function CreateAccount() {
         <Box
           style={{
             position: "absolute",
-            top: "10px", // Half the height of the circular box
+            top: "30px", // Half the height of the circular box
             left: "50%",
             transform: "translateX(-50%)",
             borderRadius: "1000px",
@@ -78,7 +78,7 @@ export default function CreateAccount() {
             }}
           />
         </Box>
-        <p style={{ color: "#596334", textAlign: "center", marginTop: "25px", paddingTop: "70px" }}>
+        <p style={{ color: "#596334", textAlign: "center", marginTop: "10px", paddingTop: "70px" }}>
           Sign in to continue to your <br /> CCHTF dashboard
         </p>
         <FormControl
