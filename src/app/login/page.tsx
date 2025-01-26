@@ -30,12 +30,12 @@ export default function Login() {
           src="/logo.png"
         ></Image>
         <Box
+          borderRadius={"15px"}
           mt={20}
           alignItems="center"
-          borderRadius="xl"
           borderColor="black"
           bg="white"
-          w="400px"
+          w="375px"
           p={10}
           color="black"
         >
@@ -46,29 +46,42 @@ export default function Login() {
             CCHTF dashboard{" "}
           </Text>
           <FormControl>
-            {/* update value of email and password every time user types */}
-            <Input
-              backgroundColor="#F4F1E8"
-              mt={4}
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-            ></Input>
-            <Input
-              backgroundColor="#F4F1E8"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="text"
-              mt={4}
-            ></Input>
-            <Button color="white" bg="#596334" w="100%" onClick={signIn} mt={4} type="submit">
-              Sign in
-            </Button>
+            <Center>
+              {/* update value of email and password every time user types */}
+              <Input
+                borderRadius={"10px"}
+                width={"90%"}
+                backgroundColor="#F4F1E8"
+                mt={4}
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+              ></Input>
+            </Center>
+            <Center>
+              <Input
+                borderRadius={"10px"}
+                width={"90%"}
+                backgroundColor="#F4F1E8"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="text"
+                mt={4}
+              ></Input>
+            </Center>
+            <Center>
+              <Button borderRadius={"10px"} color="white" bg="#596334" w="90%" onClick={signIn} mt={4} type="submit">
+                Sign in
+              </Button>
+            </Center>
             <Center>
               <Text color="#596334" mt={4}>
-                Don&#39;t have an account?<Link href="/"> Sign up</Link>
+                Don&#39;t have an account?{" "}
+                <Link href="#" style={{ textDecoration: "underline" }}>
+                  Sign up
+                </Link>
               </Text>
             </Center>
           </FormControl>
