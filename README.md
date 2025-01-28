@@ -10,6 +10,7 @@ A data collection platform for tree information and location
 - [Getting Started And Contributing](#getting-started-and-contributing)
 
 ## Overview
+
 The Central Coast Heritage Tree Foundation focuses on the protection, preservation, and preventive healthcare for legacy and heritage oaks in the greater Templeton area. They help heritage oaks by utilizing preventive tree care, restoring soil, planting Templeton acorns, and educating the community through conversation and connection.
 
 ### Purpose
@@ -36,7 +37,6 @@ The Central Coast Heritage Tree Foundation team consists of 14 Cal Poly students
 - [Jodi Yamane](https://www.linkedin.com/in/jodi-yamane-615708253?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BpnOSh4HiQrebNTSHpbL7KQ%3D%3D) - Software Developer
 - [Brandon Eng](https://www.linkedin.com/) - Software Developer
 - [Thomas Le](https://www.linkedin.com/) - Software Developer
-
 
 ## Getting Started And Contributing
 
