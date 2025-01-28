@@ -3,15 +3,15 @@ import { Image, Box, FormControl, FormLabel, FormErrorMessage, Input, Button, Li
 import { useState } from "react";
 import "../fonts/fonts.css";
 
-type FormFields = "name" | "username" | "password" | "confirmPass" | "email";
+type FormFields = "name" | "password" | "confirmPass" | "email" | "phoneNum";
 
 export default function CreateAccount() {
   const [formState, setFormState] = useState<Record<FormFields, { value: string; touched: boolean }>>({
     name: { value: "", touched: false },
-    username: { value: "", touched: false },
     password: { value: "", touched: false },
     confirmPass: { value: "", touched: false },
     email: { value: "", touched: false },
+    phoneNum: { value: "", touched: false },
   });
 
   const handleInputChange = (field: FormFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,13 +56,13 @@ export default function CreateAccount() {
         <Box
           style={{
             position: "absolute",
-            top: "30px", // Half the height of the circular box
+            top: "15px", // Half the height of the circular box
             left: "50%",
             transform: "translateX(-50%)",
             borderRadius: "1000px",
             backgroundColor: "#F4F1E8",
-            width: "150px",
-            height: "150px",
+            width: "175px",
+            height: "175px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -105,15 +105,15 @@ export default function CreateAccount() {
         </FormControl>
 
         <FormControl
-          isInvalid={isError("username")}
+          isInvalid={isError("email")}
           style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
         >
           <Input
-            type="text"
-            value={formState.username.value}
-            onChange={handleInputChange("username")}
-            onBlur={handleBlur("username")}
-            placeholder="Username"
+            type="email"
+            value={formState.email.value}
+            onChange={handleInputChange("email")}
+            onBlur={handleBlur("email")}
+            placeholder="Email"
             _placeholder={{ color: "inherit" }}
             style={{
               width: "60%",
@@ -124,9 +124,31 @@ export default function CreateAccount() {
               borderRadius: "16px",
             }}
           />
-          {isError("username") && <FormErrorMessage>Field is required.</FormErrorMessage>}
+          {isError("email") && <FormErrorMessage>Field is required.</FormErrorMessage>}
         </FormControl>
 
+        <FormControl
+          isInvalid={isError("phoneNum")}
+          style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+        >
+          <Input
+            type="phoneNum"
+            value={formState.email.value}
+            onChange={handleInputChange("phoneNum")}
+            onBlur={handleBlur("phoneNum")}
+            placeholder="Phone Number"
+            _placeholder={{ color: "inherit" }}
+            style={{
+              width: "60%",
+              height: "50px",
+              border: "none",
+              backgroundColor: "#F4F1E8",
+              color: "#33333",
+              borderRadius: "16px",
+            }}
+          />
+          {isError("phoneNum") && <FormErrorMessage>Field is required.</FormErrorMessage>}
+        </FormControl>
         <FormControl
           isInvalid={isError("password")}
           style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
@@ -171,29 +193,6 @@ export default function CreateAccount() {
             }}
           />
           {isError("confirmPass") && <FormErrorMessage>Field is required.</FormErrorMessage>}
-        </FormControl>
-
-        <FormControl
-          isInvalid={isError("email")}
-          style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-        >
-          <Input
-            type="email"
-            value={formState.email.value}
-            onChange={handleInputChange("email")}
-            onBlur={handleBlur("email")}
-            placeholder="Email"
-            _placeholder={{ color: "inherit" }}
-            style={{
-              width: "60%",
-              height: "50px",
-              border: "none",
-              backgroundColor: "#F4F1E8",
-              color: "#33333",
-              borderRadius: "16px",
-            }}
-          />
-          {isError("email") && <FormErrorMessage>Field is required.</FormErrorMessage>}
         </FormControl>
         <Box style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
           <Button
