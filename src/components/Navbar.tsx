@@ -4,6 +4,11 @@ import { LuTrees } from "react-icons/lu";
 import { MdOutlineDashboard, MdOutlinePeopleAlt } from "react-icons/md";
 import { IconType } from "react-icons";
 
+const COLORS = {
+  primary: "#596435",
+  secondary: "#e0ee99",
+};
+
 interface NavItem {
   text: string;
   icon: IconType;
@@ -28,9 +33,10 @@ export default function Navbar() {
   return (
     <div
       style={{
-        position: "absolute",
+        position: "sticky",
         height: "100vh",
-        width: "10%",
+        width: "17rem",
+        backgroundColor: COLORS.primary,
       }}
     >
       {/*Box for Logo*/}
@@ -48,7 +54,15 @@ export default function Navbar() {
       {/*VStack for Items*/}
       <VStack>
         {NAV_ITEMS.map((NavItem) => (
-          <Button key={NavItem.text}>
+          <Button
+            key={NavItem.text}
+            style={{
+              backgroundColor: COLORS.secondary,
+              color: COLORS.primary,
+              borderRadius: "20px",
+              width: "80%",
+            }}
+          >
             {<NavItem.icon />}
             {NavItem.text}
           </Button>
