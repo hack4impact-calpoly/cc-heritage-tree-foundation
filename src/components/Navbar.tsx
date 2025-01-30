@@ -51,6 +51,7 @@ export default function Navbar() {
             height: "5rem",
             width: "5rem",
             alignContent: "center",
+            marginTop: "1rem",
           }}
         >
           <Image
@@ -64,6 +65,17 @@ export default function Navbar() {
             }}
           />
         </Box>
+        <Box
+          style={{
+            color: COLORS.white,
+            textAlign: "center",
+            marginBottom: "2rem",
+          }}
+        >
+          Central Coast Heritage
+          <br />
+          Tree Foundation
+        </Box>
         {/*VStack for Items*/}
         <VStack>
           {NAV_ITEMS.map((NavItem) => (
@@ -76,11 +88,13 @@ export default function Navbar() {
                 width: "100%",
                 height: "2rem",
                 justifyContent: "left",
+                marginTop: "1rem",
               }}
             >
               <NavItem.icon
+                size="25"
                 style={{
-                  marginRight: "1rem",
+                  marginRight: "0.5rem",
                 }}
               />
               {NavItem.text}
@@ -88,8 +102,6 @@ export default function Navbar() {
           ))}
         </VStack>
       </VStack>
-      {/*Box for Logo*/}
-      <div>NavBar</div>
     </div>
   );
 }
