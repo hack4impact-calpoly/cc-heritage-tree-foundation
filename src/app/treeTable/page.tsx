@@ -15,7 +15,7 @@ export default function TreeTable() {
       mistletoe: false,
       epicormicGrowth: true,
       deadWood: true,
-      oakPitScale: false,
+      oakPitScale: "no",
       hangingItems: false,
       additionalNotes: "Tree appears healthy overall.",
     },
@@ -74,11 +74,11 @@ export default function TreeTable() {
                   <Td>{tree.height}</Td>
                   <Td>{tree.canopyBreath}</Td>
                   <Td>{tree.species}</Td>
-                  <Td>{tree.mistletoe ? "Yes" : "No"}</Td>
-                  <Td>{tree.epicormicGrowth ? "Yes" : "No"}</Td>
-                  <Td>{tree.deadWood ? "Yes" : "No"}</Td>
-                  <Td>{tree.oakPitScale ? "Yes" : "No"}</Td>
-                  <Td>{tree.hangingItems ? "Yes" : "No"}</Td>
+                  <Td>{tree.mistletoe === true ? "Yes" : "No"}</Td>
+                  <Td>{tree.epicormicGrowth === true ? "Yes" : "No"}</Td>
+                  <Td>{tree.deadWood === true ? "Yes" : "No"}</Td>
+                  <Td>{tree.oakPitScale === true ? "Yes" : "No"}</Td>
+                  <Td>{tree.hangingItems === true ? "Yes" : "No"}</Td>
                   <Td>{tree.additionalNotes}</Td>
                 </Tr>
               ))}
