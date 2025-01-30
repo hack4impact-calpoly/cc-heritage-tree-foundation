@@ -1,6 +1,7 @@
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box } from "@chakra-ui/react";
 
 export default function TreeTable() {
+  // dummy tree data
   const treeData = [
     {
       collectorName: "Sydney Jones",
@@ -38,6 +39,7 @@ export default function TreeTable() {
     },
   ];
 
+  // tree table structure
   return (
     <div>
       <Box p={5}>
