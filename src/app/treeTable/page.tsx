@@ -1,3 +1,91 @@
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box } from "@chakra-ui/react";
+
 export default function TreeTable() {
-  return <div>Will probably be made into a component later, but for now develop on /treeTable</div>;
+  const treeData = [
+    {
+      collectorName: "Sydney Jones",
+      dateCollected: "2025-01-22",
+      contactInfo: "sjones@email.com",
+      gpsCoordinates: "34.0522, -118.2437",
+      photo: "tree1.jpg",
+      dbh: "15.3",
+      height: "25 ft",
+      canopyBreath: "20 ft",
+      species: "Valley Oak",
+      mistletoe: false,
+      epicormicGrowth: true,
+      deadWood: true,
+      oakPitScale: false,
+      hangingItems: false,
+      additionalNotes: "Tree appears healthy overall.",
+    },
+    {
+      collectorName: "Ryan Smith",
+      dateCollected: "2025-01-20",
+      contactInfo: "rsmith@example.com",
+      gpsCoordinates: "37.7749, -122.4194",
+      photo: "tree2.jpg",
+      dbh: "20.1",
+      height: "30 ft",
+      canopyBreath: "25 ft",
+      species: "Blue Oak",
+      mistletoe: true,
+      epicormicGrowth: false,
+      deadWood: false,
+      oakPitScale: true,
+      hangingItems: false,
+      additionalNotes: "Signs of stress due to drought.",
+    },
+  ];
+
+  return (
+    <div>
+      <Box p={5}>
+        <TableContainer>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Collector Name</Th>
+                <Th>Date Collected</Th>
+                <Th>GPS Coordinates</Th>
+                <Th>Photo</Th>
+                <Th>DBH (inches)</Th>
+                <Th>Height</Th>
+                <Th>Tree Canopy Breadth</Th>
+                <Th>Species</Th>
+                <Th>Mistletoe</Th>
+                <Th>Epicormic Growth</Th>
+                <Th>Dead Wood</Th>
+                <Th>Oak Pit Scale</Th>
+                <Th>Hanging Items</Th>
+                <Th>Additional Notes</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {treeData.map((tree, index) => (
+                <Tr key={index}>
+                  <Td>{tree.collectorName}</Td>
+                  <Td>{tree.dateCollected}</Td>
+                  <Td>{tree.gpsCoordinates}</Td>
+                  <Td>
+                    <img src={tree.photo} alt="Tree" width="50" height="50" />
+                  </Td>
+                  <Td>{tree.dbh}</Td>
+                  <Td>{tree.height}</Td>
+                  <Td>{tree.canopyBreath}</Td>
+                  <Td>{tree.species}</Td>
+                  <Td>{tree.mistletoe ? "Yes" : "No"}</Td>
+                  <Td>{tree.epicormicGrowth ? "Yes" : "No"}</Td>
+                  <Td>{tree.deadWood ? "Yes" : "No"}</Td>
+                  <Td>{tree.oakPitScale ? "Yes" : "No"}</Td>
+                  <Td>{tree.hangingItems ? "Yes" : "No"}</Td>
+                  <Td>{tree.additionalNotes}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </div>
+  );
 }
