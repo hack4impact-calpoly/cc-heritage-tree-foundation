@@ -1,10 +1,10 @@
-'use client'
+"use client";
 import { Box, VStack, Image, Button, Flex } from "@chakra-ui/react";
 import "@/app/fonts/fonts.css";
 import { LuTrees } from "react-icons/lu";
 import { MdOutlineDashboard, MdOutlinePeopleAlt } from "react-icons/md";
 import { IconType } from "react-icons";
-import { useState } from 'react';
+import { useState } from "react";
 
 const COLORS = {
   primary: "#596435",
@@ -37,7 +37,6 @@ const NAV_ITEMS: Array<NavItem> = [
 ];
 
 export default function Navbar() {
-  
   const [activeButton, setActiveButton] = useState("Dashboard");
 
   return (
@@ -90,10 +89,13 @@ export default function Navbar() {
           {NAV_ITEMS.map((NavItem) => (
             <Button
               key={NavItem.text}
-              onClick={() => {setActiveButton(NavItem.text); console.log(activeButton)}}
+              onClick={() => {
+                setActiveButton(NavItem.text);
+                console.log(activeButton);
+              }}
               style={{
-                backgroundColor: activeButton==NavItem.text ? COLORS.secondary : COLORS.primary,
-                color: activeButton==NavItem.text ? COLORS.primary : COLORS.white,
+                backgroundColor: activeButton == NavItem.text ? COLORS.secondary : COLORS.primary,
+                color: activeButton == NavItem.text ? COLORS.primary : COLORS.white,
                 borderRadius: "20px",
                 width: "100%",
                 height: "2rem",
