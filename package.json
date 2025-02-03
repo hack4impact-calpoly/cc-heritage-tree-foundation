@@ -13,10 +13,11 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.10.3",
+    "@chakra-ui/react": "^2.10.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "framer-motion": "^11.18.0",
+    "leaflet": "^1.9.4",
     "mongoose": "^8",
     "next": "^15.1.6",
     "react": "^18",
@@ -24,6 +25,7 @@
     "react-icons": "^5.4.0"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.16",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
