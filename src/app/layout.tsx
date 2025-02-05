@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { ChakraProvider } from "@chakra-ui/react";
+import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
+
 import "./globals.css";
 
 //! Update metadata to match your project
@@ -14,9 +15,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <html lang="en">
         <body>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
           <SignedIn>
             <UserButton />
           </SignedIn>
