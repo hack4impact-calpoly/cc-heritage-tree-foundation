@@ -1,14 +1,6 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-const isPublicRoute = createRouteMatcher(["/login/page.tsx"]);
-
-//function that require authetication before access
-// export default clerkMiddleware(async (auth, request) => {
-//   if (!isPublicRoute(request)) {
-//     await auth.protect();
-//   }
-// });
-
+//clareMiddleware helper enables authetication and is where to configure protected routes
 export default clerkMiddleware();
 
 export const config = {
