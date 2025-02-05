@@ -1,6 +1,5 @@
 "use client";
 import type { Metadata } from "next";
-import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import ProfileCard from "@/components/ProfileCard";
@@ -15,9 +14,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <html lang="en">
         <body>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
           <SignedIn>
             <UserButton />
           </SignedIn>
