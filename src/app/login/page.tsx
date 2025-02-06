@@ -18,11 +18,11 @@ export default function Login() {
   return (
     <ClerkProvider>
       <SignedOut>
-        <Center width={"100vw"} height={"100vh"}>
-          <div style={{ backgroundColor: "#596334" }}>
+        <div style={{ backgroundColor: "#596334" }}>
+          <Center width={"100vw"} height={"100vh"}>
             <SignIn />
-          </div>
-        </Center>
+          </Center>
+        </div>
       </SignedOut>
     </ClerkProvider>
   );
