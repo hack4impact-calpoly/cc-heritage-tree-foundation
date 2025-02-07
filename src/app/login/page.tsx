@@ -20,7 +20,7 @@ export default function Login() {
       <SignedOut>
         <div style={{ backgroundColor: "#596334" }}>
           <Center width={"100vw"} height={"100vh"}>
-            <SignIn />
+            <SignIn routing="hash" />
           </Center>
         </div>
       </SignedOut>
