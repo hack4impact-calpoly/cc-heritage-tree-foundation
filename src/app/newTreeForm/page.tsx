@@ -1,6 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Input, Textarea, Button, Select, VStack, Heading } from "@chakra-ui/react";
+import { Box, Input, Textarea, Button, Select, VStack, Heading, Flex, ColorModeContext } from "@chakra-ui/react";
+import styles from "@/styles/new-tree-form.module.css";
+import { treeTypes } from "./tree-form-data";
+import { COLORS } from "@/styles/color-styles-data";
 
 export default function TreeEntryForm() {
   type TreeFormData = {
@@ -47,8 +50,40 @@ export default function TreeEntryForm() {
 
   return (
     <Box p={6} maxW="600px" mx="auto" boxShadow="md" borderRadius="md" bg="gray.50">
-      <Heading mb={4}>Tree Entry Form</Heading>
+      <Heading mb={4}>Tell us about this tree!</Heading>
       <VStack spacing={4} as="form" onSubmit={handleSubmit}>
+        <Box className={styles.treeFormSection}>
+          <Heading className={styles.treeFormSectionTitle} size="md">
+            Tree Type
+          </Heading>
+          <Flex justify="center" gap="5">
+            <Button
+              style={{
+                color: COLORS.Steel,
+                backgroundColor: COLORS.RobinsEgg,
+              }}
+            >
+              Valley Oak
+            </Button>
+            <Button>Coast Live Oak</Button>
+            <Button>Blue Oak</Button>
+          </Flex>
+        </Box>
+        <Box className={styles.treeFormSection}>
+          <Heading size="md" className={styles.treeFormSectionTitle}>
+            Tree Specs
+          </Heading>
+        </Box>
+        <Box className={styles.treeFormSection}>
+          <Heading size="md" className={styles.treeFormSectionTitle}>
+            Tree Health
+          </Heading>
+        </Box>
+        <Box className={styles.treeFormSection}>
+          <Heading size="md" className={styles.treeFormSectionTitle}>
+            Field Notes
+          </Heading>
+        </Box>
         <Input placeholder="Tree Name" name="treeName" value={formData.treeName} onChange={handleChange} required />
         <Input placeholder="Species" name="species" value={formData.species} onChange={handleChange} required />
         <Input placeholder="Location" name="location" value={formData.location} onChange={handleChange} required />

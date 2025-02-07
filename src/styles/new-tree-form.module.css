@@ -1,0 +1,11 @@
+.treeFormSection {
+  border-width: 1px;
+  border-color: #596334;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+}
+
+.treeFormSectionTitle {
+  color: #596334;
+}
