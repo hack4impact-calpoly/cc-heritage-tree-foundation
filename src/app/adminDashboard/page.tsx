@@ -1,4 +1,4 @@
-import { ArrowUpRight, BookX, NotebookPen, SquarePen } from "lucide-react";
+import { ArrowUpRight, NotebookPen, SquarePen } from "lucide-react";
 import {
   Grid,
   GridItem,
@@ -10,14 +10,11 @@ import {
   HStack,
   Table,
   Td,
-  TableCaption,
   Tbody,
-  Tfoot,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
 
 function AdminDashboard() {
   return (
@@ -45,7 +42,6 @@ function AdminDashboard() {
         <GridItem rowSpan={4} colSpan={4}>
           <Box
             borderRadius={"20px"}
-            //mt={20}
             borderColor="black"
             bg="white"
             w="350px"
