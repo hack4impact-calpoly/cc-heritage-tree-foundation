@@ -42,12 +42,13 @@ export default function Navbar() {
   return (
     <div
       style={{
-        position: "sticky",
+        position: "fixed",
         height: "100vh",
         width: "15rem",
         backgroundColor: COLORS.primary,
         borderTopRightRadius: "20px",
         borderBottomRightRadius: "20px",
+        padding: "20px",
         justifyContent: "center",
       }}
     >
@@ -66,8 +67,8 @@ export default function Navbar() {
             src="/logo1.png"
             alt="Logo"
             style={{
-              width: "70%",
-              height: "70%",
+              width: "100%",
+              height: "85%",
               objectFit: "contain",
               justifySelf: "center",
             }}
