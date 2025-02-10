@@ -5,92 +5,44 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import AdminDashboard from "@/app/adminDashboard/page";
-import { describe, it } from "node:test";
 
 describe("AdminDashboard", () => {
-  it("renders the form correctly", () => {
+  it("renders the welcome message", () => {
+    render(<AdminDashboard />);
+    expect(screen.getByText("Welcome back, Jane!")).toBeInTheDocument();
+  });
+
+  it("renders the 'Trees Logged This Year' section", () => {
+    render(<AdminDashboard />);
+    expect(screen.getByText("Trees Logged This Year")).toBeInTheDocument();
+    expect(screen.getByText("123")).toBeInTheDocument();
+    expect(screen.getByText("% incr from December")).toBeInTheDocument();
+  });
+
+  it("renders the 'Trees in Poor Condition' table", () => {
     render(<AdminDashboard />);
 
-    // getting elements
-    /*expect(screen.getByPlaceholderText("Tree Name")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Species")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Location")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Description")).toBeInTheDocument();
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
+    expect(screen.getByText("Trees in Poor Condition")).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "#" })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Species" })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Condition" })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Date Recorded" })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Volunteer" })).toBeInTheDocument();
   });
 
-  it("updates form fields when user types", async () => {
-    render(<TreeEntryForm />);
+  it("renders the 'Create new announcement' button", () => {
+    render(<AdminDashboard />);
 
-    // getting elements
-    const treeNameInput = screen.getByPlaceholderText("Tree Name") as HTMLInputElement;
-    const speciesInput = screen.getByPlaceholderText("Species") as HTMLInputElement;
-    const locationInput = screen.getByPlaceholderText("Location") as HTMLInputElement;
-    const descriptionInput = screen.getByPlaceholderText("Description") as HTMLTextAreaElement;
-
-    // simulating user input
-    await userEvent.type(treeNameInput, "Oak");
-    await userEvent.type(speciesInput, "Quercus robur");
-    await userEvent.type(locationInput, "Central Park");
-    await userEvent.type(descriptionInput, "A majestic oak tree.");
-
-    // checking that the inputted values are what are displayed
-    expect(treeNameInput.value).toBe("Oak");
-    expect(speciesInput.value).toBe("Quercus robur");
-    expect(locationInput.value).toBe("Central Park");
-    expect(descriptionInput.value).toBe("A majestic oak tree.");
+    const button = screen.getByRole("button", { name: /Create new announcement/i });
+    expect(button).toBeInTheDocument();
   });
 
-  it("updates the file input when a file is selected", async () => {
-    render(<TreeEntryForm />);
+  it("renders image of the map", () => {
+    render(<AdminDashboard />);
 
-    const fileInput = screen.getByRole("button", { name: /submit/i }).previousSibling as HTMLInputElement;
-    const file = new File(["tree"], "tree.png", { type: "image/png" });
-
-    fireEvent.change(fileInput, { target: { files: [file] } });
-
-    await waitFor(() => {
-      expect(fileInput.files).toHaveLength(1);
-      expect(fileInput.files![0].name).toBe("tree.png");
-    });
-  });
-
-  it("submits the form and displays the submitted data", async () => {
-    render(<TreeEntryForm />);
-
-    // get html elements
-    const treeNameInput = screen.getByPlaceholderText("Tree Name") as HTMLInputElement;
-    const speciesInput = screen.getByPlaceholderText("Species") as HTMLInputElement;
-    const locationInput = screen.getByPlaceholderText("Location") as HTMLInputElement;
-    const descriptionInput = screen.getByPlaceholderText("Description") as HTMLTextAreaElement;
-    const conditionSelect = screen.getByRole("combobox") as HTMLSelectElement;
-    const fileInput = screen.getByRole("button", { name: /submit/i }).previousSibling as HTMLInputElement;
-    const submitButton = screen.getByRole("button", { name: /submit/i });
-
-    // simulating user input
-    await userEvent.type(treeNameInput, "Oak");
-    await userEvent.type(speciesInput, "Quercus robur");
-    await userEvent.type(locationInput, "Central Park");
-    await userEvent.type(descriptionInput, "A majestic oak tree.");
-    await userEvent.selectOptions(conditionSelect, "Healthy");
-
-    const file = new File(["tree"], "tree.png", { type: "image/png" });
-    await userEvent.upload(fileInput, file);
-
-    await userEvent.click(submitButton);
-
-    // awaiting display of submitted data after clicking submit
-    await waitFor(() => {
-      expect(screen.getByText("Submitted Data")).toBeInTheDocument();
-      expect(screen.getByText("Tree Name: Oak")).toBeInTheDocument();
-      expect(screen.getByText("Species: Quercus robur")).toBeInTheDocument();
-      expect(screen.getByText("Location: Central Park")).toBeInTheDocument();
-      expect(screen.getByText("Description: A majestic oak tree.")).toBeInTheDocument();
-      expect(screen.getByText("Condition: Healthy")).toBeInTheDocument();
-      expect(screen.getByText("Photo: tree.png")).toBeInTheDocument();
-    });*/
+    const mapImage = screen.getByAltText("Map not Appearing");
+    expect(mapImage).toBeInTheDocument();
+    expect(mapImage).toHaveAttribute("src", "/map.png");
   });
 });
