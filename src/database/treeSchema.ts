@@ -28,4 +28,5 @@ const TreeSchema = new Schema<ITree>({
   },
 });
 
-export default mongoose.model("Tree", TreeSchema);
+const Tree = mongoose.models.Trees || mongoose.model("Trees", TreeSchema, "CentralCoastHeritageTreeDatabase");
+export default Tree;
