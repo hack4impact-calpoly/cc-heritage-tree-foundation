@@ -22,7 +22,6 @@ describe("AdminDashboard", () => {
 
   it("renders the 'Trees in Poor Condition' table", () => {
     render(<AdminDashboard />);
-
     expect(screen.getByText("Trees in Poor Condition")).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "#" })).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "Species" })).toBeInTheDocument();
@@ -33,14 +32,11 @@ describe("AdminDashboard", () => {
 
   it("renders the 'Create new announcement' button", () => {
     render(<AdminDashboard />);
-
-    const button = screen.getByRole("button", { name: /Create new announcement/i });
-    expect(button).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Create new announcement/i })).toBeInTheDocument();
   });
 
   it("renders image of the map", () => {
     render(<AdminDashboard />);
-
     const mapImage = screen.getByAltText("Map not Appearing");
     expect(mapImage).toBeInTheDocument();
     expect(mapImage).toHaveAttribute("src", "/map.png");
