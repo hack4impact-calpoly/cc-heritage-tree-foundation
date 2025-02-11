@@ -1,9 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Input, Textarea, Button, Select, VStack, Heading, Flex, ColorModeContext } from "@chakra-ui/react";
+import { Box, Input, Textarea, Button, Select, VStack, Heading, Flex, Text } from "@chakra-ui/react";
 import styles from "@/styles/new-tree-form.module.css";
 import { treeTypes } from "./tree-form-data";
 import { COLORS } from "@/styles/color-styles-data";
+import { LuNotebookPen } from "react-icons/lu";
 
 export default function TreeEntryForm() {
   type TreeFormData = {
@@ -57,32 +58,56 @@ export default function TreeEntryForm() {
             Tree Type
           </Heading>
           <Flex justify="center" gap="5">
-            <Button
-              style={{
-                color: COLORS.Steel,
-                backgroundColor: COLORS.RobinsEgg,
-              }}
-            >
+            <Button borderRadius="1rem" backgroundColor={COLORS.RobinsEgg} color={COLORS.Steel}>
               Valley Oak
             </Button>
-            <Button>Coast Live Oak</Button>
-            <Button>Blue Oak</Button>
+            <Button borderRadius="1rem" backgroundColor={COLORS.Sky} color={COLORS.Charcoal}>
+              Coast Live Oak
+            </Button>
+            <Button borderRadius="1rem" backgroundColor={COLORS.Steel} color={COLORS.PureWhite}>
+              Blue Oak
+            </Button>
           </Flex>
         </Box>
         <Box className={styles.treeFormSection}>
           <Heading size="md" className={styles.treeFormSectionTitle}>
             Tree Specs
           </Heading>
+          <Box>
+            <Text className={styles.treeFormFieldLabel}>Tree Height</Text>
+            <Input placeholder="input a number"></Input>
+          </Box>
+          <Box>
+            <Text className={styles.treeFormFieldLabel}>Canopy Spread</Text>
+            <Input placeholder="input a number"></Input>
+          </Box>
+          <Box>
+            <Text className={styles.treeFormFieldLabel}>Trunk DBH</Text>
+            <Input placeholder="type here..."></Input>
+          </Box>
         </Box>
         <Box className={styles.treeFormSection}>
           <Heading size="md" className={styles.treeFormSectionTitle}>
             Tree Health
           </Heading>
+          <Box>
+            <Text>How would you rate the overall tree health?</Text>
+            <Flex></Flex>
+          </Box>
+          <Box>
+            <Text className={styles.treeFormFieldLabel}>Identify issues present in your tree.</Text>
+          </Box>
         </Box>
         <Box className={styles.treeFormSection}>
-          <Heading size="md" className={styles.treeFormSectionTitle}>
-            Field Notes
-          </Heading>
+          <Flex>
+            <Heading size="md" className={styles.treeFormSectionTitle}>
+              Field Notes
+            </Heading>
+            <LuNotebookPen color={COLORS.Olive} />
+          </Flex>
+          <Box>
+            <Text>Any additional observations or thoughts?</Text>
+          </Box>
         </Box>
         <Input placeholder="Tree Name" name="treeName" value={formData.treeName} onChange={handleChange} required />
         <Input placeholder="Species" name="species" value={formData.species} onChange={handleChange} required />

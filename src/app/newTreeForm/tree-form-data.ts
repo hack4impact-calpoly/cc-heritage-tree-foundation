@@ -1,5 +1,3 @@
-const COLORS = {};
-
 //Tree Types as on Figma
 export const treeTypes = ["Valley Oak", "Coast Live Oak", "Blue Oak"] as const;
 export type TreeType = (typeof treeTypes)[number];

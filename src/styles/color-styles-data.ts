@@ -6,7 +6,7 @@ export const COLORS = {
   PureWhite: "#FFFFFF",
   Charcoal: "#333333",
   RobinsEgg: "#CFEFF9",
-  Sky: "78C1DE",
+  Sky: "#78C1DE",
   Steel: "#426B87",
   Grey: "",
   Orange: "",
