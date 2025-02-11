@@ -37,8 +37,7 @@ export async function GET(req: Request, context: { params: { treeID: string } })
   await connectDB();
 
   try {
-    const params = context.params; // Ensure params is awaited
-    const treeID = params.treeID; // Now safely access treeID
+    const { treeID } = await context.params; // Destructure treeID directly from params
 
     if (!treeID) {
       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
@@ -67,11 +66,11 @@ export async function GET(req: Request, context: { params: { treeID: string } })
   }
 }
 
-export async function DELETE(req: Request, context: { params: { treeID: string } }) {
+export async function DELETE(req: Request, context: { params: { treeID?: string } }) {
   await connectDB();
 
   try {
-    const params = context.params; // Ensure params is awaited
+    const params = await context.params; // Ensure params is awaited
     const treeID = params.treeID; // Now safely access treeID
 
     if (!treeID) {
