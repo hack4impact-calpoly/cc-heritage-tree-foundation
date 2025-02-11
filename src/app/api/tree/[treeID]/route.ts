@@ -33,7 +33,7 @@ export async function PUT(req: Request, { params }: { params: { treeID: string }
   }
 }
 
-export async function GET(req: Request, context: { params: { treeID?: string } }) {
+export async function GET(req: Request, context: { params: { treeID: string } }) {
   await connectDB();
 
   try {
