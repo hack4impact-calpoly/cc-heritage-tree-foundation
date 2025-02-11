@@ -15,19 +15,21 @@ export async function GET(request: Request) {
   }
 }
 
-export async function GET_BY_ID(req: NextRequest, { params }: { params: { id: string } }) {
-  await connectDB();
+// MOVED TO [treeID]/route.ts
 
-  try {
-    const tree = await Tree.findById(params.id).lean();
-    if (!tree) {
-      return NextResponse.json("Tree not found", { status: 404 });
-    }
-    return NextResponse.json(tree, { status: 200 });
-  } catch (err) {
-    return NextResponse.json("Failed to fetch tree: " + err, { status: 400 });
-  }
-}
+// export async function GET_BY_ID(req: NextRequest, { params }: { params: { id: string } }) {
+//   await connectDB();
+
+//   try {
+//     const tree = await Tree.findById(params.id).lean();
+//     if (!tree) {
+//       return NextResponse.json("Tree not found", { status: 404 });
+//     }
+//     return NextResponse.json(tree, { status: 200 });
+//   } catch (err) {
+//     return NextResponse.json("Failed to fetch tree: " + err, { status: 400 });
+//   }
+// }
 
 export async function POST(req: NextRequest) {
   await connectDB();
@@ -48,34 +50,20 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function PUT(req: NextRequest) {
-  await connectDB();
+// MOVED TO [treeID]/route.ts
 
-  try {
-    const { id, ...updateData } = await req.json();
-    const updatedTree = await Tree.findByIdAndUpdate(id, updateData, { new: true }).lean();
-    revalidateTag("trees");
-    if (!updatedTree) {
-      return NextResponse.json("Tree not found", { status: 404 });
-    }
-    return NextResponse.json(updatedTree, { status: 200 });
-  } catch (err) {
-    return NextResponse.json("Failed to update tree: " + err, { status: 400 });
-  }
-}
+// export async function DELETE(req: NextRequest) {
+//   await connectDB();
 
-export async function DELETE(req: NextRequest) {
-  await connectDB();
-
-  try {
-    const { id } = await req.json();
-    const deletedTree = await Tree.findByIdAndDelete(id).lean();
-    revalidateTag("trees");
-    if (!deletedTree) {
-      return NextResponse.json("Tree not found", { status: 404 });
-    }
-    return NextResponse.json("Tree deleted successfully", { status: 200 });
-  } catch (err) {
-    return NextResponse.json("Failed to delete tree: " + err, { status: 400 });
-  }
-}
+//   try {
+//     const { id } = await req.json();
+//     const deletedTree = await Tree.findByIdAndDelete(id).lean();
+//     revalidateTag("trees");
+//     if (!deletedTree) {
+//       return NextResponse.json("Tree not found", { status: 404 });
+//     }
+//     return NextResponse.json("Tree deleted successfully", { status: 200 });
+//   } catch (err) {
+//     return NextResponse.json("Failed to delete tree: " + err, { status: 400 });
+//   }
+// }
