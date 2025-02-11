@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 type IParams = {
   params: {
-    treeID: string;
+    treeId: string;
   };
 };
 
@@ -13,10 +13,10 @@ export async function PUT(req: NextRequest, { params }: IParams) {
   await connectDB();
 
   try {
-    const { treeID } = await params; // Get treeID from params
+    const { treeId } = params; // Get treeId from params
     const body = await req.json();
 
-    const updatedTree = await Tree.findByIdAndUpdate(treeID, body, {
+    const updatedTree = await Tree.findByIdAndUpdate(treeId, body, {
       new: true,
       runValidators: true,
     });
@@ -44,15 +44,15 @@ export async function GET(req: NextRequest, { params }: IParams) {
   await connectDB();
 
   try {
-    const { treeID } = await params; // Destructure treeID directly from params
+    const { treeId } = params; // Destructure treeId directly from params
 
-    if (!treeID) {
+    if (!treeId) {
       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
         status: 400,
       });
     }
 
-    const tree = await Tree.findById(treeID).lean();
+    const tree = await Tree.findById(treeId).lean();
 
     if (!tree) {
       return new Response(JSON.stringify({ message: "Tree not found" }), {
@@ -77,16 +77,16 @@ export async function DELETE(req: NextRequest, { params }: IParams) {
   await connectDB();
 
   try {
-    const params1 = await params; // Ensure params is awaited
-    const treeID = params1.treeID; // Now safely access treeID
+    const params1 = params; // Ensure params is awaited
+    const treeId = params1.treeId; // Now safely access treeId
 
-    if (!treeID) {
+    if (!treeId) {
       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
         status: 400,
       });
     }
 
-    const deletedTree = await Tree.findByIdAndDelete(treeID).lean();
+    const deletedTree = await Tree.findByIdAndDelete(treeId).lean();
 
     if (!deletedTree) {
       return new Response(JSON.stringify({ message: "Tree not found" }), {
