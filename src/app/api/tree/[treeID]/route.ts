@@ -3,11 +3,11 @@ import connectDB from "@/database/db";
 import Tree from "../../../../database/treeSchema";
 import { NextRequest } from "next/server";
 
-export async function PUT(req: Request, { params }: { params: { treeID: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { treeID: string } }) {
   await connectDB();
 
   try {
-    const { treeID } = params; // Get treeID from params
+    const { treeID } = await params; // Get treeID from params
     const body = await req.json();
 
     const updatedTree = await Tree.findByIdAndUpdate(treeID, body, {
@@ -34,11 +34,11 @@ export async function PUT(req: Request, { params }: { params: { treeID: string }
   }
 }
 
-export async function GET(req: NextRequest, context: { params: { treeID: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { treeID: string } }) {
   await connectDB();
 
   try {
-    const { treeID } = await context.params; // Destructure treeID directly from params
+    const { treeID } = await params; // Destructure treeID directly from params
 
     if (!treeID) {
       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
@@ -67,11 +67,11 @@ export async function GET(req: NextRequest, context: { params: { treeID: string 
   }
 }
 
-export async function DELETE(req: Request, context: { params: { treeID?: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { treeID?: string } }) {
   await connectDB();
 
   try {
-    const params = await context.params; // Ensure params is awaited
+    const params = await params; // Ensure params is awaited
     const treeID = params.treeID; // Now safely access treeID
 
     if (!treeID) {
