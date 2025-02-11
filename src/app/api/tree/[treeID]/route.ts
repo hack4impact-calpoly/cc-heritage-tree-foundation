@@ -34,45 +34,45 @@ export async function PUT(req: NextRequest, { params }: { params: { treeID: stri
   }
 }
 
-export async function GET(req: NextRequest, { params }: { params: { treeID: string } }) {
-  await connectDB();
+// export async function GET(req: NextRequest, { params }: { params: { treeID: string } }) {
+//   await connectDB();
 
-  try {
-    const { treeID } = await params; // Destructure treeID directly from params
+//   try {
+//     const { treeID } = await params; // Destructure treeID directly from params
 
-    if (!treeID) {
-      return new Response(JSON.stringify({ error: "Tree ID is required" }), {
-        status: 400,
-      });
-    }
+//     if (!treeID) {
+//       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
+//         status: 400,
+//       });
+//     }
 
-    const tree = await Tree.findById(treeID).lean();
+//     const tree = await Tree.findById(treeID).lean();
 
-    if (!tree) {
-      return new Response(JSON.stringify({ message: "Tree not found" }), {
-        status: 404,
-      });
-    }
+//     if (!tree) {
+//       return new Response(JSON.stringify({ message: "Tree not found" }), {
+//         status: 404,
+//       });
+//     }
 
-    return new Response(JSON.stringify(tree), { status: 200 });
-  } catch (err) {
-    let errorMessage = "An unknown error occurred";
-    if (err instanceof Error) {
-      errorMessage = err.message;
-    }
+//     return new Response(JSON.stringify(tree), { status: 200 });
+//   } catch (err) {
+//     let errorMessage = "An unknown error occurred";
+//     if (err instanceof Error) {
+//       errorMessage = err.message;
+//     }
 
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-    });
-  }
-}
+//     return new Response(JSON.stringify({ error: errorMessage }), {
+//       status: 500,
+//     });
+//   }
+// }
 
 export async function DELETE(req: NextRequest, { params }: { params: { treeID?: string } }) {
   await connectDB();
 
   try {
-    const params = await params; // Ensure params is awaited
-    const treeID = params.treeID; // Now safely access treeID
+    const params1 = await params; // Ensure params is awaited
+    const treeID = params1.treeID; // Now safely access treeID
 
     if (!treeID) {
       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
