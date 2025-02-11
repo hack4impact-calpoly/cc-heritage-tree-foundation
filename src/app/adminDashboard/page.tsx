@@ -5,6 +5,7 @@ import {
   Image,
   Text,
   Button,
+  Flex,
   Link,
   Box,
   HStack,
@@ -18,14 +19,14 @@ import {
 
 function AdminDashboard() {
   return (
-    <div>
+    <Box position="absolute" width="100vw" height="100vh" transform="translateX(-15rem)" bg="#F4F1E8">
       <Grid
         minWidth="1024px"
-        h="100%"
-        bg="#F4F1E8"
+        width="100%"
         templateRows="repeat(7, 1fr)"
         templateColumns="repeat(8, 1fr)"
         gap={5}
+        overflow="scroll"
       >
         <GridItem
           colSpan={8}
@@ -250,7 +251,7 @@ function AdminDashboard() {
           ></Image>
         </GridItem>
       </Grid>
-    </div>
+    </Box>
   );
 }
 
