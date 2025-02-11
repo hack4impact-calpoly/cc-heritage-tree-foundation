@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "@/database/db";
 import Tree from "../../../../database/treeSchema";
+import { NextRequest } from "next/server";
 
 export async function PUT(req: Request, { params }: { params: { treeID: string } }) {
   await connectDB();
@@ -33,7 +34,7 @@ export async function PUT(req: Request, { params }: { params: { treeID: string }
   }
 }
 
-export async function GET(req: Request, context: { params: { treeID: string } }) {
+export async function GET(req: NextRequest, context: { params: { treeID: string } }) {
   await connectDB();
 
   try {
