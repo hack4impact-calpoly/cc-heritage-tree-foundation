@@ -9,10 +9,11 @@ type IParams = {
   };
 };
 
-export async function PUT(req: NextRequest, { params }: IParams) {
+export async function PUT(req: NextRequest, paramsP: Promise<IParams>) {
   await connectDB();
 
   try {
+    const { params } = await paramsP;
     const { treeId } = await params; // Get treeId from params
     const body = await req.json();
 
@@ -40,10 +41,11 @@ export async function PUT(req: NextRequest, { params }: IParams) {
   }
 }
 
-export async function GET(req: NextRequest, { params }: IParams) {
+export async function GET(req: NextRequest, paramsP: Promise<IParams>) {
   await connectDB();
 
   try {
+    const { params } = await paramsP;
     const { treeId } = await params; // Destructure treeId directly from params
 
     if (!treeId) {
@@ -73,12 +75,12 @@ export async function GET(req: NextRequest, { params }: IParams) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: IParams) {
+export async function DELETE(req: NextRequest, params: Promise<IParams>) {
   await connectDB();
 
   try {
     const params1 = await params; // Ensure params is awaited
-    const treeId = params1.treeId; // Now safely access treeId
+    const treeId = params1; // Now safely access treeId
 
     if (!treeId) {
       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
