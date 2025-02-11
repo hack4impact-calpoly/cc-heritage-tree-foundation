@@ -9,15 +9,14 @@ type IParams = {
   };
 };
 
-export async function PUT(req: NextRequest, paramsP: Promise<IParams>) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ treeID: string }> }) {
   await connectDB();
 
   try {
-    const { params } = await paramsP;
-    const { treeId } = await params; // Get treeId from params
+    const treeID = (await params).treeID; // Get treeId from params
     const body = await req.json();
 
-    const updatedTree = await Tree.findByIdAndUpdate(treeId, body, {
+    const updatedTree = await Tree.findByIdAndUpdate(treeID, body, {
       new: true,
       runValidators: true,
     });
@@ -41,12 +40,11 @@ export async function PUT(req: NextRequest, paramsP: Promise<IParams>) {
   }
 }
 
-export async function GET(req: NextRequest, paramsP: Promise<IParams>) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ treeID: string }> }) {
   await connectDB();
 
   try {
-    const { params } = await paramsP;
-    const { treeId } = await params; // Destructure treeId directly from params
+    const treeId = (await params).treeID; // Destructure treeId directly from params
 
     if (!treeId) {
       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
@@ -75,11 +73,11 @@ export async function GET(req: NextRequest, paramsP: Promise<IParams>) {
   }
 }
 
-export async function DELETE(req: NextRequest, params: Promise<IParams>) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ treeID: string }> }) {
   await connectDB();
 
   try {
-    const params1 = await params; // Ensure params is awaited
+    const params1 = (await params).treeID; // Ensure params is awaited
     const treeId = params1; // Now safely access treeId
 
     if (!treeId) {
