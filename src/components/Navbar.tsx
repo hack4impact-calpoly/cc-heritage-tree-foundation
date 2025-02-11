@@ -50,6 +50,7 @@ export default function Navbar() {
         borderBottomRightRadius: "20px",
         padding: "20px",
         justifyContent: "center",
+        zIndex: "100",
       }}
     >
       <VStack>
