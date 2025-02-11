@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+// import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "@/database/db";
 import Tree from "../../../../database/treeSchema";
 import { NextRequest } from "next/server";
@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest, { params }: IParams) {
   await connectDB();
 
   try {
-    const { treeId } = params; // Get treeId from params
+    const { treeId } = await params; // Get treeId from params
     const body = await req.json();
 
     const updatedTree = await Tree.findByIdAndUpdate(treeId, body, {
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest, { params }: IParams) {
   await connectDB();
 
   try {
-    const { treeId } = params; // Destructure treeId directly from params
+    const { treeId } = await params; // Destructure treeId directly from params
 
     if (!treeId) {
       return new Response(JSON.stringify({ error: "Tree ID is required" }), {
@@ -77,7 +77,7 @@ export async function DELETE(req: NextRequest, { params }: IParams) {
   await connectDB();
 
   try {
-    const params1 = params; // Ensure params is awaited
+    const params1 = await params; // Ensure params is awaited
     const treeId = params1.treeId; // Now safely access treeId
 
     if (!treeId) {
