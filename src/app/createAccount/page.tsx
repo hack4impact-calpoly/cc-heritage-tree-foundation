@@ -36,7 +36,9 @@ export default function CreateAccount() {
         position: "absolute",
         backgroundColor: "#596334",
         height: "100vh",
+        overflowY: "scroll",
         width: "100%",
+        paddingBottom: "20px",
       }}
     >
       <Box
