@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Input, Textarea, Button, Select, VStack, Heading, Flex, Text } from "@chakra-ui/react";
+import { Box, Input, Textarea, Button, Select, VStack, Heading, Flex, Text, Image } from "@chakra-ui/react";
 import styles from "@/styles/new-tree-form.module.css";
-import { treeTypes } from "./tree-form-data";
+import { treeTypes, treeIssues, treeHealthColors } from "./tree-form-data";
 import { COLORS } from "@/styles/color-styles-data";
 import { LuNotebookPen } from "react-icons/lu";
 
@@ -92,11 +92,30 @@ export default function TreeEntryForm() {
           </Heading>
           <Box>
             <Text>How would you rate the overall tree health?</Text>
-            <Flex></Flex>
+            <Flex gap="4">
+              {[...Array.from(Array(10).keys())].reverse().map((n) => (
+                <Button
+                  key={n}
+                  backgroundColor={treeHealthColors[n][0]}
+                  color={treeHealthColors[n][1]}
+                  w="8px"
+                  h="40px"
+                  borderRadius="0.75rem"
+                >
+                  {n + 1}
+                </Button>
+              ))}
+            </Flex>
           </Box>
           <Box>
             <Text className={styles.treeFormFieldLabel}>Identify issues present in your tree.</Text>
           </Box>
+          {treeIssues.map((issue) => (
+            <Button key={issue}>
+              <Text>{issue}</Text>
+              <Image alt={issue}></Image>
+            </Button>
+          ))}
         </Box>
         <Box className={styles.treeFormSection}>
           <Flex>
