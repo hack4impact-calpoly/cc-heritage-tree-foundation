@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Input, Textarea, Button, Select, VStack, Heading, Flex, Text, Image } from "@chakra-ui/react";
-import styles from "@/styles/new-tree-form.module.css";
+import { Box, Input, Textarea, Button, Select, VStack, Heading, Flex, Text, Image, InputProps } from "@chakra-ui/react";
 import { treeTypes, treeIssues, treeHealthColors } from "./tree-form-data";
 import { COLORS } from "@/styles/color-styles-data";
 import { LuNotebookPen } from "react-icons/lu";
@@ -24,6 +23,20 @@ export default function TreeEntryForm() {
     treeCondition: "",
     photo: null,
   });
+
+  const TreeFormLabel = (props: InputProps) => <Text fontSize="16px" {...props} />;
+
+  const TreeFormInput = (props: InputProps) => (
+    <Input bg={COLORS.Cream} color={COLORS.Olive} _placeholder={{ color: "inherit" }} {...props} />
+  );
+
+  const TreeFormSection = (props: InputProps) => (
+    <Box borderWidth="1px" borderColor={COLORS.Olive} borderRadius="16px" p="24px" w="90%" {...props} />
+  );
+
+  const TreeFormSectionTitle = (props: InputProps) => (
+    <Heading color={COLORS.Olive} size="md" borderBottom="3rem" {...props} />
+  );
 
   const [submittedData, setSubmittedData] = useState<TreeFormData | null>(null);
 
@@ -50,13 +63,11 @@ export default function TreeEntryForm() {
   };
 
   return (
-    <Box p={6} maxW="600px" mx="auto" boxShadow="md" borderRadius="md" bg="gray.50">
+    <Box p={6} maxW="600px" mx="auto" boxShadow="md" borderRadius="md" bg={COLORS.PureWhite}>
       <Heading mb={4}>Tell us about this tree!</Heading>
       <VStack spacing={4} as="form" onSubmit={handleSubmit}>
-        <Box className={styles.treeFormSection}>
-          <Heading className={styles.treeFormSectionTitle} size="md">
-            Tree Type
-          </Heading>
+        <TreeFormSection>
+          <TreeFormSectionTitle>Tree Type</TreeFormSectionTitle>
           <Flex justify="center" gap="5">
             <Button borderRadius="1rem" backgroundColor={COLORS.RobinsEgg} color={COLORS.Steel}>
               Valley Oak
@@ -68,39 +79,38 @@ export default function TreeEntryForm() {
               Blue Oak
             </Button>
           </Flex>
-        </Box>
-        <Box className={styles.treeFormSection}>
-          <Heading size="md" className={styles.treeFormSectionTitle}>
-            Tree Specs
-          </Heading>
+        </TreeFormSection>
+        <TreeFormSection>
+          <TreeFormSectionTitle>Tree Specs</TreeFormSectionTitle>
           <Box>
-            <Text className={styles.treeFormFieldLabel}>Tree Height</Text>
+            <TreeFormLabel>Tree Height</TreeFormLabel>
             <Input placeholder="input a number"></Input>
           </Box>
           <Box>
-            <Text className={styles.treeFormFieldLabel}>Canopy Spread</Text>
+            <TreeFormLabel>Canopy Spread</TreeFormLabel>
             <Input placeholder="input a number"></Input>
           </Box>
           <Box>
-            <Text className={styles.treeFormFieldLabel}>Trunk DBH</Text>
+            <TreeFormLabel>Trunk DBH</TreeFormLabel>
             <Input placeholder="type here..."></Input>
           </Box>
-        </Box>
-        <Box className={styles.treeFormSection}>
-          <Heading size="md" className={styles.treeFormSectionTitle}>
-            Tree Health
-          </Heading>
+        </TreeFormSection>
+        <TreeFormSection>
+          <TreeFormSectionTitle>Tree Health</TreeFormSectionTitle>
           <Box>
             <Text>How would you rate the overall tree health?</Text>
-            <Flex gap="4">
+            <Flex gap="3.5" justify="center">
               {[...Array.from(Array(10).keys())].reverse().map((n) => (
                 <Button
                   key={n}
                   backgroundColor={treeHealthColors[n][0]}
                   color={treeHealthColors[n][1]}
-                  w="8px"
-                  h="40px"
-                  borderRadius="0.75rem"
+                  size="sm"
+                  w="2rem"
+                  h="1.8rem"
+                  borderRadius="0.5rem"
+                  padding="0.2rem"
+                  fontSize="18px"
                 >
                   {n + 1}
                 </Button>
@@ -108,7 +118,7 @@ export default function TreeEntryForm() {
             </Flex>
           </Box>
           <Box>
-            <Text className={styles.treeFormFieldLabel}>Identify issues present in your tree.</Text>
+            <TreeFormLabel>Identify issues present in your tree.</TreeFormLabel>
           </Box>
           {treeIssues.map((issue) => (
             <Button key={issue}>
@@ -116,18 +126,17 @@ export default function TreeEntryForm() {
               <Image alt={issue}></Image>
             </Button>
           ))}
-        </Box>
-        <Box className={styles.treeFormSection}>
+        </TreeFormSection>
+        <TreeFormSection>
           <Flex>
-            <Heading size="md" className={styles.treeFormSectionTitle}>
-              Field Notes
-            </Heading>
+            <TreeFormSectionTitle>Field Notes</TreeFormSectionTitle>
             <LuNotebookPen color={COLORS.Olive} />
           </Flex>
           <Box>
             <Text>Any additional observations or thoughts?</Text>
+            <TreeFormInput placeholder="type here..."></TreeFormInput>
           </Box>
-        </Box>
+        </TreeFormSection>
         <Input placeholder="Tree Name" name="treeName" value={formData.treeName} onChange={handleChange} required />
         <Input placeholder="Species" name="species" value={formData.species} onChange={handleChange} required />
         <Input placeholder="Location" name="location" value={formData.location} onChange={handleChange} required />
