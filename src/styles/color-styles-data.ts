@@ -1,6 +1,6 @@
 export const COLORS = {
   Olive: "#596334",
-  Moss: "",
+  Moss: "#DFED98",
   Tangerine: "",
   Cream: "#F4F1E8",
   PureWhite: "#FFFFFF",

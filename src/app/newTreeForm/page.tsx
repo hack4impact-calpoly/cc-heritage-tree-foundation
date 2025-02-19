@@ -13,10 +13,12 @@ import {
   Image,
   InputProps,
   HStack,
+  Show,
 } from "@chakra-ui/react";
 import { treeTypes, treeIssues, treeHealthColors } from "./tree-form-data";
 import { COLORS } from "@/styles/color-styles-data";
 import { LuNotebookPen } from "react-icons/lu";
+import { CiCircleCheck } from "react-icons/ci";
 
 export default function TreeEntryForm() {
   type TreeFormData = {
@@ -48,6 +50,8 @@ export default function TreeEntryForm() {
   );
 
   const TreeFormSectionTitle = (props: InputProps) => <Heading color={COLORS.Olive} size="md" {...props} />;
+
+  const [treeIssuesData, setTreeIssuesData] = useState<Array<string>>([]);
 
   const [submittedData, setSubmittedData] = useState<TreeFormData | null>(null);
 
@@ -132,16 +136,28 @@ export default function TreeEntryForm() {
             <TreeFormLabel>Identify issues present in your tree.</TreeFormLabel>
           </Box>
           {treeIssues.map((issue) => (
-            <Button key={issue}>
+            <Button
+              key={issue}
+              borderWidth="4px"
+              borderColor={treeIssuesData.includes(issue) ? COLORS.Moss : "transparent"}
+              onClick={() => {
+                if (!treeIssuesData.includes(issue)) {
+                  setTreeIssuesData([...treeIssuesData, issue]);
+                } else {
+                  setTreeIssuesData(treeIssuesData.filter((treeIssue) => treeIssue != issue));
+                }
+              }}
+            >
               <Text>{issue}</Text>
               <Image alt={issue}></Image>
+              {treeIssuesData.includes(issue) && <CiCircleCheck />}
             </Button>
           ))}
         </TreeFormSection>
         <TreeFormSection>
-          <HStack gap="4">
+          <HStack gap="3">
             <TreeFormSectionTitle>Field Notes</TreeFormSectionTitle>
-            <LuNotebookPen color={COLORS.Olive} size="1.2rem" />
+            <LuNotebookPen color={COLORS.Olive} size="1.3rem" />
           </HStack>
           <Box>
             <TreeFormLabel>Any additional observations or thoughts?</TreeFormLabel>
@@ -155,6 +171,10 @@ export default function TreeEntryForm() {
             ></Textarea>
           </Box>
         </TreeFormSection>
+        <Button type="submit" backgroundColor={COLORS.Olive} color={COLORS.PureWhite} borderRadius="5rem">
+          Submit
+        </Button>
+
         <Input placeholder="Tree Name" name="treeName" value={formData.treeName} onChange={handleChange} required />
         <Input placeholder="Species" name="species" value={formData.species} onChange={handleChange} required />
         <Input placeholder="Location" name="location" value={formData.location} onChange={handleChange} required />
