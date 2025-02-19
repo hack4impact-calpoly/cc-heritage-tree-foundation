@@ -64,7 +64,6 @@ export default function TreeTable() {
 
   return (
     <Box className="tree-table-container">
-      <Navbar />
       <TableContainer>
         <Table className="tree-table">
           <Thead>
