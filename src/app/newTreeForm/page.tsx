@@ -1,6 +1,19 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Input, Textarea, Button, Select, VStack, Heading, Flex, Text, Image, InputProps } from "@chakra-ui/react";
+import {
+  Box,
+  Input,
+  Textarea,
+  Button,
+  Select,
+  VStack,
+  Heading,
+  Flex,
+  Text,
+  Image,
+  InputProps,
+  HStack,
+} from "@chakra-ui/react";
 import { treeTypes, treeIssues, treeHealthColors } from "./tree-form-data";
 import { COLORS } from "@/styles/color-styles-data";
 import { LuNotebookPen } from "react-icons/lu";
@@ -24,7 +37,7 @@ export default function TreeEntryForm() {
     photo: null,
   });
 
-  const TreeFormLabel = (props: InputProps) => <Text fontSize="16px" {...props} />;
+  const TreeFormLabel = (props: InputProps) => <Text fontSize="16px" marginTop="20px" marginBottom="10px" {...props} />;
 
   const TreeFormInput = (props: InputProps) => (
     <Input bg={COLORS.Cream} color={COLORS.Olive} _placeholder={{ color: "inherit" }} {...props} />
@@ -34,9 +47,7 @@ export default function TreeEntryForm() {
     <Box borderWidth="1px" borderColor={COLORS.Olive} borderRadius="16px" p="24px" w="90%" {...props} />
   );
 
-  const TreeFormSectionTitle = (props: InputProps) => (
-    <Heading color={COLORS.Olive} size="md" borderBottom="3rem" {...props} />
-  );
+  const TreeFormSectionTitle = (props: InputProps) => <Heading color={COLORS.Olive} size="md" {...props} />;
 
   const [submittedData, setSubmittedData] = useState<TreeFormData | null>(null);
 
@@ -67,8 +78,8 @@ export default function TreeEntryForm() {
       <Heading mb={4}>Tell us about this tree!</Heading>
       <VStack spacing={4} as="form" onSubmit={handleSubmit}>
         <TreeFormSection>
-          <TreeFormSectionTitle>Tree Type</TreeFormSectionTitle>
-          <Flex justify="center" gap="5">
+          <TreeFormSectionTitle marginBottom="20px">Tree Type</TreeFormSectionTitle>
+          <Flex justify="left" gap="4">
             <Button borderRadius="1rem" backgroundColor={COLORS.RobinsEgg} color={COLORS.Steel}>
               Valley Oak
             </Button>
@@ -84,22 +95,22 @@ export default function TreeEntryForm() {
           <TreeFormSectionTitle>Tree Specs</TreeFormSectionTitle>
           <Box>
             <TreeFormLabel>Tree Height</TreeFormLabel>
-            <Input placeholder="input a number"></Input>
+            <TreeFormInput placeholder="input a number"></TreeFormInput>
           </Box>
           <Box>
             <TreeFormLabel>Canopy Spread</TreeFormLabel>
-            <Input placeholder="input a number"></Input>
+            <TreeFormInput placeholder="input a number"></TreeFormInput>
           </Box>
           <Box>
             <TreeFormLabel>Trunk DBH</TreeFormLabel>
-            <Input placeholder="type here..."></Input>
+            <TreeFormInput placeholder="type here..."></TreeFormInput>
           </Box>
         </TreeFormSection>
         <TreeFormSection>
           <TreeFormSectionTitle>Tree Health</TreeFormSectionTitle>
           <Box>
-            <Text>How would you rate the overall tree health?</Text>
-            <Flex gap="3.5" justify="center">
+            <TreeFormLabel>How would your rate the overall tree health?</TreeFormLabel>
+            <Flex gap="3" justify="left">
               {[...Array.from(Array(10).keys())].reverse().map((n) => (
                 <Button
                   key={n}
@@ -128,13 +139,20 @@ export default function TreeEntryForm() {
           ))}
         </TreeFormSection>
         <TreeFormSection>
-          <Flex>
+          <HStack gap="4">
             <TreeFormSectionTitle>Field Notes</TreeFormSectionTitle>
-            <LuNotebookPen color={COLORS.Olive} />
-          </Flex>
+            <LuNotebookPen color={COLORS.Olive} size="1.2rem" />
+          </HStack>
           <Box>
-            <Text>Any additional observations or thoughts?</Text>
-            <TreeFormInput placeholder="type here..."></TreeFormInput>
+            <TreeFormLabel>Any additional observations or thoughts?</TreeFormLabel>
+            <Textarea
+              placeholder="type here..."
+              bg={COLORS.Cream}
+              color={COLORS.Olive}
+              h="16rem"
+              _placeholder={{ color: "inherit" }}
+              borderRadius="1rem"
+            ></Textarea>
           </Box>
         </TreeFormSection>
         <Input placeholder="Tree Name" name="treeName" value={formData.treeName} onChange={handleChange} required />
