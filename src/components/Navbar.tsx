@@ -2,9 +2,11 @@
 import { Box, VStack, Image, Button, Flex } from "@chakra-ui/react";
 import "@/app/fonts/fonts.css";
 import { LuTrees } from "react-icons/lu";
-import { MdOutlineDashboard, MdOutlinePeopleAlt } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlinePeopleAlt, MdArrowOutward } from "react-icons/md";
+import { FiBell } from "react-icons/fi";
 import { IconType } from "react-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter from Next.js
 
 const COLORS = {
   primary: "#596435",
@@ -16,6 +18,7 @@ interface NavItem {
   id: number;
   text: string;
   icon: IconType;
+  path: string;
 }
 
 const NAV_ITEMS: Array<NavItem> = [
@@ -23,21 +26,42 @@ const NAV_ITEMS: Array<NavItem> = [
     id: 1,
     text: "Dashboard",
     icon: MdOutlineDashboard,
+    path: "/adminDashboard",
   },
   {
     id: 2,
     text: "Tree Inventory",
     icon: LuTrees,
+    path: "/treeTable",
   },
   {
     id: 3,
     text: "Volunteers",
     icon: MdOutlinePeopleAlt,
+    path: "/volunteers",
+  },
+  {
+    id: 4,
+    text: "Messages",
+    icon: FiBell,
+    path: "/messages",
+  },
+  {
+    id: 5,
+    text: "Map",
+    icon: MdArrowOutward,
+    path: "/map",
   },
 ];
 
 export default function Navbar() {
   const [activeButton, setActiveButton] = useState("Dashboard");
+  const router = useRouter(); // Initialize the router
+
+  const handleNavigation = (path: string, text: string) => {
+    setActiveButton(text);
+    router.push(path);
+  };
 
   return (
     <div
@@ -91,13 +115,10 @@ export default function Navbar() {
           {NAV_ITEMS.map((NavItem) => (
             <Button
               key={NavItem.text}
-              onClick={() => {
-                setActiveButton(NavItem.text);
-                console.log(activeButton);
-              }}
+              onClick={() => handleNavigation(NavItem.path, NavItem.text)}
               style={{
-                backgroundColor: activeButton == NavItem.text ? COLORS.secondary : COLORS.primary,
-                color: activeButton == NavItem.text ? COLORS.primary : COLORS.white,
+                backgroundColor: activeButton === NavItem.text ? COLORS.secondary : COLORS.primary,
+                color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
                 borderRadius: "20px",
                 width: "100%",
                 height: "2rem",
