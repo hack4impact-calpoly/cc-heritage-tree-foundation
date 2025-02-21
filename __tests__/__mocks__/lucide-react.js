@@ -3,6 +3,7 @@ module.exports = {
   ArrowUpRight: () => null,
   NotebookPen: () => null,
   SquarePen: () => null,
+  ChevronDown: () => null,
 };
 
 test("empty test just to pass", () => {});
