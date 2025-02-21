@@ -4,9 +4,9 @@ import { Grid, GridItem, Image, Text, Button, Flex, Link, Box, Center, Input, Fo
 import React, { useState } from "react";
 
 function EditUserProfile() {
-  const [name, setName] = useState("Jane Doe");
-  const [email, setEmail] = useState("janedoe123@gmail.com");
-  const [phoneNumber, setPhoneNumber] = useState("000-000-0000");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const saveUserInfo = () => {
     console.log("Saving user info...");
@@ -23,7 +23,7 @@ function EditUserProfile() {
               boxSize="50px"
               borderRadius="full"
               fit="cover"
-              alt="Profile Picture Not Appearing"
+              alt="Small Profile Picture Not Appearing"
               src="/pfp.png"
               ml={1}
             ></Image>
@@ -80,10 +80,10 @@ function EditUserProfile() {
                         width={300}
                         backgroundColor="#F4F1E8"
                         mt={4}
-                        placeholder="Email"
+                        placeholder="Name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        type="email"
+                        type="text"
                       ></Input>
                     </Center>
                     <Center display="flex" justifyContent="center" alignItems="center">
@@ -110,10 +110,10 @@ function EditUserProfile() {
                         width={300}
                         backgroundColor="#F4F1E8"
                         mt={10}
-                        placeholder="Email"
+                        placeholder="Phone Number"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
-                        type="email"
+                        type="text"
                       ></Input>
                     </Center>
                     <Center display="flex" justifyContent="center" alignItems="center">
