@@ -14,7 +14,8 @@ export default function ProfileCard() {
         <Box borderWidth="3px" padding={10} rounded="10" m="20px" bg="white">
           <SignedIn>
             <Flex align="center" gap={10}>
-              <UserButton />
+              <UserButton></UserButton>
+              {/* <Image src={user?.imageUrl} alt="User Profile" boxSize="32px" borderRadius="50%" /> */}
               <Flex direction="column">
                 <div>
                   {user?.firstName} {user?.lastName}
