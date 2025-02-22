@@ -3,17 +3,11 @@ import { Center, VStack, Image, Text, Link, Box, Button, Input, FormControl, Cir
 import React, { useState } from "react";
 import { ClerkProvider, SignUp, SignUpButton, SignedIn, SignIn, SignedOut, UserButton } from "@clerk/nextjs";
 
-export default function Login() {
+export default function SignUpPage() {
   // set original value of email to an empty string
   const [email, setEmail] = useState("");
   // set original value of password to an empty string
   const [password, setPassword] = useState("");
-
-  // handle signing in
-  function signIn() {
-    console.log(email);
-    console.log(password);
-  }
 
   return (
     <ClerkProvider>

@@ -5,29 +5,26 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import Login from "@/app/login/page";
+import SignUpPage from "@/app/signup/page";
 import userEvent from "@testing-library/user-event";
+import { ClerkProvider, SignedOut } from "@clerk/clerk-react";
 
+//mocks signup components, checks that all neccessary components are on the page
 jest.mock("@clerk/nextjs", () => ({
-  //mocks the clerk provider, takes the children and outputs the children
   ClerkProvider: ({ children }) => <>{children}</>,
-
-  //mocks the login component, it is just two divs
-  //two input boxes. This should catch if sign in component is forgotten
-  SignIn: () => (
+  SignedOut: ({ children }) => <>{children}</>,
+  SignUp: () => (
     <div>
-      <div>Sign in to CCHTF</div>
+      <div>Create your account</div>
       <input placeholder="Email" />
       <input placeholder="Password" type="password" />
     </div>
   ),
-  //mocks the signed out component
-  SignedOut: ({ children }) => <>{children}</>,
 }));
 
-describe("Login Page", () => {
+describe("Signup page", () => {
   it("allows email and password input", async () => {
-    render(<Login />);
+    render(<SignUpPage />);
     const emailInput = screen.getByPlaceholderText("Email");
     const passwordInput = screen.getByPlaceholderText("Password");
 
@@ -39,7 +36,7 @@ describe("Login Page", () => {
   });
 
   it("renders the welcome message", () => {
-    render(<Login />);
-    expect(screen.getByText("Sign in to CCHTF")).toBeInTheDocument();
+    render(<SignUpPage />);
+    expect(screen.getByText("Create your account")).toBeInTheDocument();
   });
 });
