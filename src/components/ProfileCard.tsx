@@ -9,10 +9,10 @@ export default function ProfileCard() {
   const { user } = useUser();
 
   return (
-    <Flex justify="flex-end" gap="4" bg="#F4F1E8">
-      <div>
-        <Box borderWidth="3px" padding={10} rounded="10" m="20px" bg="white">
-          <SignedIn>
+    <SignedIn>
+      <Flex justify="flex-end" gap="4" bg="#F4F1E8">
+        <div>
+          <Box borderWidth="3px" padding={10} rounded="10" m="20px" bg="white">
             <Flex align="center" gap={10}>
               <UserButton></UserButton>
               {/* <Image src={user?.imageUrl} alt="User Profile" boxSize="32px" borderRadius="50%" /> */}
@@ -26,9 +26,9 @@ export default function ProfileCard() {
                 <Image src="/downArrow.svg" alt="Down Arrow" boxSize="24px" />
               </Flex>
             </Flex>
-          </SignedIn>
-        </Box>
-      </div>
-    </Flex>
+          </Box>
+        </div>
+      </Flex>
+    </SignedIn>
   );
 }
