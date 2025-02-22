@@ -15,6 +15,8 @@ export default function ProfileCard() {
           <Box borderWidth="3px" padding={10} rounded="10" m="20px" bg="white">
             <Flex align="center" gap={10}>
               <UserButton></UserButton>
+              {/* TODO: Once funcionality is working for profile card drop down then remove user button 
+              and uncomment the image below */}
               {/* <Image src={user?.imageUrl} alt="User Profile" boxSize="32px" borderRadius="50%" /> */}
               <Flex direction="column">
                 <div>
