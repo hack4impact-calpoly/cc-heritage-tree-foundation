@@ -9,12 +9,6 @@ export default function Login() {
   // set original value of password to an empty string
   const [password, setPassword] = useState("");
 
-  // handle signing in
-  function signIn() {
-    console.log(email);
-    console.log(password);
-  }
-
   return (
     <ClerkProvider>
       <SignedOut>
