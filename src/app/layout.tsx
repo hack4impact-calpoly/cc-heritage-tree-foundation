@@ -11,13 +11,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const pathName = usePathname();
 
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body>
+    <html lang="en">
+      <body>
+        <ClerkProvider>
           <ProfileCard />
           <ChakraProvider>{children}</ChakraProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
