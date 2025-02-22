@@ -1,7 +1,7 @@
 "use client";
 import type { Metadata } from "next";
 import { ChakraProvider } from "@chakra-ui/react";
-import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import ProfileCard from "@/components/ProfileCard";
 
 import "./globals.css";
