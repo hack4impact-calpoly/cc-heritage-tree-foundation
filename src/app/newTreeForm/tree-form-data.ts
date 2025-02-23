@@ -4,6 +4,30 @@ import { COLORS } from "@/styles/color-styles-data";
 export const treeTypes = ["Valley Oak", "Coast Live Oak", "Blue Oak"] as const;
 export type TreeType = (typeof treeTypes)[number];
 
+interface TreeTypeData {
+  species: string;
+  bgColor: string;
+  color: string;
+}
+
+export const TREE_TYPE_DATA: Array<TreeTypeData> = [
+  {
+    species: "Valley Oak",
+    bgColor: COLORS.RobinsEgg,
+    color: COLORS.Steel,
+  },
+  {
+    species: "Coast Live Oak",
+    bgColor: COLORS.Sky,
+    color: COLORS.Charcoal,
+  },
+  {
+    species: "Blue Oak",
+    bgColor: COLORS.Steel,
+    color: COLORS.PureWhite,
+  },
+];
+
 //Tree Issues as on Figma
 export const treeIssues = [
   "Dead branches",
@@ -20,7 +44,7 @@ export const treeIssues = [
   "Bird activity including nesting holes",
   "Acorn granary",
 ] as const;
-export type treeIssue = (typeof treeIssues)[number];
+export type TreeIssue = (typeof treeIssues)[number];
 
 //Form Data
 export type TreeFormData = {
@@ -43,3 +67,21 @@ export const treeHealthColors = [
   ["#9AAD48", "#313714"], //9
   [COLORS.Olive, "#F2FBCC"], //10
 ];
+
+export type TreeSpecsData = {
+  treeHeight: string;
+  canopySpread: string;
+  trunkDBH: string;
+};
+
+export type FormValues = {
+  treeType: TreeType;
+  treeSpecs: {
+    treeHeight: number;
+    canopySpread: number;
+    trunkDBH: string;
+  };
+  treeHealth: number;
+  treeIssues: Array<TreeIssue>;
+  fieldNotes: string;
+};
