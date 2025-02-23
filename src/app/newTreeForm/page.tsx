@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEventHandler, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Input,
@@ -20,7 +20,6 @@ import {
   treeHealthColors,
   TreeIssue,
   TreeType,
-  TreeSpecsData,
   FormValues,
   TREE_TYPE_DATA,
 } from "./tree-form-data";
@@ -102,7 +101,6 @@ export default function TreeEntryForm() {
 
   const handleTreeHealth = (e: React.MouseEvent<HTMLButtonElement>) => {
     const treeHealth = Number(e.currentTarget.getAttribute("value")) + 1;
-    console.log(treeHealth);
     setFormData((prev) => ({
       ...prev,
       treeHealth,
@@ -125,7 +123,6 @@ export default function TreeEntryForm() {
 
   const handleFieldNotes = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const fieldNotes = e.target.value;
-    console.log(fieldNotes);
     setFormData((prev) => ({
       ...prev,
       fieldNotes,
@@ -134,7 +131,6 @@ export default function TreeEntryForm() {
 
   const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
     event.preventDefault();
-    console.log("Submitted From");
     console.log(formData);
   };
 

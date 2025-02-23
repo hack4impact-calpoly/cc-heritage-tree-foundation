@@ -1,4 +1,4 @@
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box, Image } from "@chakra-ui/react";
 
 export default function TreeTable() {
   // dummy tree data
@@ -70,7 +70,7 @@ export default function TreeTable() {
                   <Td>{tree.dateCollected}</Td>
                   <Td>{tree.gpsCoordinates}</Td>
                   <Td>
-                    <img src={tree.photo} alt="Tree" width="50" height="50" />
+                    <Image src={tree.photo} alt="Tree" width="50" height="50" />
                   </Td>
                   <Td>{tree.dbh}</Td>
                   <Td>{tree.height}</Td>
