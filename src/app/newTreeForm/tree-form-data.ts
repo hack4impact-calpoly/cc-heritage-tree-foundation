@@ -51,7 +51,7 @@ export type TreeFormData = {
   treeType: TreeType;
   treeSpecs: Map<string, string>;
   treeHealth: number; //Number between 1-10
-  treeIssues: Array<treeIssue>;
+  treeIssues: Array<TreeIssue>;
   fieldNotes: string;
 };
 
