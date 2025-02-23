@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { FormEventHandler, useState } from "react";
 import {
   Box,
   Input,
@@ -132,8 +132,10 @@ export default function TreeEntryForm() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    console.log("Submitted");
+  const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    console.log("Submitted From");
+    console.log(formData);
   };
 
   return (
@@ -142,7 +144,7 @@ export default function TreeEntryForm() {
         Tell us about this tree!
       </Heading>
       <VStack spacing={4} as="form" onSubmit={handleSubmit}>
-        <TreeFormSection>
+        <TreeFormSection isRequired>
           <TreeFormHeading style={{ fontSize: "24px" }} marginBottom="20px">
             Tree Type
           </TreeFormHeading>
@@ -163,7 +165,7 @@ export default function TreeEntryForm() {
             ))}
           </Flex>
         </TreeFormSection>
-        <TreeFormSection>
+        <TreeFormSection isRequired>
           <TreeFormHeading style={{ fontSize: "24px" }}>Tree Specs</TreeFormHeading>
           <Box>
             <TreeFormLabel>Tree Height</TreeFormLabel>
@@ -196,7 +198,7 @@ export default function TreeEntryForm() {
             />
           </Box>
         </TreeFormSection>
-        <TreeFormSection>
+        <TreeFormSection isRequired>
           <TreeFormHeading style={{ fontSize: "24px" }}>Tree Health</TreeFormHeading>
           <Box>
             <TreeFormLabel>How would you rate the overall tree health?</TreeFormLabel>
