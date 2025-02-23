@@ -1,19 +1,31 @@
 "use client";
 
+<<<<<<< HEAD
 import { SignInButton, SignUpButton, SignedIn, SignIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import { ChakraProvider, Flex } from "@chakra-ui/react";
+=======
+import React from "react";
+import { SignedIn, useUser } from "@clerk/nextjs";
+import { Flex, Box, Image } from "@chakra-ui/react";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import styles from "./profileCard.module.css";
+>>>>>>> 1588d18 (feat: redirected the profilecardbox to userprofile page, changed the cursor)
 
 export default function ProfileCard() {
   const { user } = useUser();
+  const router = useRouter();
 
   return (
-    <Flex justify="flex-end" gap="4" bg="#F4F1E8">
-      <div>
-        <Box borderWidth="3px" padding={10} rounded="10" m="20px" bg="white">
-          <SignedIn>
+    <SignedIn>
+      <Flex justify="flex-end" gap="4" bg="#F4F1E8">
+        <div className={styles.profileCardBox} onClick={() => router.push("/userProfile")}>
+          <Box borderWidth="3px" padding={10} rounded="10" m="20px" bg="white">
             <Flex align="center" gap={10}>
-              <UserButton></UserButton>
-              {/* <Image src={user?.imageUrl} alt="User Profile" boxSize="32px" borderRadius="50%" /> */}
+              {/* <UserButton></UserButton> */}
+              {/* TODO: Once funcionality is working for profile card drop down then remove user button 
+              and uncomment the image below */}
+              <Image src={user?.imageUrl} alt="User Profile" boxSize="32px" borderRadius="50%" />
               <Flex direction="column">
                 <div>
                   {user?.firstName} {user?.lastName}
