@@ -32,7 +32,7 @@ function UserProfile() {
               boxSize="50px"
               borderRadius="full"
               fit="cover"
-              alt="Profile Picture Not Appearing"
+              alt="Small Profile Picture Not Appearing"
               src="/pfp.png"
               ml={1}
             ></Image>
