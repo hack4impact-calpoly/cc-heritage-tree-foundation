@@ -27,7 +27,7 @@ export default function Login() {
           borderRadius="full"
           fit="contain"
           alt="Logo not Appearing"
-          src="/logo.png"
+          src="/logo1.png"
         ></Image>
         <Box
           borderRadius={"15px"}
@@ -77,9 +77,9 @@ export default function Login() {
               </Button>
             </Center>
             <Center>
-              <Text color="#596334" mt={4}>
+              <Text textStyle="s" color="#596334" mt={4}>
                 Don&#39;t have an account?{" "}
-                <Link href="#" style={{ textDecoration: "underline" }}>
+                <Link href="/createAccount" style={{ textDecoration: "underline" }}>
                   Sign up
                 </Link>
               </Text>
