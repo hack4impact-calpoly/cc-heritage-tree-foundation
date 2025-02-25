@@ -259,7 +259,7 @@ export default function TreeEntryForm() {
                 </Text>
                 {formData.treeIssues.includes(issue) && (
                   <Box pos="absolute" bottom="0.25rem" right="0.25rem">
-                    <FaRegCircleCheck color={COLORS.Moss} width="2rem" />
+                    <FaRegCircleCheck color={COLORS.Moss} width="2rem" data-testid={`icon-${issue}`} />
                   </Box>
                 )}
               </Button>
@@ -269,7 +269,7 @@ export default function TreeEntryForm() {
         <TreeFormSection>
           <HStack gap="3">
             <TreeFormHeading style={{ fontSize: "24px" }}>Field Notes</TreeFormHeading>
-            <LuNotebookPen color={COLORS.Olive} size="1.3rem" />
+            <LuNotebookPen color={COLORS.Olive} size="1.3rem" data-testid="icon-Field notes" />
           </HStack>
           <Box>
             <TreeFormLabel htmlFor="fieldNotes">Any additional observations or thoughts?</TreeFormLabel>
