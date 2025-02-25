@@ -75,7 +75,7 @@ export type TreeSpecsData = {
 };
 
 export type FormValues = {
-  treeType: TreeType;
+  treeType: TreeType | "";
   treeSpecs: {
     treeHeight: number;
     canopySpread: number;

@@ -13,16 +13,9 @@ import {
   HStack,
   FormControl,
   chakra,
+  FormLabel,
 } from "@chakra-ui/react";
-import {
-  treeTypes,
-  treeIssues,
-  treeHealthColors,
-  TreeIssue,
-  TreeType,
-  FormValues,
-  TREE_TYPE_DATA,
-} from "./tree-form-data";
+import { treeIssues, treeHealthColors, TreeIssue, TreeType, FormValues, TREE_TYPE_DATA } from "./tree-form-data";
 import { COLORS } from "@/styles/color-styles-data";
 import { LuNotebookPen } from "react-icons/lu";
 import { FaRegCircleCheck } from "react-icons/fa6";
@@ -45,7 +38,7 @@ const TreeFormInput = chakra(Input, {
   },
 });
 
-const TreeFormLabel = chakra(Text, {
+const TreeFormLabel = chakra(FormLabel, {
   baseStyle: {
     marginTop: "20px",
     marginBottom: "10px",
@@ -69,7 +62,7 @@ const disabledStyle = {
 
 export default function TreeEntryForm() {
   const [formData, setFormData] = useState<FormValues>({
-    treeType: treeTypes[0],
+    treeType: "",
     treeSpecs: {
       treeHeight: 0,
       canopySpread: 0,
@@ -141,10 +134,10 @@ export default function TreeEntryForm() {
       </Heading>
       <VStack spacing={4} as="form" onSubmit={handleSubmit}>
         <TreeFormSection isRequired>
-          <TreeFormHeading style={{ fontSize: "24px" }} marginBottom="20px">
+          <TreeFormHeading id="treeSpecies" style={{ fontSize: "24px" }} marginBottom="20px">
             Tree Type
           </TreeFormHeading>
-          <Flex justify="left" gap="4">
+          <Flex role="group" aria-labelledby="treeSpecies" justify="left" gap="4">
             {TREE_TYPE_DATA.map((data) => (
               <Button
                 key={data.species}
@@ -153,7 +146,7 @@ export default function TreeEntryForm() {
                 backgroundColor={data.bgColor}
                 color={data.color}
                 onClick={handleTreeType}
-                disabled={formData.treeType == data.species ? true : false}
+                disabled={formData.treeType == data.species}
                 _disabled={disabledStyle}
               >
                 {data.species}
@@ -164,8 +157,11 @@ export default function TreeEntryForm() {
         <TreeFormSection isRequired>
           <TreeFormHeading style={{ fontSize: "24px" }}>Tree Specs</TreeFormHeading>
           <Box>
-            <TreeFormLabel>Tree Height</TreeFormLabel>
+            <TreeFormLabel htmlFor="treeHeight" requiredIndicator>
+              Tree Height
+            </TreeFormLabel>
             <TreeFormInput
+              id="treeHeight"
               type="number"
               name="treeHeight"
               value={formData.treeSpecs.treeHeight == 0 ? "" : formData.treeSpecs.treeHeight}
@@ -174,8 +170,11 @@ export default function TreeEntryForm() {
             />
           </Box>
           <Box>
-            <TreeFormLabel>Canopy Spread</TreeFormLabel>
+            <TreeFormLabel htmlFor="canopySpread" requiredIndicator>
+              Canopy Spread
+            </TreeFormLabel>
             <TreeFormInput
+              id="canopySpread"
               type="number"
               name="canopySpread"
               value={formData.treeSpecs.canopySpread == 0 ? "" : formData.treeSpecs.canopySpread}
@@ -184,8 +183,11 @@ export default function TreeEntryForm() {
             />
           </Box>
           <Box>
-            <TreeFormLabel>Trunk DBH</TreeFormLabel>
+            <TreeFormLabel htmlFor="trunkDBH" requiredIndicator>
+              Trunk DBH
+            </TreeFormLabel>
             <TreeFormInput
+              id="trunkDBH"
               type="text"
               name="trunkDBH"
               value={formData.treeSpecs.trunkDBH}
@@ -194,11 +196,11 @@ export default function TreeEntryForm() {
             />
           </Box>
         </TreeFormSection>
-        <TreeFormSection isRequired>
+        <TreeFormSection>
           <TreeFormHeading style={{ fontSize: "24px" }}>Tree Health</TreeFormHeading>
           <Box>
-            <TreeFormLabel>How would you rate the overall tree health?</TreeFormLabel>
-            <Flex gap="3" justify="left">
+            <TreeFormLabel htmlFor="treeHealth">How would you rate the overall tree health?</TreeFormLabel>
+            <Flex id="treeHealth" gap="3" justify="left">
               {[...Array.from(Array(10).keys())].reverse().map((n) => (
                 <Button
                   key={n}
@@ -211,7 +213,7 @@ export default function TreeEntryForm() {
                   borderRadius="0.5rem"
                   padding="0.2rem"
                   fontSize="18px"
-                  disabled={formData.treeHealth == n + 1 ? true : false}
+                  disabled={formData.treeHealth == n + 1}
                   onClick={handleTreeHealth}
                   _disabled={disabledStyle}
                 >
@@ -221,9 +223,9 @@ export default function TreeEntryForm() {
             </Flex>
           </Box>
           <Box>
-            <TreeFormLabel>Identify issues present in your tree.</TreeFormLabel>
+            <TreeFormLabel htmlFor="treeIssues">Identify issues present in your tree.</TreeFormLabel>
           </Box>
-          <Box gap="4" justifyContent="center">
+          <Box id="treeIssues" gap="4" justifyContent="center">
             {treeIssues.map((issue) => (
               <Button
                 key={issue}
@@ -270,8 +272,9 @@ export default function TreeEntryForm() {
             <LuNotebookPen color={COLORS.Olive} size="1.3rem" />
           </HStack>
           <Box>
-            <TreeFormLabel>Any additional observations or thoughts?</TreeFormLabel>
+            <TreeFormLabel htmlFor="fieldNotes">Any additional observations or thoughts?</TreeFormLabel>
             <Textarea
+              id="fieldNotes"
               name="fieldNotes"
               placeholder="type here..."
               value={formData.fieldNotes}
