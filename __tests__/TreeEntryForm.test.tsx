@@ -7,89 +7,152 @@ import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import TreeEntryForm from "@/app/newTreeForm/page";
 import userEvent from "@testing-library/user-event";
+import { treeIssues } from "@/app/newTreeForm/tree-form-data";
 
 describe("TreeEntryForm", () => {
-  it("renders the form correctly", () => {
+  it("renders tree type section", () => {
     render(<TreeEntryForm />);
 
-    // getting elements
-    expect(screen.getByPlaceholderText("Tree Name")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Species")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Location")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Description")).toBeInTheDocument();
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
+    // Tree Type
+    expect(screen.getByText(/Tree Type/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Valley Oak/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Coast Live Oak/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Blue Oak/i })).toBeInTheDocument();
   });
 
-  it("updates form fields when user types", async () => {
+  it("applies correct stylization for selected tree type button", async () => {
     render(<TreeEntryForm />);
 
-    // getting elements
-    const treeNameInput = screen.getByPlaceholderText("Tree Name") as HTMLInputElement;
-    const speciesInput = screen.getByPlaceholderText("Species") as HTMLInputElement;
-    const locationInput = screen.getByPlaceholderText("Location") as HTMLInputElement;
-    const descriptionInput = screen.getByPlaceholderText("Description") as HTMLTextAreaElement;
+    const button1 = screen.getByRole("button", { name: /Valley Oak/i });
+    const button2 = screen.getByRole("button", { name: /Coast Live Oak/i });
 
-    // simulating user input
-    await userEvent.type(treeNameInput, "Oak");
-    await userEvent.type(speciesInput, "Quercus robur");
-    await userEvent.type(locationInput, "Central Park");
-    await userEvent.type(descriptionInput, "A majestic oak tree.");
+    expect(button1).not.toBeDisabled();
+    expect(button1).toHaveStyle("background-color: #CFEFF9");
+    expect(button2).not.toBeDisabled();
+    expect(button2).toHaveStyle("background-color: #78C1DE");
 
-    // checking that the inputted values are what are displayed
-    expect(treeNameInput.value).toBe("Oak");
-    expect(speciesInput.value).toBe("Quercus robur");
-    expect(locationInput.value).toBe("Central Park");
-    expect(descriptionInput.value).toBe("A majestic oak tree.");
+    await userEvent.click(button1);
+
+    expect(button1).toBeDisabled();
+    expect(button1).toHaveStyle("background-color: #333333");
+    expect(button2).not.toBeDisabled();
+    expect(button2).toHaveStyle("background-color: #78C1DE");
+
+    await userEvent.click(button2);
+
+    expect(button1).not.toBeDisabled();
+    expect(button1).toHaveStyle("background-color: #CFEFF9");
+    expect(button2).toBeDisabled();
+    expect(button2).toHaveStyle("background-color: #333333");
   });
 
-  it("updates the file input when a file is selected", async () => {
+  it("renders tree specs section", () => {
     render(<TreeEntryForm />);
 
-    const fileInput = screen.getByRole("button", { name: /submit/i }).previousSibling as HTMLInputElement;
-    const file = new File(["tree"], "tree.png", { type: "image/png" });
+    // Tree Specs
+    expect(screen.getByText(/Tree Specs/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tree Height/i)).toBeInTheDocument();
+    expect(screen.getByText(/Canopy Spread/i)).toBeInTheDocument();
+    expect(screen.getAllByPlaceholderText("input a number")).toHaveLength(2);
+    expect(screen.getByLabelText(/Trunk DBH/i)).toBeInTheDocument();
+    expect(screen.getAllByPlaceholderText("type here...")).toHaveLength(2);
+  });
 
-    fireEvent.change(fileInput, { target: { files: [file] } });
+  it("updates tree spec fields when user types", async () => {
+    const treeHealth = screen.getByLabelText(/Tree Specs/i) as HTMLInputElement;
+    const canopySpread = screen.getByLabelText(/Canopy Spread/i) as HTMLInputElement;
+    const trunkDBH = screen.getByLabelText(/Trunk DBH/i) as HTMLInputElement;
 
-    await waitFor(() => {
-      expect(fileInput.files).toHaveLength(1);
-      expect(fileInput.files![0].name).toBe("tree.png");
+    await userEvent.type(treeHealth, "20");
+    await userEvent.type(canopySpread, "100");
+    await userEvent.type(trunkDBH, "-2");
+
+    expect(treeHealth.value).toBe("20");
+    expect(canopySpread.value).toBe("100");
+    expect(trunkDBH.value).toBe("-2");
+  });
+
+  it("renders tree health section", () => {
+    render(<TreeEntryForm />);
+
+    // Tree Health
+    expect(screen.getByLabelText(/How would you rate the overall tree health\?/i)).toBeInTheDocument();
+    for (let i = 1; i <= 10; i++) {
+      expect(screen.getByRole("button", { name: `${i}` })).toBeInTheDocument();
+    }
+    expect(screen.getByLabelText(/Identify issues present in your tree\./i)).toBeInTheDocument();
+    treeIssues.forEach((issue) => {
+      expect(screen.getByRole("button", { name: issue })).toBeInTheDocument();
+      expect(screen.getByText(issue)).toBeInTheDocument();
+      expect(screen.getByAltText(issue)).toBeInTheDocument();
     });
   });
 
-  it("submits the form and displays the submitted data", async () => {
+  it("applies correct stylization for selected tree health buttons", async () => {
     render(<TreeEntryForm />);
 
-    // get html elements
-    const treeNameInput = screen.getByPlaceholderText("Tree Name") as HTMLInputElement;
-    const speciesInput = screen.getByPlaceholderText("Species") as HTMLInputElement;
-    const locationInput = screen.getByPlaceholderText("Location") as HTMLInputElement;
-    const descriptionInput = screen.getByPlaceholderText("Description") as HTMLTextAreaElement;
-    const conditionSelect = screen.getByRole("combobox") as HTMLSelectElement;
-    const fileInput = screen.getByRole("button", { name: /submit/i }).previousSibling as HTMLInputElement;
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const button1 = screen.getByRole("button", { name: /1/ });
+    const button10 = screen.getByRole("button", { name: /10/ });
 
-    // simulating user input
-    await userEvent.type(treeNameInput, "Oak");
-    await userEvent.type(speciesInput, "Quercus robur");
-    await userEvent.type(locationInput, "Central Park");
-    await userEvent.type(descriptionInput, "A majestic oak tree.");
-    await userEvent.selectOptions(conditionSelect, "Healthy");
+    expect(button1).not.toBeDisabled();
+    expect(button1).toHaveStyle("background-color: #A41D00");
+    expect(button10).not.toBeDisabled();
+    expect(button10).toHaveStyle("background-color: #596334");
 
-    const file = new File(["tree"], "tree.png", { type: "image/png" });
-    await userEvent.upload(fileInput, file);
+    await userEvent.click(button1);
 
-    await userEvent.click(submitButton);
+    expect(button1).toBeDisabled();
+    expect(button1).toHaveStyle("background-color: #333333");
+    expect(button10).not.toBeDisabled();
+    expect(button10).toHaveStyle("background-color: #596334");
 
-    // awaiting display of submitted data after clicking submit
-    await waitFor(() => {
-      expect(screen.getByText("Submitted Data")).toBeInTheDocument();
-      expect(screen.getByText("Tree Name: Oak")).toBeInTheDocument();
-      expect(screen.getByText("Species: Quercus robur")).toBeInTheDocument();
-      expect(screen.getByText("Location: Central Park")).toBeInTheDocument();
-      expect(screen.getByText("Description: A majestic oak tree.")).toBeInTheDocument();
-      expect(screen.getByText("Condition: Healthy")).toBeInTheDocument();
-      expect(screen.getByText("Photo: tree.png")).toBeInTheDocument();
-    });
+    await userEvent.click(button10);
+
+    expect(button1).not.toBeDisabled();
+    expect(button1).toHaveStyle("background-color: #A41D00");
+    expect(button10).toBeDisabled();
+    expect(button10).toHaveStyle("background-color: #333333");
+  });
+
+  it("applies correct stylization for selected tree issue buttons", async () => {
+    render(<TreeEntryForm />);
+
+    const button = screen.getByRole("button", { name: /Dead Branches/i });
+
+    expect(button).toHaveStyle("border-color: #FFFFFF");
+
+    await userEvent.click(button);
+
+    expect(button).toHaveStyle("border-color: #DFED98");
+    expect(screen.getByTestId("icon-Dead Branches")).toBeInTheDocument();
+
+    await userEvent.click(button);
+
+    expect(button).toHaveStyle("border-color: #FFFFFF");
+    expect(screen.getByTestId("icon-Dead Branches")).not.toBeInTheDocument();
+  });
+
+  it("renders field notes section", () => {
+    render(<TreeEntryForm />);
+
+    expect(screen.getByText(/Field notes/i));
+    expect(screen.getByTestId("icon-Field notes")).toBeInTheDocument();
+    expect(screen.getByLabelText("Any additional observations or thoughts?"));
+  });
+
+  it("updates field notes when user types", async () => {
+    render(<TreeEntryForm />);
+
+    const fieldNotes = screen.getByLabelText("Any additional observations or thoughts?") as HTMLTextAreaElement;
+
+    await userEvent.type(fieldNotes, "None.");
+
+    expect(fieldNotes.value).toBe("None.");
+  });
+
+  it("renders submit button", () => {
+    render(<TreeEntryForm />);
+
+    expect(screen.getByRole("button", { name: /Submit/i }));
   });
 });
