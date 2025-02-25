@@ -242,6 +242,7 @@ export default function TreeEntryForm() {
                   borderRadius="inherit"
                   src={"/TreeIssues/" + issue + ".png"}
                   alt={issue}
+                  aria-hidden="true"
                   pos="absolute"
                   fit="cover"
                   w="100%"
