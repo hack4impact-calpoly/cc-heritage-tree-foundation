@@ -6,7 +6,6 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import Login from "@/app/login/page";
-import { SignIn } from "@app/signin/page";
 import userEvent from "@testing-library/user-event";
 
 jest.mock("@clerk/nextjs", () => ({

@@ -4,11 +4,6 @@ import React, { useState } from "react";
 import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export default function Login() {
-  // set original value of email to an empty string
-  const [email, setEmail] = useState("");
-  // set original value of password to an empty string
-  const [password, setPassword] = useState("");
-
   return (
     <ClerkProvider>
       <SignedOut>
