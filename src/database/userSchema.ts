@@ -1,18 +1,21 @@
 import mongoose, { Schema } from "mongoose";
 
+
+//! Example user schema. Not guaranteed to work
+const UserSchema = new Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
+  role: { type: String, required: true },
+});
+
 export type IUser = {
   _id: string;
   name: string;
-  roles: string[];
   email: string;
   phoneNumber: string;
+  role: string;
 };
-
-const UserSchema = new Schema<IUser>({
-  name: { type: String, required: true },
-  roles: { type: [String], required: true },
-  email: { type: String, required: true },
-  phoneNumber: { type: String, required: true },
-});
 
 export default mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
