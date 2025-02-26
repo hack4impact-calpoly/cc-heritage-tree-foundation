@@ -75,6 +75,7 @@ export type TreeSpecsData = {
 };
 
 export type FormValues = {
+  treeLocation: Array<string>;
   treeType: TreeType | "";
   treeSpecs: {
     treeHeight: number;
