@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-
 //! Example user schema. Not guaranteed to work
 const UserSchema = new Schema({
   name: { type: String, required: true },
