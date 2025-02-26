@@ -62,6 +62,7 @@ const disabledStyle = {
 
 export default function TreeEntryForm() {
   const [formData, setFormData] = useState<FormValues>({
+    treeLocation: ["", ""],
     treeType: "",
     treeSpecs: {
       treeHeight: 0,
@@ -79,6 +80,22 @@ export default function TreeEntryForm() {
       ...prev,
       treeType,
     }));
+  };
+
+  const handleTreeLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const longOrLat = e.currentTarget.getAttribute("name");
+    const value = e.target.value;
+    if (longOrLat === "treeLatitude") {
+      setFormData((prev) => ({
+        ...prev,
+        treeLocation: [value, formData.treeLocation[1]],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        treeLocation: [formData.treeLocation[0], value],
+      }));
+    }
   };
 
   const handleTreeSpecs = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,6 +150,29 @@ export default function TreeEntryForm() {
         Tell us about this tree!
       </Heading>
       <VStack spacing={4} as="form" onSubmit={handleSubmit}>
+        <TreeFormSection isRequired>
+          <TreeFormHeading id="treeLocation" style={{ fontSize: "24px" }} marginBottom="20px">
+            Location
+          </TreeFormHeading>
+          <Box display="flex" flexDirection="row" gap="20px">
+            <TreeFormInput
+              id="treeLatitude"
+              type="string"
+              name="treeLatitude"
+              value={formData.treeLocation[0]}
+              placeholder="input latitude"
+              onChange={handleTreeLocation}
+            />
+            <TreeFormInput
+              id="treeLongitude"
+              type="string"
+              name="treeLongitude"
+              value={formData.treeLocation[1]}
+              placeholder="input longitude"
+              onChange={handleTreeLocation}
+            />
+          </Box>
+        </TreeFormSection>
         <TreeFormSection isRequired>
           <TreeFormHeading id="treeSpecies" style={{ fontSize: "24px" }} marginBottom="20px">
             Tree Type
