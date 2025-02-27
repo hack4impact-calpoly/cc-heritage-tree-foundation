@@ -10,14 +10,12 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
 
   return (
-    <ClerkProvider>
-      <SignedOut>
-        <div style={{ backgroundColor: "#596334" }}>
-          <Center width={"100vw"} height={"100vh"}>
-            <SignUp routing="hash" signInUrl="/login" />
-          </Center>
-        </div>
-      </SignedOut>
-    </ClerkProvider>
+    <SignedOut>
+      <div style={{ backgroundColor: "#596334" }}>
+        <Center width={"100vw"} height={"100vh"}>
+          <SignUp routing="hash" signInUrl="/login" />
+        </Center>
+      </div>
+    </SignedOut>
   );
 }

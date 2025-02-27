@@ -1,11 +1,17 @@
+"use client";
 import Navbar from "@/components/Navbar";
 import { Box, Progress, Tabs, TabList, TabPanels, Tab, TabPanel, Flex } from "@chakra-ui/react";
 import { GoRows } from "react-icons/go";
 import { PiRows } from "react-icons/pi";
+import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
+  const { user } = useUser();
   return (
     <Flex direction="row">
+      {user?.primaryEmailAddress?.emailAddress}
+      <br />
+      {user?.id}
       <Box>
         <Box width="200px" bg="lavender" textAlign="center">
           Here are some ChakraUI examples: <br />

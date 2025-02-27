@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.10.5",
-    "@clerk/clerk-react": "^5.22.10",
-    "@clerk/nextjs": "^6.11.0",
+    "@clerk/clerk-react": "^5.24.0",
+    "@clerk/nextjs": "^5.0.9",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@testing-library/user-event": "^14.6.1",
@@ -23,10 +23,11 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.474.0",
     "mongoose": "^8",
-    "next": "^15.1.7",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-icons": "^5.4.0"
+    "next": "^14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.4.0",
+    "swr": "^2.3.2"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -35,8 +36,8 @@
     "@types/jest": "^29.5.14",
     "@types/leaflet": "^1.9.16",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.0",
     "eslint": "^8",
     "eslint-config-next": "^14",
     "eslint-config-prettier": "^9",
@@ -48,6 +49,6 @@
     "prettier": "^3",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5.3.3"
   }
 }

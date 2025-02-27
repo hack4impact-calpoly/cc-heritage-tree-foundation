@@ -5,14 +5,12 @@ import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignIn, SignedOut,
 
 export default function Login() {
   return (
-    <ClerkProvider>
-      <SignedOut>
-        <div style={{ backgroundColor: "#596334" }}>
-          <Center width={"100vw"} height={"100vh"}>
-            <SignIn routing="hash" signUpUrl="/signup" />
-          </Center>
-        </div>
-      </SignedOut>
-    </ClerkProvider>
+    <SignedOut>
+      <div style={{ backgroundColor: "#596334" }}>
+        <Center width={"100vw"} height={"100vh"}>
+          <SignIn routing="hash" signUpUrl="/signup" />
+        </Center>
+      </div>
+    </SignedOut>
   );
 }
