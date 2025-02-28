@@ -1,101 +1,337 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Input, Textarea, Button, Select, VStack, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Input,
+  Textarea,
+  Button,
+  VStack,
+  Heading,
+  Flex,
+  Text,
+  Image,
+  HStack,
+  FormControl,
+  chakra,
+  FormLabel,
+} from "@chakra-ui/react";
+import { treeIssues, treeHealthColors, TreeIssue, TreeType, FormValues, TREE_TYPE_DATA } from "./tree-form-data";
+import { COLORS } from "@/styles/color-styles-data";
+import { LuNotebookPen } from "react-icons/lu";
+import { FaRegCircleCheck } from "react-icons/fa6";
+
+const TreeFormSection = chakra(FormControl, {
+  baseStyle: {
+    borderWidth: "1px",
+    borderColor: COLORS.Olive,
+    borderRadius: "16px",
+    p: "24px",
+    w: "90%",
+  },
+});
+
+const TreeFormInput = chakra(Input, {
+  baseStyle: {
+    bg: COLORS.Cream,
+    color: COLORS.Olive,
+    _placeholder: { color: "inherit" },
+  },
+});
+
+const TreeFormLabel = chakra(FormLabel, {
+  baseStyle: {
+    marginTop: "20px",
+    marginBottom: "10px",
+  },
+});
+
+const TreeFormHeading = chakra(Heading, {
+  baseStyle: {
+    color: COLORS.Olive,
+  },
+});
+
+const disabledStyle = {
+  backgroundColor: COLORS.Charcoal,
+  color: COLORS.PureWhite,
+  _hover: {
+    backgroundColor: COLORS.Charcoal,
+    cursor: "not-allowed",
+  },
+};
 
 export default function TreeEntryForm() {
-  type TreeFormData = {
-    treeName: string;
-    species: string;
-    location: string;
-    description: string;
-    treeCondition: string;
-    photo: File | null;
-  };
-
-  const [formData, setFormData] = useState<TreeFormData>({
-    treeName: "",
-    species: "",
-    location: "",
-    description: "",
-    treeCondition: "",
-    photo: null,
+  const [formData, setFormData] = useState<FormValues>({
+    treeLocation: ["", ""],
+    treeType: "",
+    treeSpecs: {
+      treeHeight: 0,
+      canopySpread: 0,
+      trunkDBH: "",
+    },
+    treeHealth: 0,
+    treeIssues: [],
+    fieldNotes: "",
   });
 
-  const [submittedData, setSubmittedData] = useState<TreeFormData | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleTreeType = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const treeType = e.currentTarget.getAttribute("name") as TreeType;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      treeType,
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+  const handleTreeLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const longOrLat = e.currentTarget.getAttribute("name");
+    const value = e.target.value;
+    if (longOrLat === "treeLatitude") {
       setFormData((prev) => ({
         ...prev,
-        photo: e.target.files![0],
+        treeLocation: [value, formData.treeLocation[1]],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        treeLocation: [formData.treeLocation[0], value],
       }));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmittedData(formData);
+  const handleTreeSpecs = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      treeSpecs: {
+        ...prev.treeSpecs,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleTreeHealth = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const treeHealth = Number(e.currentTarget.getAttribute("value")) + 1;
+    setFormData((prev) => ({
+      ...prev,
+      treeHealth,
+    }));
+  };
+
+  const handleTreeIssues = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const treeIssue = e.currentTarget.getAttribute("name") as TreeIssue;
+    let newIssues: Array<TreeIssue> = formData.treeIssues;
+    if (formData.treeIssues.includes(treeIssue)) {
+      newIssues = newIssues.filter((issue) => issue != treeIssue);
+    } else {
+      newIssues = [...newIssues, treeIssue];
+    }
+    setFormData((prev) => ({
+      ...prev,
+      treeIssues: newIssues,
+    }));
+  };
+
+  const handleFieldNotes = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const fieldNotes = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      fieldNotes,
+    }));
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    console.log(formData);
   };
 
   return (
-    <Box p={6} maxW="600px" mx="auto" boxShadow="md" borderRadius="md" bg="gray.50">
-      <Heading mb={4}>Tree Entry Form</Heading>
+    <Box p={6} maxW="600px" mx="auto" boxShadow="md" borderRadius="md" bg={COLORS.PureWhite}>
+      <Heading mb={4} justifySelf="center" margin="3rem">
+        Tell us about this tree!
+      </Heading>
       <VStack spacing={4} as="form" onSubmit={handleSubmit}>
-        <Input placeholder="Tree Name" name="treeName" value={formData.treeName} onChange={handleChange} required />
-        <Input placeholder="Species" name="species" value={formData.species} onChange={handleChange} required />
-        <Input placeholder="Location" name="location" value={formData.location} onChange={handleChange} required />
-        <Textarea
-          placeholder="Description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-        <Select name="treeCondition" value={formData.treeCondition} onChange={handleChange} required>
-          <option value="">Select Condition</option>
-          <option value="Healthy">Healthy</option>
-          <option value="Fair">Fair</option>
-          <option value="Poor">Poor</option>
-        </Select>
-        <Input type="file" accept="image/*" onChange={handleFileChange} />
-        <Button type="submit" colorScheme="blue">
+        <TreeFormSection isRequired>
+          <TreeFormHeading id="treeLocation" style={{ fontSize: "24px" }} marginBottom="20px">
+            Location
+          </TreeFormHeading>
+          <Box display="flex" flexDirection="row" gap="20px">
+            <TreeFormInput
+              id="treeLatitude"
+              type="string"
+              name="treeLatitude"
+              value={formData.treeLocation[0]}
+              placeholder="input latitude"
+              onChange={handleTreeLocation}
+            />
+            <TreeFormInput
+              id="treeLongitude"
+              type="string"
+              name="treeLongitude"
+              value={formData.treeLocation[1]}
+              placeholder="input longitude"
+              onChange={handleTreeLocation}
+            />
+          </Box>
+        </TreeFormSection>
+        <TreeFormSection isRequired>
+          <TreeFormHeading id="treeSpecies" style={{ fontSize: "24px" }} marginBottom="20px">
+            Tree Type
+          </TreeFormHeading>
+          <Flex role="group" aria-labelledby="treeSpecies" justify="left" gap="4">
+            {TREE_TYPE_DATA.map((data) => (
+              <Button
+                key={data.species}
+                name={data.species}
+                borderRadius="1rem"
+                backgroundColor={data.bgColor}
+                color={data.color}
+                onClick={handleTreeType}
+                disabled={formData.treeType == data.species}
+                _disabled={disabledStyle}
+              >
+                {data.species}
+              </Button>
+            ))}
+          </Flex>
+        </TreeFormSection>
+        <TreeFormSection isRequired>
+          <TreeFormHeading style={{ fontSize: "24px" }}>Tree Specs</TreeFormHeading>
+          <Box>
+            <TreeFormLabel htmlFor="treeHeight" requiredIndicator>
+              Tree Height
+            </TreeFormLabel>
+            <TreeFormInput
+              id="treeHeight"
+              type="number"
+              name="treeHeight"
+              value={formData.treeSpecs.treeHeight == 0 ? "" : formData.treeSpecs.treeHeight}
+              placeholder="input a number"
+              onChange={handleTreeSpecs}
+            />
+          </Box>
+          <Box>
+            <TreeFormLabel htmlFor="canopySpread" requiredIndicator>
+              Canopy Spread
+            </TreeFormLabel>
+            <TreeFormInput
+              id="canopySpread"
+              type="number"
+              name="canopySpread"
+              value={formData.treeSpecs.canopySpread == 0 ? "" : formData.treeSpecs.canopySpread}
+              placeholder="input a number"
+              onChange={handleTreeSpecs}
+            />
+          </Box>
+          <Box>
+            <TreeFormLabel htmlFor="trunkDBH" requiredIndicator>
+              Trunk DBH
+            </TreeFormLabel>
+            <TreeFormInput
+              id="trunkDBH"
+              type="text"
+              name="trunkDBH"
+              value={formData.treeSpecs.trunkDBH}
+              placeholder="type here..."
+              onChange={handleTreeSpecs}
+            />
+          </Box>
+        </TreeFormSection>
+        <TreeFormSection>
+          <TreeFormHeading style={{ fontSize: "24px" }}>Tree Health</TreeFormHeading>
+          <Box>
+            <TreeFormLabel htmlFor="treeHealth">How would you rate the overall tree health?</TreeFormLabel>
+            <Flex id="treeHealth" gap="3" justify="left">
+              {[...Array.from(Array(10).keys())].reverse().map((n) => (
+                <Button
+                  key={n}
+                  value={n}
+                  backgroundColor={treeHealthColors[n][0]}
+                  color={treeHealthColors[n][1]}
+                  size="sm"
+                  w="2rem"
+                  h="1.8rem"
+                  borderRadius="0.5rem"
+                  padding="0.2rem"
+                  fontSize="18px"
+                  disabled={formData.treeHealth == n + 1}
+                  onClick={handleTreeHealth}
+                  _disabled={disabledStyle}
+                >
+                  {n + 1}
+                </Button>
+              ))}
+            </Flex>
+          </Box>
+          <Box>
+            <TreeFormLabel htmlFor="treeIssues">Identify issues present in your tree.</TreeFormLabel>
+          </Box>
+          <Box id="treeIssues" gap="4" justifyContent="center">
+            {treeIssues.map((issue) => (
+              <Button
+                key={issue}
+                name={issue}
+                margin="0.5rem"
+                w="12rem"
+                h="12rem"
+                borderWidth="4px"
+                borderColor={formData.treeIssues.includes(issue) ? COLORS.Moss : COLORS.PureWhite}
+                borderRadius="7%"
+                onClick={handleTreeIssues}
+              >
+                <Image
+                  borderRadius="inherit"
+                  src={"/TreeIssues/" + issue + ".png"}
+                  alt={issue}
+                  aria-hidden="true"
+                  pos="absolute"
+                  fit="cover"
+                  w="100%"
+                  h="100%"
+                />
+                <Text
+                  pos="absolute"
+                  top="0.5rem"
+                  left="0.5rem"
+                  color={COLORS.PureWhite}
+                  whiteSpace="normal"
+                  align="left"
+                >
+                  {issue}
+                </Text>
+                {formData.treeIssues.includes(issue) && (
+                  <Box pos="absolute" bottom="0.25rem" right="0.25rem">
+                    <FaRegCircleCheck color={COLORS.Moss} width="2rem" data-testid={`icon-${issue}`} />
+                  </Box>
+                )}
+              </Button>
+            ))}
+          </Box>
+        </TreeFormSection>
+        <TreeFormSection>
+          <HStack gap="3">
+            <TreeFormHeading style={{ fontSize: "24px" }}>Field Notes</TreeFormHeading>
+            <LuNotebookPen color={COLORS.Olive} size="1.3rem" data-testid="icon-Field notes" />
+          </HStack>
+          <Box>
+            <TreeFormLabel htmlFor="fieldNotes">Any additional observations or thoughts?</TreeFormLabel>
+            <Textarea
+              id="fieldNotes"
+              name="fieldNotes"
+              placeholder="type here..."
+              value={formData.fieldNotes}
+              bg={COLORS.Cream}
+              color={COLORS.Olive}
+              h="16rem"
+              _placeholder={{ color: "inherit" }}
+              borderRadius="1rem"
+              onChange={handleFieldNotes}
+            ></Textarea>
+          </Box>
+        </TreeFormSection>
+        <Button type="submit" backgroundColor={COLORS.Olive} color={COLORS.PureWhite} borderRadius="5rem">
           Submit
         </Button>
       </VStack>
-
-      {submittedData && (
-        <Box mt={6} p={4} borderWidth={1} borderRadius="md">
-          <Heading size="md">Submitted Data</Heading>
-          <p>
-            <>Tree Name:</> {submittedData.treeName}
-          </p>
-          <p>
-            <>Species:</> {submittedData.species}
-          </p>
-          <p>
-            <>Location:</> {submittedData.location}
-          </p>
-          <p>
-            <>Description:</> {submittedData.description}
-          </p>
-          <p>
-            <>Condition:</> {submittedData.treeCondition}
-          </p>
-          {submittedData.photo && (
-            <p>
-              <>Photo:</> {submittedData.photo.name}
-            </p>
-          )}
-        </Box>
-      )}
     </Box>
   );
 }
