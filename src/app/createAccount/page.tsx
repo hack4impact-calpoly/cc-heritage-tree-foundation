@@ -135,7 +135,7 @@ export default function CreateAccount() {
         >
           <Input
             type="phoneNum"
-            value={formState.email.value}
+            value={formState.phoneNum.value}
             onChange={handleInputChange("phoneNum")}
             onBlur={handleBlur("phoneNum")}
             placeholder="Phone Number"

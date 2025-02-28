@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/database/db";
-import User from "@/database/userSchema";
+import User, { IUser } from "@/database/userSchema";
 
 // get all users
 export async function GET(request: Request) {
