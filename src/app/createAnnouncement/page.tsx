@@ -54,17 +54,17 @@ const CreateAnnouncement = () => {
   };
 
   return (
-    <Box position="absolute" width="100vw" height="100vh" bg="#F4F1E8" transform="translateX(-4rem)">
-      <VStack
-        spacing={7}
-        align="start"
-        p="50px"
-        py="50px"
-        width="100%"
-        maxW="900px"
-        mx="auto"
-        transform="translate(-12rem, 4rem)"
-      >
+    <Box
+      position="absolute"
+      width="100vw"
+      minHeight="100vh"
+      bg="#F4F1E8"
+      transform="translateX(-15rem)"
+      pl="15rem"
+      display="flex"
+      alignItems="center"
+    >
+      <VStack spacing={7} align="start" p="50px" py="50px" width="100%" maxW="900px" mx="auto">
         <Box fontSize="3xl" fontWeight="bold">
           New Message
         </Box>
