@@ -160,9 +160,11 @@ export default function TreeEntryForm() {
       }
 
       const userData = await userResponse.json();
+
       const collectorName = userData.name || "Unknown Collector"; // Fallback if no name is found
 
       const currentDate = new Date();
+
       const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
       const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
 
