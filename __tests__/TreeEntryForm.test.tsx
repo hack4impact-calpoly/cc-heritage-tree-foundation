@@ -8,8 +8,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { treeIssues } from "@/app/newTreeForm/tree-form-data";
 import TreeEntryForm from "@/app/newTreeForm/page";
-import { ClerkProvider } from "@clerk/nextjs";
-import mockRouter from "next-router-mock";
 
 jest.mock("@clerk/nextjs", () => ({
   ClerkProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
