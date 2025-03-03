@@ -14,25 +14,25 @@ export default function ProfileCard() {
   return (
     <SignedIn>
       <Flex justify="flex-end" gap="4" bg="#F4F1E8">
-        {/* <div className={styles.profileCardBox} onClick={() => router.push("/userProfile")}> */}
-        <Box borderWidth="3px" padding={10} rounded="10" m="20px" bg="white">
-          <Flex align="center" gap={10}>
-            <UserButton></UserButton>
-            {/* TODO: Once funcionality is working for profile card drop down then remove user button 
+        <div className={styles.profileCardBox} onClick={() => router.push("/userProfile")}>
+          <Box rounded="10" padding="20px" m="20px" bg="white">
+            <Flex align="center" gap={5}>
+              {/* <UserButton></UserButton> */}
+              {/* TODO: Once funcionality is working for profile card drop down then remove user button 
               and uncomment the image below */}
-            <Image src={user?.imageUrl} alt="User Profile" boxSize="32px" borderRadius="50%" />
-            <Flex direction="column">
-              <div>
-                {user?.firstName} {user?.lastName}
-              </div>
-              <div style={{ color: "gray" }}>Role</div>
+              <Image src={user?.imageUrl} alt="User Profile" boxSize="32px" borderRadius="50%" />
+              <Flex direction="column">
+                <div>
+                  {user?.firstName} {user?.lastName}
+                </div>
+                <div style={{ color: "gray" }}>Role</div>
+              </Flex>
+              <Flex gap="4">
+                <Image src="/downArrow.svg" alt="Down Arrow" boxSize="24px" />
+              </Flex>
             </Flex>
-            <Flex gap="4">
-              <Image src="/downArrow.svg" alt="Down Arrow" boxSize="24px" />
-            </Flex>
-          </Flex>
-        </Box>
-        {/* </div> */}
+          </Box>
+        </div>
       </Flex>
     </SignedIn>
   );

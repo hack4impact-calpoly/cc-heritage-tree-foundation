@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   marginLeft: pathName !== "/login" && pathName !== "/signup" ? "15rem" : "0",
                 }}
               >
-                {/*<ProfileCard/>*/}
+                <ProfileCard />
                 {children}
               </main>
             </div>
