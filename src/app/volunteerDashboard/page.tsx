@@ -5,16 +5,20 @@ export default function VolunteerDashboard() {
   return (
     <Box
       height="100%"
-      width="100vw"
+      width="100%"
+      maxWidth="100%"
       bg="#F4F1E8"
-      transform="translateX(-15rem)"
       display="flex"
       justifyContent="center"
       alignItems="center"
-      pl="20px"
-      pr="20px"
     >
-      <Grid templateRows="auto auto" templateColumns="435px 700px" gap={4} ml="15rem" mt={100} mb={10}>
+      <Grid
+        templateRows={["auto auto"]}
+        templateColumns={["1fr", "1fr", "1fr", "435px 700px"]}
+        gap={4}
+        my={10}
+        mx={"50px"}
+      >
         {/*Hello Message*/}
         <GridItem colSpan={2}>
           <Box>
@@ -54,7 +58,7 @@ export default function VolunteerDashboard() {
             <Text marginTop="24px" marginBottom="16px" fontSize="24px" fontWeight="600" color="#333333">
               Trees Logged
             </Text>
-            <Grid templateColumns="1fr 1fr" gap="24px">
+            <Grid templateColumns={["1fr", "1fr", "1fr 1fr"]} gap="24px">
               <Box bg="#DFED98" borderRadius="12px" padding="20px">
                 <VStack spacing="0px">
                   <Text w="100%" color="#596334" fontSize="18px" fontWeight="600">
