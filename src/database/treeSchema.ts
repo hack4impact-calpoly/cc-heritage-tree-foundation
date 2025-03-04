@@ -10,6 +10,7 @@ export type ITree = {
   canopyBreadth: Decimal128;
   species: string;
   treeCondition: string[];
+  treeQuality: Decimal128;
   additionalNotes?: string;
 };
 
@@ -22,6 +23,7 @@ const TreeSchema = new Schema<ITree>({
   canopyBreadth: { type: mongoose.Types.Decimal128, required: true },
   species: { type: String, required: true },
   treeCondition: { type: [String], required: true },
+  treeQuality: { type: mongoose.Types.Decimal128, required: true },
   additionalNotes: {
     type: String,
     required: false,
