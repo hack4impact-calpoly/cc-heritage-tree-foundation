@@ -38,11 +38,4 @@ export default function SignupRedirect() {
       submitUserInfo();
     }
   }, [user, isLoaded, router]);
-
-  return (
-    <div>
-      <p>Redirecting...</p>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </div>
-  );
 }
