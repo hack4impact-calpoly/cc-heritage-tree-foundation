@@ -24,6 +24,7 @@ export default function SignupRedirect() {
               name: user.fullName,
               email: user.primaryEmailAddress?.emailAddress,
               role: "Volunteer",
+              active: true,
             }),
           });
 

@@ -6,6 +6,7 @@ const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   phoneNumber: { type: String, required: false },
   role: { type: String, required: true },
+  active: { type: Boolean, required: true },
 });
 
 export type IUser = {
@@ -14,6 +15,7 @@ export type IUser = {
   email: string;
   phoneNumber: string;
   role: string;
+  active: boolean;
 };
 
 export default mongoose.models.User || mongoose.model<IUser>("User", UserSchema);

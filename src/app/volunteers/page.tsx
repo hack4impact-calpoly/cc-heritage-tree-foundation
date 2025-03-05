@@ -157,37 +157,38 @@ function Volunteers() {
                     <Th>User</Th>
                     <Th>Role</Th>
                     <Th>Email</Th>
-                    <Th>Phone Number</Th>
+                    {/*<Th>Phone Number</Th>*/}
                     <Th>Activity</Th>
                     <Th></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {paginatedUsers.length > 0 ? (
-                    paginatedUsers.map((user: IUser) => (
+                    paginatedUsers.map((user: IUser, index) => (
                       <Tr key={user._id}>
                         <Td>
                           <Box display="flex" alignItems="center" justifyContent="center" height="100%">
-                            {user._id}
+                            {index}
                           </Box>
                         </Td>
                         <Td>{user.name}</Td>
                         <Td>
-                          <Box display="flex" alignItems="center" justifyContent="center" height="100%">
+                          <Box display="flex" alignItems="center" height="100%">
                             {user.role}
                           </Box>
                         </Td>
                         <Td>{user.email}</Td>
+                        {/*
                         <Td>
                           {user.phoneNumber?.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") || "N/A"}
-                        </Td>
+                        </Td>*/}
                         <Td>
                           <Box display="flex" alignItems="center" justifyContent="center" height="100%">
                             <Box
                               width="8px"
                               height="8px"
                               borderRadius="full"
-                              bg={"Active" === "Active" ? "#596334" : "gray.400"}
+                              bg={user.active ? "#596334" : "gray.400"}
                             />
                           </Box>
                         </Td>
@@ -228,7 +229,7 @@ function Volunteers() {
                   </Button>
 
                   {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => {
-                    let pageNumber;
+                    let pageNumber = 0;
                     if (totalPages <= 3) {
                       pageNumber = i + 1;
                     } else if (currentPage === 1) {
