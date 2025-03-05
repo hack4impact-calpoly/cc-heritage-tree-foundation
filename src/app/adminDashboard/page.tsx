@@ -1,3 +1,4 @@
+"use client";
 import { ArrowUpRight, NotebookPen, SquarePen } from "lucide-react";
 import {
   Grid,
@@ -16,45 +17,34 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import Map from "@/components/Map";
+import { useUser } from "@clerk/nextjs";
 
 function AdminDashboard() {
+  const user = useUser();
   return (
-    <Box position="absolute" width="100vw" height="100vh" transform="translateX(-15rem)" bg="#F4F1E8">
+    <Box width="100%" height="100%" p={{ base: "20px", md: "0 50px 50px 50px" }} pt="0px">
       <Grid
-        minWidth="1024px"
         width="100%"
-        templateRows="repeat(7, 1fr)"
-        templateColumns="repeat(8, 1fr)"
-        gap={5}
-        overflow="scroll"
+        height="100%"
+        templateRows={{ base: "auto auto auto auto", md: "repeat(10, 1fr)" }}
+        templateColumns={{ base: "1fr", md: "repeat(8, 1fr)" }}
+        gap={4}
       >
-        <GridItem
-          colSpan={8}
-          rowSpan={2}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          position="relative"
-        >
-          <Text ml={-425} fontSize="3xl" fontWeight="bold" color="#596334" mt="auto">
-            Welcome back, Jane!
+        {/* Welcome Message */}
+        <GridItem colSpan={{ base: 1, md: 8 }} rowSpan={1} display="flex" alignItems="center">
+          <Text fontSize="3xl" fontWeight="bold" color="#596334">
+            Welcome back, {user.user?.firstName}!
           </Text>
         </GridItem>
-        <GridItem rowSpan={4} colSpan={4}>
-          <Box
-            borderRadius={"20px"}
-            borderColor="black"
-            bg="white"
-            w="350px"
-            h="270px"
-            alignItems="center"
-            p={10}
-            ml="auto"
-          >
+
+        {/* Trees Logged This Year */}
+        <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 3 }}>
+          <Box borderRadius="20px" borderColor="black" bg="white" height="100%" p={{ base: 5, md: 10 }}>
             <HStack>
               <Text color="#333333">Trees Logged This Year</Text>
               <Link href="" ml="auto">
-                <ArrowUpRight></ArrowUpRight>
+                <ArrowUpRight />
               </Link>
             </HStack>
             <Text mt={5} mb={5} fontWeight="bold" color="#596334" fontSize="7xl">
@@ -63,192 +53,101 @@ function AdminDashboard() {
             <Text color="#333333">% incr from December</Text>
           </Box>
         </GridItem>
-        <GridItem rowSpan={6} colSpan={4}>
-          <Box
-            mr="auto"
-            borderRadius={"20px"}
-            alignItems="center"
-            borderColor="black"
-            bg="white"
-            w="600px"
-            h="355px"
-            p={10}
-          >
+
+        {/* Trees in Poor Condition */}
+        <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 5 }}>
+          <Box borderRadius="20px" borderColor="black" bg="white" height="100%" p={{ base: 5, md: 10 }}>
             <HStack>
               <Text color="#333333">Trees in Poor Condition</Text>
               <Link href="" ml="auto">
-                <ArrowUpRight></ArrowUpRight>
+                <ArrowUpRight />
               </Link>
             </HStack>
-            <Box borderRadius="20px" overflow="hidden" border="1px solid" borderColor={"#596334"} mt={10}>
+            <Box borderRadius="20px" overflow="hidden" border="1px solid" borderColor="#596334" mt={10}>
               <Table size="sm" variant="simple">
                 <Thead bg="#DFED98">
-                  <Tr>
-                    <Th width={"20%"}>#</Th>
-                    <Th width={"20%"}>Species</Th>
-                    <Th width={"20%"}>Condition</Th>
-                    <Th width={"20%"}>Date Recorded</Th>
-                    <Th width={"20%"}>Volunteer</Th>
+                  <Tr h="40px">
+                    <Th width="20%">#</Th>
+                    <Th width="20%">Species</Th>
+                    <Th width="20%">Condition</Th>
+                    <Th width="20%">Date Recorded</Th>
+                    <Th width="20%">Volunteer</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <Tr>
-                    <Td>1</Td>
-                    <Td>
-                      <Box
-                        color="#4A7B90"
-                        bg="#CFEFF9"
-                        height={10}
-                        width={10}
-                        display="flex"
-                        pt={3}
-                        justifyContent="center"
-                        borderRadius={11}
-                      >
-                        VO
-                      </Box>
-                    </Td>
-                    <Td>
-                      <Box
-                        color="white"
-                        bg="#596334"
-                        height={10}
-                        width={10}
-                        display="flex"
-                        pt={3}
-                        justifyContent="center"
-                        borderRadius={11}
-                      >
-                        10
-                      </Box>
-                    </Td>
-                    <Td>12/24/2024</Td>
-                    <Td>
-                      <NotebookPen></NotebookPen>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td>1</Td>
-                    <Td>
-                      <Box
-                        color="#4A7B90"
-                        bg="#CFEFF9"
-                        height={10}
-                        width={10}
-                        display="flex"
-                        pt={3}
-                        justifyContent="center"
-                        borderRadius={11}
-                      >
-                        VO
-                      </Box>
-                    </Td>
-                    <Td>
-                      <Box
-                        color="white"
-                        bg="#596334"
-                        height={10}
-                        width={10}
-                        display="flex"
-                        pt={3}
-                        justifyContent="center"
-                        borderRadius={11}
-                      >
-                        8
-                      </Box>
-                    </Td>
-                    <Td>1/3/2025</Td>
-                    <Td>
-                      <NotebookPen></NotebookPen>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td>1</Td>
-                    <Td>
-                      <Box
-                        color="#4A7B90"
-                        bg="#CFEFF9"
-                        height={10}
-                        width={10}
-                        display="flex"
-                        pt={3}
-                        justifyContent="center"
-                        borderRadius={11}
-                      >
-                        VO
-                      </Box>
-                    </Td>
-                    <Td>
-                      <Box
-                        color="white"
-                        bg="#596334"
-                        height={10}
-                        width={10}
-                        display="flex"
-                        pt={3}
-                        justifyContent="center"
-                        borderRadius={11}
-                      >
-                        9
-                      </Box>
-                    </Td>
-                    <Td>2/6/2025</Td>
-                    <Td>
-                      <NotebookPen></NotebookPen>
-                    </Td>
-                  </Tr>
+                  {[1, 2, 3].map((item) => (
+                    <Tr key={item}>
+                      <Td>{item}</Td>
+                      <Td>
+                        <Box
+                          color="#4A7B90"
+                          bg="#CFEFF9"
+                          height={10}
+                          width={10}
+                          display="flex"
+                          pt={3}
+                          justifyContent="center"
+                          borderRadius={11}
+                        >
+                          VO
+                        </Box>
+                      </Td>
+                      <Td>
+                        <Box
+                          color="white"
+                          bg="#596334"
+                          height={10}
+                          width={10}
+                          display="flex"
+                          pt={3}
+                          justifyContent="center"
+                          borderRadius={11}
+                        >
+                          {item === 1 ? 10 : item === 2 ? 8 : 9}
+                        </Box>
+                      </Td>
+                      <Td>{item === 1 ? "12/24/2024" : item === 2 ? "1/3/2025" : "2/6/2025"}</Td>
+                      <Td>
+                        <NotebookPen />
+                      </Td>
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
             </Box>
           </Box>
         </GridItem>
-        <GridItem rowSpan={2} colSpan={4}>
+
+        {/* Create New Announcement Button */}
+        <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>
           <Box
-            width={"350px"}
             display="flex"
-            justifyContent={"center"}
+            justifyContent="center"
             alignItems="center"
-            borderRadius={"20px"}
+            borderRadius="20px"
             borderColor="black"
             bg="white"
-            p={9}
-            pl={-2}
-            pr={-2}
-            ml="auto"
-            mt="auto"
-            height={"40px"}
+            height="100%"
           >
             <Button
-              width={"300px"}
-              height={"50px"}
+              width="100%"
+              maxWidth="300px"
+              height="50px"
               color="white"
               bg="#E57300"
-              borderRadius={"50px"}
+              borderRadius="50px"
               fontWeight="bold"
               fontSize="sm"
             >
-              Create new announcement&nbsp;<SquarePen></SquarePen>
+              Create new announcement&nbsp;
+              <SquarePen />
             </Button>
           </Box>
         </GridItem>
-        <GridItem
-          rowSpan={6}
-          colSpan={8}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          position="relative"
-        >
-          <Image
-            mb={70}
-            mr={-250}
-            src="/map.png"
-            fit="cover"
-            alt="Map not Appearing"
-            height="200px"
-            width="975px"
-            borderRadius="20px"
-          ></Image>
+
+        {/* Map */}
+        <GridItem rowSpan={{ base: 2, md: 5 }} colSpan={{ base: 1, md: 8 }} data-testid="map_id">
+          <Map />
         </GridItem>
       </Grid>
     </Box>
