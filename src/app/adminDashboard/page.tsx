@@ -146,7 +146,7 @@ function AdminDashboard() {
         </GridItem>
 
         {/* Map */}
-        <GridItem rowSpan={{ base: 2, md: 5 }} colSpan={{ base: 1, md: 8 }}>
+        <GridItem rowSpan={{ base: 2, md: 5 }} colSpan={{ base: 1, md: 8 }} data-testid="map_id">
           <Map />
         </GridItem>
       </Grid>

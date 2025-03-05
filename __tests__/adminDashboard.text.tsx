@@ -7,10 +7,22 @@ import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminDashboard from "@/app/adminDashboard/page";
 
+jest.mock("@clerk/nextjs", () => ({
+  ClerkProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useUser: () => ({
+    user: {
+      primaryEmailAddress: "test@example.com",
+      fullName: "Test User",
+      firstName: "User",
+    },
+    isSignedIn: true,
+  }),
+}));
+
 describe("AdminDashboard", () => {
   it("renders the welcome message", () => {
     render(<AdminDashboard />);
-    expect(screen.getByText("Welcome back, Jane!")).toBeInTheDocument();
+    expect(screen.getByText("Welcome back, User!")).toBeInTheDocument();
   });
 
   it("renders the 'Trees Logged This Year' section", () => {
@@ -37,8 +49,7 @@ describe("AdminDashboard", () => {
 
   it("renders image of the map", () => {
     render(<AdminDashboard />);
-    const mapImage = screen.getByAltText("Map not Appearing");
+    const mapImage = screen.getByTestId("map_id");
     expect(mapImage).toBeInTheDocument();
-    expect(mapImage).toHaveAttribute("src", "/map.png");
   });
 });
