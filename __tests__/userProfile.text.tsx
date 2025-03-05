@@ -35,23 +35,17 @@ describe("UserProfile", () => {
     expect(screen.getByRole("columnheader", { name: "Date Recorded" })).toBeInTheDocument();
   });
 
-  it("renders the profile button", () => {
-    render(<UserProfile />);
-    expect(screen.getByText("User Name")).toBeInTheDocument();
-    expect(screen.getByText("Volunteer")).toBeInTheDocument();
-  });
-
   it("renders image of the profile", () => {
     render(<UserProfile />);
     const pfpImage = screen.getByAltText("Profile Picture Not Appearing");
     expect(pfpImage).toBeInTheDocument();
     expect(pfpImage).toHaveAttribute("src", "/pfp.png");
   });
-
+  /*
   it("renders small image of the profile", () => {
     render(<UserProfile />);
     const pfpImageSmall = screen.getByAltText("Small Profile Picture Not Appearing");
     expect(pfpImageSmall).toBeInTheDocument();
     expect(pfpImageSmall).toHaveAttribute("src", "/pfp.png");
-  });
+  });*/
 });

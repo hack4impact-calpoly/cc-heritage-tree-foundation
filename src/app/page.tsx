@@ -4,6 +4,7 @@ import { Box, Progress, Tabs, TabList, TabPanels, Tab, TabPanel, Flex } from "@c
 import { GoRows } from "react-icons/go";
 import { PiRows } from "react-icons/pi";
 import { useUser } from "@clerk/nextjs";
+import ProfileCard from "@/components/ProfileCard";
 
 export default function Home() {
   const { user } = useUser();

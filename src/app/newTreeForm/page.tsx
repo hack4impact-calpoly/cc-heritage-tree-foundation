@@ -19,6 +19,8 @@ import { treeIssues, treeHealthColors, TreeIssue, TreeType, FormValues, TREE_TYP
 import { COLORS } from "@/styles/color-styles-data";
 import { LuNotebookPen } from "react-icons/lu";
 import { FaRegCircleCheck } from "react-icons/fa6";
+import { useUser } from "@clerk/nextjs";
+import mongoose from "mongoose";
 
 const TreeFormSection = chakra(FormControl, {
   baseStyle: {
@@ -61,6 +63,7 @@ const disabledStyle = {
 };
 
 export default function TreeEntryForm() {
+  const { user } = useUser();
   const [formData, setFormData] = useState<FormValues>({
     treeLocation: ["", ""],
     treeType: "",
@@ -76,6 +79,7 @@ export default function TreeEntryForm() {
 
   const handleTreeType = (e: React.MouseEvent<HTMLButtonElement>) => {
     const treeType = e.currentTarget.getAttribute("name") as TreeType;
+    console.log("Tree type selected: " + treeType);
     setFormData((prev) => ({
       ...prev,
       treeType,
@@ -139,9 +143,82 @@ export default function TreeEntryForm() {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLDivElement>) => {
     event.preventDefault();
-    console.log(formData);
+
+    if (!user) {
+      alert("Please log in to submit the form.");
+      return;
+    }
+
+    try {
+      // Fetch user's name from backend using email
+      const userResponse = await fetch(`/api/user/${user.primaryEmailAddress}`);
+
+      if (!userResponse.ok) {
+        throw new Error("Failed to fetch user details.");
+      }
+
+      const userData = await userResponse.json();
+
+      const collectorName = userData.name || "Unknown Collector"; // Fallback if no name is found
+
+      const currentDate = new Date();
+
+      const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
+      const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
+
+      const gpsCoordinates = formData.treeLocation.map((coord) =>
+        mongoose.Types.Decimal128.fromString(coord.toString()),
+      );
+
+      // Construct the submission data
+      const dataToSubmit = {
+        collectorName, // Use the fetched name
+        dateCollected: currentDate,
+        gpsCoordinates,
+        dbh: dbhDecimal,
+        canopyBreadth: canopyBreadthDecimal,
+        species: formData.treeType,
+        treeCondition: formData.treeIssues,
+        treeQuality: formData.treeHealth,
+        additionalNotes: formData.fieldNotes,
+      };
+
+      console.log("Submitting the following data:", JSON.stringify(dataToSubmit, null, 2));
+
+      const response = await fetch("/api/tree", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSubmit),
+      });
+
+      const responseText = await response.text();
+      console.log("Response Text: " + responseText);
+
+      if (response.ok) {
+        alert("Tree data submitted successfully!");
+        setFormData({
+          treeLocation: ["", ""],
+          treeType: "",
+          treeSpecs: {
+            treeHeight: 0,
+            canopySpread: 0,
+            trunkDBH: "",
+          },
+          treeHealth: 0,
+          treeIssues: [],
+          fieldNotes: "",
+        });
+      } else {
+        alert("Failed to submit data.");
+      }
+    } catch (error) {
+      console.error("Error submitting tree data:", error);
+      alert("Error submitting tree data.");
+    }
   };
 
   return (

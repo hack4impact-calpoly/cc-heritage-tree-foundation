@@ -2,12 +2,31 @@
  * @jest-environment jsdom
  */
 
-import React from "react";
+import React, { ReactNode } from "react";
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { treeIssues } from "@/app/newTreeForm/tree-form-data";
 import TreeEntryForm from "@/app/newTreeForm/page";
+
+jest.mock("@clerk/nextjs", () => ({
+  ClerkProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useUser: () => ({
+    user: {
+      primaryEmailAddress: "test@example.com",
+      fullName: "Test User",
+    },
+    isSignedIn: true,
+  }),
+}));
+
+jest.mock("mongoose", () => ({
+  Types: {
+    Decimal128: {
+      fromString: jest.fn((value) => value), // Mock Decimal128.fromString
+    },
+  },
+}));
 
 describe("TreeEntryForm", () => {
   it("renders tree type section", () => {
@@ -164,4 +183,21 @@ describe("TreeEntryForm", () => {
 
     expect(screen.getByRole("button", { name: /Submit/i }));
   });
+
+  const mockUser = {
+    primaryEmailAddress: "test@example.com",
+  };
+
+  const mockFormData = {
+    treeLocation: ["37.7749", "-122.4194"], // Example GPS coordinates
+    treeType: "Valley Oak",
+    treeSpecs: {
+      treeHeight: 20,
+      canopySpread: 100,
+      trunkDBH: "2.5",
+    },
+    treeHealth: 8,
+    treeIssues: ["Dead branches"],
+    fieldNotes: "Healthy tree with minor issues.",
+  };
 });
