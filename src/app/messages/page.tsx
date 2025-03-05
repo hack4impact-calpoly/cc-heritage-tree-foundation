@@ -1,6 +1,24 @@
 "use client";
 import React, { useState } from "react";
-import { Flex, Box, Image, Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Image,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+} from "@chakra-ui/react";
 
 function Messages() {
   return (
@@ -12,9 +30,11 @@ function Messages() {
           <Tab>Inbox</Tab>
           <Tab>Sent</Tab>
         </TabList>
+        {/* need to add a new message button */}
         <TabPanels>
           {/* This is panel is for Inbox Messages */}
           <TabPanel>
+            {/* call table component  */}
             <p>one!</p>
           </TabPanel>
           {/* This panel is for Sent Messages */}
