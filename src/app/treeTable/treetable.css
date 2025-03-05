@@ -1,0 +1,116 @@
+/* TreeTable.css */
+
+.tree-table-container {
+    padding: 20px;
+    background-color: #fcfcfc;
+    border-radius: 50px;
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 40px;
+  }
+  
+  .tree-table {
+    width: 100%;
+    border-collapse: separate;
+    border-radius: 10px; 
+    overflow: hidden; 
+  }
+  
+  .tree-table thead {
+    background-color: #DFED98;
+    width: 100%;
+  }
+  
+  .tree-table th {
+    padding: 10px;
+    text-align: center;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+  }
+
+
+  .tree-table td {    
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .species-button {
+    background-color: #CFEFF9 !important;
+    color:#4A7B9D !important;
+    border-radius: 5px;
+    padding: 5px 10px;
+  }
+  
+  .condition-button {
+    background-color: #596334!important;
+    color: white !important;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    text-align: center; 
+  }
+  
+  .page-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 5px;
+  }
+  
+  .page-button {
+    background-color: #ffffff !important;
+    border: 1.5px solid black ;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+
+  }
+
+  .page-button:hover {
+    background-color: #d0d2c9!important;
+  }
+
+  
+  .active-page {
+    background-color: #556b2f !important;
+    color: white !important;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
+  .clickable-arrow {
+    cursor: pointer;
+    color: rgb(0, 0, 0);
+    font-weight: Bold;
+  }
+  
+  .clickable-arrow:hover {
+    text-decoration: underline;
+  }
+
+  .previous-button {
+    background-color: #DFED98;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+
+  .previous-button {
+    background-color: #DFED98 !important;
+    color: white;
+  }
+  
+  .previous-button:hover {
+    background-color: #596334!important;
+  }
+
+  .page-button, .previous-button, .active-page {
+    padding: 10px 15px;
+    border-radius: 50px !important;
+    border:black !important;
+    cursor: pointer;
+    text-align: center;
+    min-width: 40px;
+  }
+  

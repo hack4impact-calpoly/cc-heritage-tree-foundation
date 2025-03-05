@@ -19,9 +19,12 @@ import {
 } from "@chakra-ui/react";
 import Map from "@/components/Map";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 function AdminDashboard() {
   const user = useUser();
+  const router = useRouter();
+
   return (
     <Box width="100%" height="100%" p={{ base: "20px", md: "0 50px 50px 50px" }} pt="0px">
       <Grid
@@ -138,6 +141,7 @@ function AdminDashboard() {
               borderRadius="50px"
               fontWeight="bold"
               fontSize="sm"
+              onClick={() => router.push("/createAnnouncement")}
             >
               Create new announcement&nbsp;
               <SquarePen />
