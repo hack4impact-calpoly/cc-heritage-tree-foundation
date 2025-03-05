@@ -1,8 +1,15 @@
+"use client";
+
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box, Button } from "@chakra-ui/react";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import "./treetable.css";
 
 export default function TreeTable() {
+  const treesPerPage = 8;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // testing with 20 entries to see if 3 pages work
   const treeData = [
     {
       id: 1,
@@ -12,49 +19,133 @@ export default function TreeTable() {
       condition: 10,
     },
     {
-      id: 1,
+      id: 2,
       species: "VO",
       dateRecorded: "00/00/00",
       volunteer: "#",
       condition: 10,
     },
     {
-      id: 1,
+      id: 3,
       species: "VO",
       dateRecorded: "00/00/00",
       volunteer: "#",
       condition: 10,
     },
     {
-      id: 1,
+      id: 4,
       species: "VO",
       dateRecorded: "00/00/00",
       volunteer: "#",
       condition: 10,
     },
     {
-      id: 1,
+      id: 5,
       species: "VO",
       dateRecorded: "00/00/00",
       volunteer: "#",
       condition: 10,
     },
     {
-      id: 1,
+      id: 6,
       species: "VO",
       dateRecorded: "00/00/00",
       volunteer: "#",
       condition: 10,
     },
     {
-      id: 1,
+      id: 7,
       species: "VO",
       dateRecorded: "00/00/00",
       volunteer: "#",
       condition: 10,
     },
     {
-      id: 1,
+      id: 8,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 9,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 10,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 11,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 12,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 13,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 14,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 15,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 16,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 17,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 18,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 19,
+      species: "VO",
+      dateRecorded: "00/00/00",
+      volunteer: "#",
+      condition: 10,
+    },
+    {
+      id: 20,
       species: "VO",
       dateRecorded: "00/00/00",
       volunteer: "#",
@@ -62,6 +153,17 @@ export default function TreeTable() {
     },
   ];
 
+  const totalPages = Math.ceil(treeData.length / treesPerPage);
+
+  const indexOfLastTree = currentPage * treesPerPage;
+  const indexOfFirstTree = indexOfLastTree - treesPerPage;
+  const currentTrees = treeData.slice(indexOfFirstTree, indexOfLastTree);
+
+  const handlePageChange = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
   return (
     <Box className="tree-table-container">
       <TableContainer>
@@ -77,7 +179,7 @@ export default function TreeTable() {
             </Tr>
           </Thead>
           <Tbody>
-            {treeData.map((tree) => (
+            {currentTrees.map((tree) => (
               <Tr key={tree.id}>
                 <Td>{tree.id}</Td>
                 <Td>
@@ -95,11 +197,31 @@ export default function TreeTable() {
         </Table>
       </TableContainer>
       <Box className="page-controls">
-        <Button className="previous-button">Previous</Button>
-        <Button className="active-page">1</Button>
-        <Button className="page-button">2</Button>
-        <Button className="page-button">3</Button>
-        <Button className="page-button">Next</Button>
+        <Button
+          className="previous-button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+
+        {Array.from({ length: totalPages }, (_, index) => (
+          <Button
+            key={index + 1}
+            className={currentPage === index + 1 ? "active-page" : "page-button"}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </Button>
+        ))}
+
+        <Button
+          className="page-button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
       </Box>
     </Box>
   );
