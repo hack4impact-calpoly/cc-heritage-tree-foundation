@@ -6,6 +6,7 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminDashboard from "@/app/adminDashboard/page";
+import mockRouter from "next-router-mock";
 
 jest.mock("@clerk/nextjs", () => ({
   ClerkProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -17,6 +18,10 @@ jest.mock("@clerk/nextjs", () => ({
     },
     isSignedIn: true,
   }),
+}));
+
+jest.mock("next/navigation", () => ({
+  useRouter: () => mockRouter,
 }));
 
 describe("AdminDashboard", () => {

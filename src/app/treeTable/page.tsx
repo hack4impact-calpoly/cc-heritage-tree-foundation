@@ -1,6 +1,6 @@
 "use client";
 
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box, Button } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, Text, TableContainer, Box, Button } from "@chakra-ui/react";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import "./treetable.css";
@@ -165,63 +165,68 @@ export default function TreeTable() {
     }
   };
   return (
-    <Box className="tree-table-container">
-      <TableContainer>
-        <Table className="tree-table">
-          <Thead>
-            <Tr>
-              <Th>#</Th>
-              <Th>Species</Th>
-              <Th>Date Recorded</Th>
-              <Th>Volunteer</Th>
-              <Th>Condition</Th>
-              <Th></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {currentTrees.map((tree) => (
-              <Tr key={tree.id}>
-                <Td>{tree.id}</Td>
-                <Td>
-                  <Button className="species-button">{tree.species}</Button>
-                </Td>
-                <Td>{tree.dateRecorded}</Td>
-                <Td>{tree.volunteer}</Td>
-                <Td>
-                  <Button className="condition-button">{tree.condition}</Button>
-                </Td>
-                <Td className="clickable-arrow">&gt;</Td>
+    <Box width="100%" height="100%" p={{ base: "20px", md: "50px" }} display="flex" justifyContent="center">
+      <Box w="90%" maxWidth="1137px">
+        <Text fontSize={["24px", "30px", "38px"]} color="#333" fontWeight="600" mb="30px">
+          Tree Inventory
+        </Text>
+        <TableContainer bg="white" borderRadius="10px">
+          <Table className="tree-table">
+            <Thead>
+              <Tr>
+                <Th>#</Th>
+                <Th>Species</Th>
+                <Th>Date Recorded</Th>
+                <Th>Volunteer</Th>
+                <Th>Condition</Th>
+                <Th></Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <Box className="page-controls">
-        <Button
-          className="previous-button"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-
-        {Array.from({ length: totalPages }, (_, index) => (
+            </Thead>
+            <Tbody>
+              {currentTrees.map((tree) => (
+                <Tr key={tree.id}>
+                  <Td>{tree.id}</Td>
+                  <Td>
+                    <Button className="species-button">{tree.species}</Button>
+                  </Td>
+                  <Td>{tree.dateRecorded}</Td>
+                  <Td>{tree.volunteer}</Td>
+                  <Td>
+                    <Button className="condition-button">{tree.condition}</Button>
+                  </Td>
+                  <Td className="clickable-arrow">&gt;</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+        <Box className="page-controls">
           <Button
-            key={index + 1}
-            className={currentPage === index + 1 ? "active-page" : "page-button"}
-            onClick={() => handlePageChange(index + 1)}
+            className="previous-button"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
           >
-            {index + 1}
+            Previous
           </Button>
-        ))}
 
-        <Button
-          className="page-button"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </Button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Button
+              key={index + 1}
+              className={currentPage === index + 1 ? "active-page" : "page-button"}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Button>
+          ))}
+
+          <Button
+            className="page-button"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
