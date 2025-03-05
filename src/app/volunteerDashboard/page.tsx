@@ -3,9 +3,11 @@ import { Box, Grid, GridItem, Text, Button, HStack, VStack, Link, IconButton, Fl
 import { Plus, ArrowUpRight, EllipsisVertical } from "lucide-react";
 import Map from "@/components/Map";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export default function VolunteerDashboard() {
   const router = useRouter();
+  const user = useUser();
 
   return (
     <Box
@@ -19,7 +21,7 @@ export default function VolunteerDashboard() {
       justifyContent="center"
       alignItems="center"
     >
-      <Box ml="15rem" width="100%" height="100vh" p={{ base: "20px", md: "50px" }} overflow="scroll">
+      <Box ml="15rem" width="100%" height="100%" p={{ base: "20px", md: "50px" }} overflow="scroll">
         <Grid
           h="100%"
           w="100%"
@@ -30,7 +32,7 @@ export default function VolunteerDashboard() {
           {/* Hello Message */}
           <GridItem rowSpan={1} colSpan={{ base: 1, md: 7 }}>
             <Text fontSize="3xl" color="#596334" fontWeight="bold">
-              Hello Jane 👋
+              Hello {user.user?.firstName} 👋
             </Text>
             <Text fontSize="16px" color="#333" fontWeight={"400"}>
               Thank you so much for your effort, let&#39;s do this!
@@ -57,7 +59,7 @@ export default function VolunteerDashboard() {
                     Add Tree
                   </Text>
                 </Button>
-                <Link href="" position="absolute" top="0px" right="0px">
+                <Link href="/treeTable" position="absolute" top="0px" right="0px">
                   <ArrowUpRight color="#333333" />
                 </Link>
               </HStack>
@@ -117,14 +119,14 @@ export default function VolunteerDashboard() {
 
           {/* Map */}
           <GridItem
-            rowSpan={{ base: 2, md: 7 }} // Adjusted rowSpan for small screens
+            rowSpan={{ base: 2, md: 7 }}
             colSpan={{ base: 1, md: 4 }}
             bg="white"
             borderRadius="16px"
             display="flex"
             justifyContent="center"
             alignItems="center"
-            minHeight="300px" // Ensure the map has a minimum height
+            minHeight="300px"
           >
             <Map />
           </GridItem>
@@ -136,7 +138,7 @@ export default function VolunteerDashboard() {
                 <Text color="#F4F1E8" fontSize="24px" fontWeight="600">
                   Announcements
                 </Text>
-                <Link href="" position="absolute" top="0px" right="0px">
+                <Link href="/messages" position="absolute" top="0px" right="0px">
                   <ArrowUpRight color="#F4F1E8" />
                 </Link>
               </HStack>

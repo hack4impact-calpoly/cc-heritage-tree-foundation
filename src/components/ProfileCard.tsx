@@ -13,9 +13,9 @@ export default function ProfileCard() {
 
   return (
     <SignedIn>
-      <Flex justify="flex-end" gap="4" bg="#F4F1E8">
+      <Flex justify="flex-end" gap="4" h="100px" w="100vw" transform={"translate(-15rem)"}>
         {/* <div className={styles.profileCardBox} onClick={() => router.push("/userProfile")}> */}
-        <Box rounded="10" padding="20px" m="20px" bg="white">
+        <Box rounded="10" padding="20px" mt="20px" mr="20px" bg="white" onClick={() => router.push("/userProfile")}>
           <Flex align="center" gap={5}>
             <UserButton></UserButton>
             {/* TODO: Once funcionality is working for profile card drop down then remove user button 

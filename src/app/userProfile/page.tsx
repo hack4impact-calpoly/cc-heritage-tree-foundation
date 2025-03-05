@@ -25,28 +25,6 @@ function UserProfile() {
   return (
     <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
       <Box maxH="90vh">
-        <Flex direction="row" justify="right">
-          <Box mt={5} mr={5} borderRadius={"15px"} borderColor="black" bg="white" w="250px" h="100px" p={5}>
-            <Image
-              mt={1}
-              boxSize="50px"
-              borderRadius="full"
-              fit="cover"
-              alt="Small Profile Picture Not Appearing"
-              src="/pfp.png"
-              ml={1}
-            ></Image>
-            <Flex direction="row">
-              <Flex mt={-49} ml={20} direction="column">
-                <Text>User Name</Text>
-                <Text color="#868686">Volunteer</Text>
-              </Flex>
-              <Box ml={5} mt={-9}>
-                <ChevronDown></ChevronDown>
-              </Box>
-            </Flex>
-          </Box>
-        </Flex>
         <Center>
           <Flex direction="row">
             <Flex ml={10} mt={25} direction="column">

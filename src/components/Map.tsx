@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useLayoutEffect } from "react";
 import { Tree, treeData } from "./map_data";
 import { Plus, Minus } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -9,7 +9,7 @@ const L = dynamic(() => import("leaflet") as any, {
 });
 export default function Map() {
   const mapRef = useRef(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     require("leaflet/dist/leaflet.css");
     const L = require("leaflet");
     const DefaultIcon = L.icon({
