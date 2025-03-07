@@ -13,7 +13,6 @@ import {
   Td,
   IconButton,
   HStack,
-  Select,
   Button,
   Text,
   Spinner,
@@ -23,6 +22,7 @@ import { IUser } from "@/database/userSchema";
 import { SquarePen, SearchIcon, FileDown, ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { relative } from "path";
+import { CenterStyle } from "@/styles/AllStyle";
 
 function Volunteers() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,7 +77,7 @@ function Volunteers() {
   };
 
   return (
-    <Box height="100%" width="100%" display="flex" justifyContent="center" alignItems="center">
+    <Box height="100%" width="100%" {...CenterStyle}>
       <VStack maxWidth="1137px" width="90%" spacing={5} className="volunteer-container">
         {/*PageText*/}
         <Box width="100%" position="relative" minHeight="80px">
@@ -128,7 +128,7 @@ function Volunteers() {
         {/*Table*/}
         <Box minHeight="510px" width="100%" height={"100%"}>
           {loading ? (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+            <Box {...CenterStyle} height="100%">
               <Spinner size="xl" thickness="4px" speed="0.65s" color="#596334" />
             </Box>
           ) : (
@@ -167,13 +167,13 @@ function Volunteers() {
                     paginatedUsers.map((user: IUser, index) => (
                       <Tr key={user._id}>
                         <Td>
-                          <Box display="flex" alignItems="center" justifyContent="center" height="100%">
+                          <Box {...CenterStyle} height="100%">
                             {index}
                           </Box>
                         </Td>
                         <Td>{user.name}</Td>
                         <Td>
-                          <Box display="flex" alignItems="center" height="100%">
+                          <Box {...CenterStyle} height="100%">
                             {user.role}
                           </Box>
                         </Td>
@@ -183,7 +183,7 @@ function Volunteers() {
                           {user.phoneNumber?.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") || "N/A"}
                         </Td>*/}
                         <Td>
-                          <Box display="flex" alignItems="center" justifyContent="center" height="100%">
+                          <Box {...CenterStyle} height="100%">
                             <Box
                               width="8px"
                               height="8px"
@@ -193,13 +193,7 @@ function Volunteers() {
                           </Box>
                         </Td>
                         <Td position="relative">
-                          <IconButton
-                            aria-label="EditUser"
-                            variant="ghost"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                          >
+                          <IconButton aria-label="EditUser" variant="ghost" {...CenterStyle}>
                             <SquarePen color="#333333" />
                           </IconButton>
                         </Td>

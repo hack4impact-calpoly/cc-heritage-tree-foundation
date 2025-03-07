@@ -1,7 +1,8 @@
 "use client";
-import { Image, Box, FormControl, FormLabel, FormErrorMessage, Input, Button, Link } from "@chakra-ui/react";
+import { Image, Box, FormControl, FormErrorMessage, Input, Button, Link } from "@chakra-ui/react";
 import { useState } from "react";
 import "../fonts/fonts.css";
+import { InputStyle } from "@/styles/CreateAccountStyle";
 
 type FormFields = "name" | "password" | "confirmPass" | "email" | "phoneNum";
 
@@ -94,14 +95,7 @@ export default function CreateAccount() {
             onBlur={handleBlur("name")}
             placeholder="Name"
             _placeholder={{ color: "inherit" }}
-            style={{
-              width: "60%",
-              height: "50px",
-              border: "none",
-              backgroundColor: "#F4F1E8",
-              color: "#33333",
-              borderRadius: "16px",
-            }}
+            {...InputStyle}
           />
           {isError("name") && <FormErrorMessage>Field is required.</FormErrorMessage>}
         </FormControl>
@@ -117,14 +111,7 @@ export default function CreateAccount() {
             onBlur={handleBlur("email")}
             placeholder="Email"
             _placeholder={{ color: "inherit" }}
-            style={{
-              width: "60%",
-              height: "50px",
-              border: "none",
-              backgroundColor: "#F4F1E8",
-              color: "#33333",
-              borderRadius: "16px",
-            }}
+            {...InputStyle}
           />
           {isError("email") && <FormErrorMessage>Field is required.</FormErrorMessage>}
         </FormControl>
@@ -140,14 +127,7 @@ export default function CreateAccount() {
             onBlur={handleBlur("phoneNum")}
             placeholder="Phone Number"
             _placeholder={{ color: "inherit" }}
-            style={{
-              width: "60%",
-              height: "50px",
-              border: "none",
-              backgroundColor: "#F4F1E8",
-              color: "#33333",
-              borderRadius: "16px",
-            }}
+            {...InputStyle}
           />
           {isError("phoneNum") && <FormErrorMessage>Field is required.</FormErrorMessage>}
         </FormControl>
@@ -162,14 +142,7 @@ export default function CreateAccount() {
             onBlur={handleBlur("password")}
             placeholder="Password"
             _placeholder={{ color: "inherit" }}
-            style={{
-              width: "60%",
-              height: "50px",
-              border: "none",
-              backgroundColor: "#F4F1E8",
-              color: "#33333",
-              borderRadius: "16px",
-            }}
+            {...InputStyle}
           />
           {isError("password") && <FormErrorMessage>Field is required.</FormErrorMessage>}
         </FormControl>
@@ -185,14 +158,7 @@ export default function CreateAccount() {
             onBlur={handleBlur("confirmPass")}
             placeholder="Confirm Password "
             _placeholder={{ color: "inherit" }}
-            style={{
-              width: "60%",
-              height: "50px",
-              border: "none",
-              backgroundColor: "#F4F1E8",
-              color: "#33333",
-              borderRadius: "16px",
-            }}
+            {...InputStyle}
           />
           {isError("confirmPass") && <FormErrorMessage>Field is required.</FormErrorMessage>}
         </FormControl>

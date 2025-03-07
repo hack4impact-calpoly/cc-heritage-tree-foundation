@@ -4,6 +4,14 @@ import { Plus, ArrowUpRight, EllipsisVertical } from "lucide-react";
 import Map from "@/components/Map";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { CenterStyle } from "@/styles/AllStyle";
+import {
+  Box1AnnStyle,
+  Box2AnnStyle,
+  IconButtonStyle,
+  TextAnnStyle,
+  TextWeightStyle,
+} from "@/styles/VolunteerDashStyle";
 
 export default function VolunteerDashboard() {
   const router = useRouter();
@@ -44,15 +52,7 @@ export default function VolunteerDashboard() {
             <Flex w="100%" h="100%" borderRadius="16px" bg="white" p="20px" flexDir="column" gap="15px">
               <HStack position="relative">
                 <Button bg="#596334" px="14px" py="3px" borderRadius="12px" onClick={() => router.push("/newTreeForm")}>
-                  <Box
-                    w="24px"
-                    h="24px"
-                    borderRadius="100px"
-                    bg="#F4F1E8"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
+                  <Box w="24px" h="24px" borderRadius="100px" bg="#F4F1E8" {...CenterStyle}>
                     <Plus color="#596334" />
                   </Box>
                   <Text ml="10px" color="#F4F1E8" fontSize="16px">
@@ -76,15 +76,15 @@ export default function VolunteerDashboard() {
                   display="flex"
                   flexDir="column"
                 >
-                  <Text w="100%" color="#596334" fontSize={{ base: "20px", md: "1vw" }} fontWeight="600">
+                  <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                     You&#39;ve logged
                   </Text>
-                  <Flex flexGrow={1} alignItems="center" justifyContent="center">
+                  <Flex flexGrow={1} {...CenterStyle}>
                     <HStack>
-                      <Text color="#596334" fontSize={{ base: "50px", md: "2.5vw" }} fontWeight="600">
+                      <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
                         25
                       </Text>
-                      <Text color="#596334" fontSize={{ base: "20px", md: "1vw" }} fontWeight="600">
+                      <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
                         trees
                       </Text>
                     </HStack>
@@ -99,15 +99,15 @@ export default function VolunteerDashboard() {
                   display="flex"
                   flexDir="column"
                 >
-                  <Text w="100%" color="#596334" fontSize={{ base: "20px", md: "1vw" }} fontWeight="600">
+                  <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                     Total logged
                   </Text>
                   <Flex flexGrow={1} alignItems="center" justifyContent="center">
                     <HStack>
-                      <Text color="#596334" fontSize={{ base: "50px", md: "2.5vw" }} fontWeight="600">
+                      <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
                         175
                       </Text>
-                      <Text color="#596334" fontSize={{ base: "20px", md: "1vw" }} fontWeight="600">
+                      <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
                         trees
                       </Text>
                     </HStack>
@@ -123,9 +123,7 @@ export default function VolunteerDashboard() {
             colSpan={{ base: 1, md: 4 }}
             bg="white"
             borderRadius="16px"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
+            {...CenterStyle}
             minHeight="300px"
           >
             <Map />
@@ -142,35 +140,29 @@ export default function VolunteerDashboard() {
                   <ArrowUpRight color="#F4F1E8" />
                 </Link>
               </HStack>
-              <Box w="100%" bg="#F8F8F8" borderRadius="12px" py="10px" px="8px">
+              <Box {...Box1AnnStyle}>
                 <HStack position={"relative"} w="100%">
-                  <Box bg="#D9D9D9" w="42px" h="42px" borderRadius="full" flexShrink={0}></Box>
-                  <Text color="#000000" fontSize="16px" fontWeight="400" marginRight={10}>
-                    Hello Volunteers! Please check your emails for updates from CCHTF
-                  </Text>
-                  <IconButton aria-label="More options" variant={"ghost"} position={"absolute"} right="0px">
+                  <Box {...Box2AnnStyle}></Box>
+                  <Text {...TextAnnStyle}>Hello Volunteers! Please check your emails for updates from CCHTF</Text>
+                  <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
                     <EllipsisVertical color="#333333" />
                   </IconButton>
                 </HStack>
               </Box>
-              <Box w="100%" bg="#F8F8F8" borderRadius="12px" py="10px" px="8px">
+              <Box {...Box1AnnStyle}>
                 <HStack position={"relative"}>
-                  <Box bg="#D9D9D9" w="42px" h="42px" borderRadius="full" flexShrink={0}></Box>
-                  <Text color="#000000" fontSize="16px" fontWeight="400" marginRight={10}>
-                    You&#39;ve logged 25 trees 🎉🎉 Thank you so much for your hard work!
-                  </Text>
-                  <IconButton aria-label="More options" variant={"ghost"} position={"absolute"} right="0px">
+                  <Box {...Box2AnnStyle}></Box>
+                  <Text {...TextAnnStyle}>You&#39;ve logged 25 trees 🎉🎉 Thank you so much for your hard work!</Text>
+                  <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
                     <EllipsisVertical color="#333333" />
                   </IconButton>
                 </HStack>
               </Box>
-              <Box w="100%" bg="#F8F8F8" borderRadius="12px" py="10px" px="8px">
+              <Box {...Box1AnnStyle}>
                 <HStack position={"relative"}>
-                  <Box bg="#D9D9D9" w="42px" h="42px" borderRadius="full" flexShrink={0}></Box>
-                  <Text color="#000000" fontSize="16px" fontWeight="400" marginRight={10}>
-                    Message here!
-                  </Text>
-                  <IconButton aria-label="More options" variant={"ghost"} position={"absolute"} right="0px">
+                  <Box {...Box2AnnStyle}></Box>
+                  <Text {...TextAnnStyle}>Message here!</Text>
+                  <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
                     <EllipsisVertical color="#333333" />
                   </IconButton>
                 </HStack>
