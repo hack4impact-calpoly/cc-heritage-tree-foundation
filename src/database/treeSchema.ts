@@ -18,7 +18,7 @@ const TreeSchema = new Schema<ITree>({
   dateCollected: { type: Date, required: true },
   gpsCoordinates: { type: [mongoose.Types.Decimal128], required: true },
   photo: { type: String, required: false },
-  dbh: { type: mongoose.Types.Decimal128, required: true },
+  dbh: { type: Number, required: true },
   canopyBreadth: { type: mongoose.Types.Decimal128, required: true },
   species: { type: String, required: true },
   treeCondition: { type: [String], required: true },
@@ -28,5 +28,4 @@ const TreeSchema = new Schema<ITree>({
   },
 });
 
-const Tree = mongoose.models.Trees || mongoose.model("Trees", TreeSchema, "trees");
-export default Tree;
+export default mongoose.model("Tree", TreeSchema);
