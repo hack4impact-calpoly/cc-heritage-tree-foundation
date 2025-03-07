@@ -59,14 +59,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ tree
         status: 404,
       });
     }
-    const serializedTree = {
-      ...tree,
-      gpsCoordinates: tree.gpsCoordinates.map((coord: any) => coord.toString()),
-      dbh: tree.dbh.toString(),
-      canopyBreadth: tree.canopyBreadth.toString(),
-    };
 
-    return new Response(JSON.stringify(serializedTree), { status: 200 });
+    return new Response(JSON.stringify(tree), { status: 200 });
   } catch (err) {
     let errorMessage = "An unknown error occurred";
     if (err instanceof Error) {

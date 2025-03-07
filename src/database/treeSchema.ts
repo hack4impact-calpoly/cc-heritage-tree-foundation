@@ -10,6 +10,7 @@ export type ITree = {
   canopyBreadth: Decimal128;
   species: string;
   treeCondition: string[];
+  treeQuality: Decimal128;
   additionalNotes?: string;
 };
 
@@ -18,14 +19,16 @@ const TreeSchema = new Schema<ITree>({
   dateCollected: { type: Date, required: true },
   gpsCoordinates: { type: [mongoose.Types.Decimal128], required: true },
   photo: { type: String, required: false },
-  dbh: { type: Number, required: true },
+  dbh: { type: mongoose.Types.Decimal128, required: true },
   canopyBreadth: { type: mongoose.Types.Decimal128, required: true },
   species: { type: String, required: true },
   treeCondition: { type: [String], required: true },
+  treeQuality: { type: mongoose.Types.Decimal128, required: true },
   additionalNotes: {
     type: String,
     required: false,
   },
 });
 
-export default mongoose.model("Tree", TreeSchema);
+const Tree = mongoose.models.Trees || mongoose.model("Trees", TreeSchema, "trees");
+export default Tree;
