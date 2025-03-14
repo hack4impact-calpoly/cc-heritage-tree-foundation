@@ -2,6 +2,8 @@
 import { ChevronDown } from "lucide-react";
 import { Grid, GridItem, Image, Text, Button, Flex, Link, Box, Center, Input, FormControl } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { InputUser, TextUser } from "@/styles/UserStyle";
+import { CenterStyle } from "@/styles/AllStyle";
 
 function EditUserProfile() {
   const [name, setName] = useState("");
@@ -71,14 +73,12 @@ function EditUserProfile() {
                 </GridItem>
                 <GridItem colSpan={3} mt={10}>
                   <FormControl>
-                    <Center display="flex" justifyContent="center" alignItems="center">
-                      <Text fontWeight="medium" color="black" align="center" mt={4} mr={30}>
+                    <Center {...CenterStyle}>
+                      <Text {...TextUser} mt={4} mr={30}>
                         Name
                       </Text>
                       <Input
-                        borderRadius={"10px"}
-                        width={300}
-                        backgroundColor="#F4F1E8"
+                        {...InputUser}
                         mt={4}
                         placeholder="Name"
                         value={name}
@@ -86,14 +86,12 @@ function EditUserProfile() {
                         type="text"
                       ></Input>
                     </Center>
-                    <Center display="flex" justifyContent="center" alignItems="center">
-                      <Text fontWeight="medium" mr={34} color="black" align="center" mt={10}>
+                    <Center {...CenterStyle}>
+                      <Text {...TextUser} mr={34} mt={10}>
                         Email
                       </Text>
                       <Input
-                        borderRadius={"10px"}
-                        width={300}
-                        backgroundColor="#F4F1E8"
+                        {...InputUser}
                         mt={10}
                         placeholder="Email"
                         value={email}
@@ -101,14 +99,12 @@ function EditUserProfile() {
                         type="email"
                       ></Input>
                     </Center>
-                    <Center display="flex" justifyContent="center" alignItems="center">
-                      <Text fontWeight="medium" mr={30} color="black" align="center" mt={10}>
+                    <Center>
+                      <Text mr={30} {...TextUser} mt={10}>
                         Phone
                       </Text>
                       <Input
-                        borderRadius={"10px"}
-                        width={300}
-                        backgroundColor="#F4F1E8"
+                        {...InputUser}
                         mt={10}
                         placeholder="Phone Number"
                         value={phoneNumber}
@@ -116,7 +112,7 @@ function EditUserProfile() {
                         type="text"
                       ></Input>
                     </Center>
-                    <Center display="flex" justifyContent="center" alignItems="center">
+                    <Center {...CenterStyle}>
                       <Link>
                         <Button onClick={saveUserInfo} mt={10} borderRadius={20} backgroundColor="#596334">
                           <Text color="white">Save</Text>

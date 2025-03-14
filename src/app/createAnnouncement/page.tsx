@@ -11,11 +11,10 @@ import {
   VStack,
   IconButton,
   HStack,
-  useToast,
-  Flex,
   Text,
 } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
+import { InputStyleAnnouncement } from "@/styles/CreateAnnouncementStyle";
 
 const CreateAnnouncement = () => {
   type AnnouncementData = {
@@ -76,10 +75,7 @@ const CreateAnnouncement = () => {
             _placeholder={{ color: "#596435" }}
             value={formData.recipients}
             onChange={handleChange}
-            bg="white"
-            color="#596435"
-            borderRadius="xl"
-            py="23px"
+            {...InputStyleAnnouncement}
           />
         </FormControl>
         <FormControl>
@@ -90,9 +86,7 @@ const CreateAnnouncement = () => {
             _placeholder={{ color: "#596435" }}
             value={formData.subject}
             onChange={handleChange}
-            bg="white"
-            borderRadius="xl"
-            py="23px"
+            {...InputStyleAnnouncement}
           />
         </FormControl>
         <FormControl position="relative">
@@ -103,11 +97,9 @@ const CreateAnnouncement = () => {
             _placeholder={{ color: "#596435" }}
             value={formData.message}
             onChange={handleChange}
-            bg="#white"
+            {...InputStyleAnnouncement}
             h="250px"
             pr="40px" // Space for icon
-            color="#596435"
-            borderRadius="xl"
           />
           <Box position="absolute" top="35px" right="15px" display="flex" alignItems="center">
             <label htmlFor="file-upload" style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>

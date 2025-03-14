@@ -1,5 +1,5 @@
 "use client";
-import { ChevronDown, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import {
   Grid,
   HStack,
@@ -20,6 +20,9 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 import React from "react";
+import { LeftUser, TextUser } from "@/styles/UserStyle";
+import { CenterStyle } from "@/styles/AllStyle";
+import { BoxItem, IconStyle, VO } from "@/styles/AdminDashStyle";
 
 function UserProfile() {
   return (
@@ -57,55 +60,47 @@ function UserProfile() {
                   </GridItem>
                   <GridItem colSpan={2} mt={10}>
                     <FormControl>
-                      <Center display="flex" justifyContent="left" alignItems="left">
-                        <Text fontWeight="medium" color="black" align="center" mr={30}>
+                      <Center {...LeftUser}>
+                        <Text {...CenterStyle} {...TextUser} mr={30}>
                           Name
                         </Text>
                       </Center>
-                      <Center display="flex" justifyContent="left" alignItems="left">
+                      <Center {...LeftUser}>
                         <Text fontSize="xs" color="black" align="left" mt={2} mr={30}>
                           Jane Doe
                         </Text>
                       </Center>
-                      <Center display="flex" justifyContent="left" alignItems="left">
-                        <Text textStyle="xs" fontWeight="medium" color="black" mt={5}>
+                      <Center {...LeftUser}>
+                        <Text textStyle="xs" {...TextUser} mt={5}>
                           Email
                         </Text>
                       </Center>
-                      <Center display="flex" justifyContent="left" alignItems="left">
-                        <Text
-                          fontSize="xs"
-                          display="flex"
-                          justifyContent="left"
-                          alignItems="left"
-                          color="black"
-                          mt={2}
-                          mr={30}
-                        >
+                      <Center {...LeftUser}>
+                        <Text fontSize="xs" {...LeftUser} color="black" mt={2} mr={30}>
                           janedoe123@gmail.com
                         </Text>
                       </Center>
-                      <Center display="flex" justifyContent="left" alignItems="left">
-                        <Text fontWeight="medium" mr={30} color="black" align="center" mt={5}>
+                      <Center {...LeftUser}>
+                        <Text mr={30} {...TextUser} mt={5}>
                           Phone
                         </Text>
                       </Center>
-                      <Center fontSize="xs" display="flex" justifyContent="left" alignItems="left">
+                      <Center fontSize="xs" {...LeftUser}>
                         <Text color="black" mt={2}>
                           000-000-0000
                         </Text>
                       </Center>
-                      <Center display="flex" justifyContent="left" alignItems="left">
-                        <Text fontWeight="medium" mr={30} color="black" align="center" mt={5}>
+                      <Center {...LeftUser}>
+                        <Text {...TextUser} mr={30} mt={5}>
                           Roles
                         </Text>
                       </Center>
-                      <Center display="flex" justifyContent="left" alignItems="left">
+                      <Center {...LeftUser}>
                         <Text fontSize="xs" color="black" mt={2}>
                           Admin, Volunteer
                         </Text>
                       </Center>
-                      <Center mt={5} display="flex" justifyContent="left" alignItems="left">
+                      <Center mt={5} {...LeftUser}>
                         <Link href="/editUserProfile">
                           <Button borderColor="#596334" borderWidth={1} borderRadius={20} backgroundColor="white">
                             <Text fontSize="xs" color="#596334">
@@ -114,7 +109,7 @@ function UserProfile() {
                           </Button>
                         </Link>
                       </Center>
-                      <Center display="flex" justifyContent="left" alignItems="left">
+                      <Center {...LeftUser}>
                         <Link href="/">
                           <Button
                             mt={2}
@@ -136,17 +131,7 @@ function UserProfile() {
             </Flex>
 
             <Flex ml={10} mt={20}>
-              <Box
-                mt={5}
-                mr="auto"
-                borderRadius={"20px"}
-                alignItems="center"
-                borderColor="black"
-                bg="white"
-                w="400px"
-                h="475px"
-                p={10}
-              >
+              <Box mt={5} mr="auto" {...BoxItem} w="400px" h="475px" p={10}>
                 <HStack>
                   <Text color="#333333">Trees Logged</Text>
                   <Link href="" ml="auto">
@@ -166,16 +151,7 @@ function UserProfile() {
                       <Tr>
                         <Td>1</Td>
                         <Td>
-                          <Box
-                            color="#4A7B90"
-                            bg="#CFEFF9"
-                            height={10}
-                            width={10}
-                            display="flex"
-                            pt={3}
-                            justifyContent="center"
-                            borderRadius={11}
-                          >
+                          <Box {...VO} {...IconStyle}>
                             VO
                           </Box>
                         </Td>
@@ -184,16 +160,7 @@ function UserProfile() {
                       <Tr>
                         <Td>1</Td>
                         <Td>
-                          <Box
-                            color="#4A7B90"
-                            bg="#CFEFF9"
-                            height={10}
-                            width={10}
-                            display="flex"
-                            pt={3}
-                            justifyContent="center"
-                            borderRadius={11}
-                          >
+                          <Box {...VO} {...IconStyle}>
                             VO
                           </Box>
                         </Td>
@@ -202,16 +169,7 @@ function UserProfile() {
                       <Tr>
                         <Td>1</Td>
                         <Td>
-                          <Box
-                            color="#4A7B90"
-                            bg="#CFEFF9"
-                            height={10}
-                            width={10}
-                            display="flex"
-                            pt={3}
-                            justifyContent="center"
-                            borderRadius={11}
-                          >
+                          <Box {...VO} {...IconStyle}>
                             VO
                           </Box>
                         </Td>
@@ -220,16 +178,7 @@ function UserProfile() {
                       <Tr>
                         <Td>1</Td>
                         <Td>
-                          <Box
-                            color="#4A7B90"
-                            bg="#CFEFF9"
-                            height={10}
-                            width={10}
-                            display="flex"
-                            pt={3}
-                            justifyContent="center"
-                            borderRadius={11}
-                          >
+                          <Box {...VO} {...IconStyle}>
                             VO
                           </Box>
                         </Td>
@@ -238,16 +187,7 @@ function UserProfile() {
                       <Tr>
                         <Td>1</Td>
                         <Td>
-                          <Box
-                            color="#4A7B90"
-                            bg="#CFEFF9"
-                            height={10}
-                            width={10}
-                            display="flex"
-                            pt={3}
-                            justifyContent="center"
-                            borderRadius={11}
-                          >
+                          <Box {...VO} {...IconStyle}>
                             VO
                           </Box>
                         </Td>

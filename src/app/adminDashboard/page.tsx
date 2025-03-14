@@ -1,25 +1,10 @@
 "use client";
 import { ArrowUpRight, NotebookPen, SquarePen } from "lucide-react";
-import {
-  Grid,
-  GridItem,
-  Image,
-  Text,
-  Button,
-  Flex,
-  Link,
-  Box,
-  HStack,
-  Table,
-  Td,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react";
+import { Grid, GridItem, Text, Button, Link, Box, HStack, Table, Td, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
 import Map from "@/components/Map";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { IconStyle, BoxItem, VO, Condition } from "@/styles/AdminDashStyle";
 
 function AdminDashboard() {
   const user = useUser();
@@ -43,7 +28,7 @@ function AdminDashboard() {
 
         {/* Trees Logged This Year */}
         <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 3 }}>
-          <Box borderRadius="20px" borderColor="black" bg="white" height="100%" p={{ base: 5, md: 10 }}>
+          <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
             <HStack>
               <Text color="#333333">Trees Logged This Year</Text>
               <Link href="" ml="auto">
@@ -59,7 +44,7 @@ function AdminDashboard() {
 
         {/* Trees in Poor Condition */}
         <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 5 }}>
-          <Box borderRadius="20px" borderColor="black" bg="white" height="100%" p={{ base: 5, md: 10 }}>
+          <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
             <HStack>
               <Text color="#333333">Trees in Poor Condition</Text>
               <Link href="" ml="auto">
@@ -82,30 +67,12 @@ function AdminDashboard() {
                     <Tr key={item}>
                       <Td>{item}</Td>
                       <Td>
-                        <Box
-                          color="#4A7B90"
-                          bg="#CFEFF9"
-                          height={10}
-                          width={10}
-                          display="flex"
-                          pt={3}
-                          justifyContent="center"
-                          borderRadius={11}
-                        >
+                        <Box {...VO} {...IconStyle}>
                           VO
                         </Box>
                       </Td>
                       <Td>
-                        <Box
-                          color="white"
-                          bg="#596334"
-                          height={10}
-                          width={10}
-                          display="flex"
-                          pt={3}
-                          justifyContent="center"
-                          borderRadius={11}
-                        >
+                        <Box {...Condition} {...IconStyle}>
                           {item === 1 ? 10 : item === 2 ? 8 : 9}
                         </Box>
                       </Td>
@@ -123,15 +90,7 @@ function AdminDashboard() {
 
         {/* Create New Announcement Button */}
         <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            borderRadius="20px"
-            borderColor="black"
-            bg="white"
-            height="100%"
-          >
+          <Box display="flex" justifyContent="center" {...BoxItem} height="100%">
             <Button
               width="100%"
               maxWidth="300px"
