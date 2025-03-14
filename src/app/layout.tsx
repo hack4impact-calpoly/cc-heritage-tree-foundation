@@ -22,10 +22,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 style={{
                   backgroundColor: "#F4F1E8",
                   flexGrow: 1,
-                  marginLeft: pathName !== "/login" && pathName !== "/signup" ? "15rem" : "0",
+                  paddingLeft: pathName !== "/login" && pathName !== "/signup" ? "15rem" : "0",
+                  width: "100%",
+                  height: "100%",
+                  minHeight: "100vh",
                 }}
               >
-                {/*<ProfileCard/>*/}
+                <ProfileCard />
                 {children}
               </main>
             </div>

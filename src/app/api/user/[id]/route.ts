@@ -1,6 +1,6 @@
 import connectDB from "@/database/db";
 import User from "@/database/userSchema";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, userAgent } from "next/server";
 
 // Get a specific user
 export async function GET(req: NextRequest, context: { params: any }) {
@@ -8,12 +8,18 @@ export async function GET(req: NextRequest, context: { params: any }) {
     await connectDB();
     const params = await context.params;
     const { id } = params;
+    const isEmail = /\S+@\S+\.\S+/.test(id);
+    let user;
 
     if (!id) {
       return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
     }
 
-    const user = await User.findById(id);
+    if (isEmail) {
+      user = await User.findOne({ email: id });
+    } else {
+      user = await User.findById(id);
+    }
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
