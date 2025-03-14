@@ -8,8 +8,14 @@ export async function GET(request: Request) {
 
   try {
     const trees = await Tree.find().lean();
-    console.log(trees);
-    return NextResponse.json(trees, { status: 200 });
+    const serializedTrees = trees.map((tree) => ({
+      ...tree,
+      gpsCoordinates: tree.gpsCoordinates.map((coord: any) => coord.toString()),
+      dbh: tree.dbh.toString(),
+      canopyBreadth: tree.canopyBreadth.toString(),
+    }));
+    console.log(serializedTrees);
+    return NextResponse.json(serializedTrees, { status: 200 });
   } catch (err) {
     return NextResponse.json("Failed to fetch trees: " + err, { status: 400 });
   }
