@@ -10,8 +10,9 @@ import {
   Textarea,
   VStack,
   IconButton,
-  HStack,
+  Image,
   Text,
+  HStack,
 } from "@chakra-ui/react";
 import { AlignJustify } from "lucide-react";
 import { BrowserView, MobileView } from "react-device-detect";
@@ -159,20 +160,28 @@ const CreateAnnouncement = () => {
             </Box>
           </BrowserView>
           <MobileView>
-            <Box
-              position="absolute"
-              width="100vw"
-              minHeight="100vh"
-              bg="#F4F1E8"
-              transform="translateX(-15rem)"
-              pl="15rem"
-              display="flex"
-              alignItems="center"
-            >
+            <Box>
+              <div
+                style={{
+                  position: "absolute",
+                  marginLeft: "20px",
+                  marginTop: "15px",
+                }}
+              >
+                <AlignJustify></AlignJustify>
+              </div>
+              {/* add tree icon */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: "50px",
+                }}
+              >
+                <Image src="./logo1.png" alt="tree icon" height={"50px"}></Image>
+              </div>
               <VStack spacing={7} align="start" p="50px" py="50px" width="100%" maxW="900px" mx="auto">
-                <Box fontSize="3xl" fontWeight="bold">
-                  New Message
-                </Box>
                 <FormControl>
                   <FormLabel fontWeight="bold">Send to</FormLabel>
                   <Input
@@ -207,7 +216,7 @@ const CreateAnnouncement = () => {
                     h="250px"
                     pr="40px" // Space for icon
                   />
-                  <Box position="absolute" top="35px" right="15px" display="flex" alignItems="center">
+                  <Box position="absolute" bottom="15px" left="10px" display="flex" alignItems="center">
                     <label htmlFor="file-upload" style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
                       <IconButton
                         icon={<AttachmentIcon />}
