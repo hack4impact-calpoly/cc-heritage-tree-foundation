@@ -77,19 +77,8 @@ function Volunteers() {
   };
 
   const downloadData = () => {
-    // retreive ALL volunteers data
-    const dataSheet = XLSX.utils.json_to_sheet(
-      usersData.map((user: IUser, index) => ({
-        "#": index,
-        Name: user.name,
-        Email: user.email,
-        Role: user.role,
-        Active: user.active ? "Yes" : "No",
-      })),
-    );
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, dataSheet, "Volunteers Table");
+    const table = document.getElementById("volunteersTable");
+    const wb = XLSX.utils.table_to_book(table, { sheet: "Volunteers Table" });
     XLSX.writeFile(wb, "volunteersTable.xlsx");
   };
 
