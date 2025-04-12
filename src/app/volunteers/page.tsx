@@ -17,7 +17,7 @@ import {
   Text,
   Spinner,
 } from "@chakra-ui/react";
-
+import * as XLSX from "xlsx";
 import { IUser } from "@/database/userSchema";
 import { SquarePen, SearchIcon, FileDown, ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState, useEffect } from "react";
@@ -76,6 +76,23 @@ function Volunteers() {
     setCurrentPage(1);
   };
 
+  const downloadData = () => {
+    // retreive ALL volunteers data
+    const dataSheet = XLSX.utils.json_to_sheet(
+      usersData.map((user: IUser, index) => ({
+        "#": index,
+        Name: user.name,
+        Email: user.email,
+        Role: user.role,
+        Active: user.active ? "Yes" : "No",
+      })),
+    );
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, dataSheet, "Volunteers Table");
+    XLSX.writeFile(wb, "volunteersTable.xlsx");
+  };
+
   return (
     <Box height="100%" width="100%" {...CenterStyle}>
       <VStack maxWidth="1137px" width="90%" spacing={5} className="volunteer-container">
@@ -115,7 +132,15 @@ function Volunteers() {
           </InputGroup>
 
           <HStack spacing={2} width={["100%", "auto"]} justifyContent={["flex-end", "flex-end"]}>
-            <Button padding={4} position="absolute" bg="white" borderRadius="24px" variant="solid" right={0}>
+            <Button
+              padding={4}
+              position="absolute"
+              bg="white"
+              borderRadius="24px"
+              variant="solid"
+              right={0}
+              onClick={downloadData}
+            >
               <HStack spacing={2}>
                 <Text color="#596334" fontWeight="600">
                   Export to Sheets
@@ -150,7 +175,7 @@ function Volunteers() {
                 },
               }}
             >
-              <Table variant="simple" width="100%" size={["sm", "md"]}>
+              <Table id="volunteersTable" variant="simple" width="100%" size={["sm", "md"]}>
                 <Thead bg="#DFED98" minWidth="100px" wordBreak="break-word" whiteSpace="normal" padding="8px">
                   <Tr>
                     <Th>#</Th>
