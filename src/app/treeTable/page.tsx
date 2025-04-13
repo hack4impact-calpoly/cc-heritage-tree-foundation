@@ -1,9 +1,25 @@
 "use client";
-import { Table, Thead, Tbody, Tr, Th, Td, Text, TableContainer, Box, Button, Image } from "@chakra-ui/react";
+import {
+  Table,
+  Flex,
+  Thead,
+  Tbody,
+  HStack,
+  Tr,
+  Th,
+  Td,
+  Text,
+  TableContainer,
+  Box,
+  Button,
+  Image,
+} from "@chakra-ui/react";
+import * as XLSX from "xlsx";
 import Navbar from "@/components/Navbar";
 import "./treetable.css";
 import { useState, useEffect } from "react";
 import { ITree } from "@/database/treeSchema";
+import { FileDown } from "lucide-react";
 export default function TreeTable() {
   const [trees, setTrees] = useState<ITree[]>([]);
   useEffect(() => {
