@@ -1,5 +1,8 @@
 "use client";
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dbfdba3 (can download all tree data)
 import {
   Table,
   Flex,
@@ -16,17 +19,24 @@ import {
   Image,
 } from "@chakra-ui/react";
 import * as XLSX from "xlsx";
+<<<<<<< HEAD
 =======
 import { Table, Thead, Tbody, Tr, Th, Td, Text, TableContainer, Box, Button, Image } from "@chakra-ui/react";
 >>>>>>> b5f28c7 (feat: connect backend tree table)
+=======
+>>>>>>> dbfdba3 (can download all tree data)
 import Navbar from "@/components/Navbar";
 import "./treetable.css";
 import { useState, useEffect } from "react";
 import { ITree } from "@/database/treeSchema";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { FileDown } from "lucide-react";
 =======
 >>>>>>> b5f28c7 (feat: connect backend tree table)
+=======
+import { FileDown } from "lucide-react";
+>>>>>>> dbfdba3 (can download all tree data)
 export default function TreeTable() {
   const [trees, setTrees] = useState<ITree[]>([]);
   useEffect(() => {
