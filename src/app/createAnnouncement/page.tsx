@@ -59,7 +59,7 @@ const CreateAnnouncement = () => {
         message: formData.message,
       };
 
-      console.log("Submitted Data:", formData);
+      console.log("Submitted Data: ", formData);
 
       const res = await fetch("/api/messages", {
         method: "POST",
