@@ -16,20 +16,23 @@ import {
   Button,
   Text,
   Spinner,
+  Image,
 } from "@chakra-ui/react";
 import * as XLSX from "xlsx";
 import { IUser } from "@/database/userSchema";
-import { SquarePen, SearchIcon, FileDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { SquarePen, SearchIcon, FileDown, ChevronLeft, ChevronRight, Menu } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { relative } from "path";
 import { CenterStyle } from "@/styles/AllStyle";
-
+import { BrowserView, MobileView, isMobile } from "react-device-detect";
 function Volunteers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [usersData, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [isClient, setIsClient] = useState(false);
+
   const rowsPerPage = 7;
 
   const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
@@ -92,204 +95,260 @@ function Volunteers() {
     XLSX.utils.book_append_sheet(wb, dataSheet, "Volunteers Table");
     XLSX.writeFile(wb, "volunteersTable.xlsx");
   };
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
-    <Box height="100%" width="100%" {...CenterStyle}>
-      <VStack maxWidth="1137px" width="90%" spacing={5} className="volunteer-container">
-        {/*PageText*/}
-        <Box width="100%" position="relative" minHeight="80px">
-          <VStack alignItems="flex-start" spacing={1} position="relative">
-            <Text fontSize={["24px", "30px", "38px"]} color="#333" fontWeight="600">
-              Volunteer Database
-            </Text>
-            <Text fontSize="16px" color="#333" fontWeight="400">
-              {filteredUsers.length} volunteers found
-            </Text>
-          </VStack>
-        </Box>
-        {/*Search/Export*/}
-        <HStack
-          width="100%"
-          position="relative"
-          minHeight="50px"
-          flexWrap={["wrap", "nowrap"]}
-          spacing={[2, 4]}
-          justifyContent="space-between"
-        >
-          <InputGroup width={["100%", "225px"]} mb={[2, 0]}>
-            <Input
-              placeholder="Search"
-              bg="white"
-              border="none"
-              borderRadius="24px"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={handleSearch}
-            />
-            <InputRightElement width="3rem" cursor="pointer" onClick={handleSearch}>
-              <SearchIcon size={18} color="gray" />
-            </InputRightElement>
-          </InputGroup>
+    <div>
+      {isClient ? (
+        <div>
+          <BrowserView>
+            <Box height="100%" width="100%" {...CenterStyle}>
+              <VStack maxWidth="1137px" width="90%" spacing={5} className="volunteer-container">
+                {/*PageText*/}
+                <Box width="100%" position="relative" minHeight="80px">
+                  <VStack alignItems="flex-start" spacing={1} position="relative">
+                    <Text fontSize={["24px", "30px", "38px"]} color="#333" fontWeight="600">
+                      Volunteer Database
+                    </Text>
+                    <Text fontSize="16px" color="#333" fontWeight="400">
+                      {filteredUsers.length} volunteers found
+                    </Text>
+                  </VStack>
+                </Box>
+                {/*Search/Export*/}
+                <HStack
+                  width="100%"
+                  position="relative"
+                  minHeight="50px"
+                  flexWrap={["wrap", "nowrap"]}
+                  spacing={[2, 4]}
+                  justifyContent="space-between"
+                >
+                  <InputGroup width={["100%", "225px"]} mb={[2, 0]}>
+                    <Input
+                      placeholder="Search"
+                      bg="white"
+                      border="none"
+                      borderRadius="24px"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyDown={handleSearch}
+                    />
+                    <InputRightElement width="3rem" cursor="pointer" onClick={handleSearch}>
+                      <SearchIcon size={18} color="gray" />
+                    </InputRightElement>
+                  </InputGroup>
 
-          <HStack spacing={2} width={["100%", "auto"]} justifyContent={["flex-end", "flex-end"]}>
-            <Button
-              padding={4}
-              position="absolute"
-              bg="white"
-              borderRadius="24px"
-              variant="solid"
-              right={0}
-              onClick={downloadData}
-            >
-              <HStack spacing={2}>
-                <Text color="#596334" fontWeight="600">
-                  Export to Sheets
-                </Text>
-                <FileDown color="#596334" />
-              </HStack>
-            </Button>
-          </HStack>
-        </HStack>
-        {/*Table*/}
-        <Box minHeight="510px" width="100%" height={"100%"}>
-          {loading ? (
-            <Box {...CenterStyle} height="100%">
-              <Spinner size="xl" thickness="4px" speed="0.65s" color="#596334" />
-            </Box>
-          ) : (
-            <Box
-              width="100%"
-              borderRadius="16px"
-              bg="#FAF9F6"
-              overflowX="auto"
-              sx={{
-                "& table": {
-                  tableLayout: "auto",
-                  width: "100%",
-                },
-                "& Thead, & td": {
-                  minWidth: "50px",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal",
-                  padding: "8px",
-                },
-              }}
-            >
-              <Table id="volunteersTable" variant="simple" width="100%" size={["sm", "md"]}>
-                <Thead bg="#DFED98" minWidth="100px" wordBreak="break-word" whiteSpace="normal" padding="8px">
-                  <Tr>
-                    <Th>#</Th>
-                    <Th>User</Th>
-                    <Th>Role</Th>
-                    <Th>Email</Th>
-                    {/*<Th>Phone Number</Th>*/}
-                    <Th>Activity</Th>
-                    <Th></Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {paginatedUsers.length > 0 ? (
-                    paginatedUsers.map((user: IUser, index) => (
-                      <Tr key={user._id}>
-                        <Td>
-                          <Box {...CenterStyle} height="100%">
-                            {index}
-                          </Box>
-                        </Td>
-                        <Td>{user.name}</Td>
-                        <Td>
-                          <Box {...CenterStyle} height="100%">
-                            {user.role}
-                          </Box>
-                        </Td>
-                        <Td>{user.email}</Td>
-                        {/*
-                        <Td>
-                          {user.phoneNumber?.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") || "N/A"}
-                        </Td>*/}
-                        <Td>
-                          <Box {...CenterStyle} height="100%">
-                            <Box
-                              width="8px"
-                              height="8px"
-                              borderRadius="full"
-                              bg={user.active ? "#596334" : "gray.400"}
-                            />
-                          </Box>
-                        </Td>
-                        <Td position="relative">
-                          <IconButton aria-label="EditUser" variant="ghost" {...CenterStyle}>
-                            <SquarePen color="#333333" />
-                          </IconButton>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <Tr>
-                      <Td colSpan={7} textAlign="center" fontSize="sm" color="gray.500">
-                        No results
-                      </Td>
-                    </Tr>
-                  )}
-                </Tbody>
-              </Table>
-              {/*Table Pages*/}
-              {totalPages > 1 && (
-                <HStack spacing={2} justifyContent="center" my={2} py={2} flexWrap="wrap" bottom={0}>
-                  <Button
-                    bg=""
-                    _hover={{ bg: "gray.100" }}
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  >
-                    <HStack height="100%">
-                      <ChevronLeft />
-                      <Text>Previous</Text>
-                    </HStack>
-                  </Button>
-
-                  {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => {
-                    let pageNumber = 0;
-                    if (totalPages <= 3) {
-                      pageNumber = i + 1;
-                    } else if (currentPage === 1) {
-                      pageNumber = i + 1;
-                    } else if (currentPage === totalPages) {
-                      pageNumber = totalPages - 2 + i;
-                    } else {
-                      pageNumber = currentPage - 1 + i;
-                    }
-                    return (
-                      <Button
-                        key={pageNumber}
-                        onClick={() => setCurrentPage(pageNumber)}
-                        bg={pageNumber === currentPage ? "#DFED98" : ""}
-                        color="#333333"
-                        _hover={{ bg: pageNumber === currentPage ? "#DFED98" : "gray.100" }}
-                        borderRadius="23px"
-                        mx={1}
-                      >
-                        {pageNumber}
-                      </Button>
-                    );
-                  })}
-
-                  <Button
-                    bg=""
-                    _hover={{ bg: "gray.100" }}
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  >
-                    <HStack height="100%">
-                      <Text>Next</Text>
-                      <ChevronRight />
-                    </HStack>
-                  </Button>
+                  <HStack spacing={2} width={["100%", "auto"]} justifyContent={["flex-end", "flex-end"]}>
+                    <Button
+                      padding={4}
+                      position="absolute"
+                      bg="white"
+                      borderRadius="24px"
+                      variant="solid"
+                      right={0}
+                      onClick={downloadData}
+                    >
+                      <HStack spacing={2}>
+                        <Text color="#596334" fontWeight="600">
+                          Export to Sheets
+                        </Text>
+                        <FileDown color="#596334" />
+                      </HStack>
+                    </Button>
+                  </HStack>
                 </HStack>
-              )}
+                {/*Table*/}
+                <Box minHeight="510px" width="100%" height={"100%"}>
+                  {loading ? (
+                    <Box {...CenterStyle} height="100%">
+                      <Spinner size="xl" thickness="4px" speed="0.65s" color="#596334" />
+                    </Box>
+                  ) : (
+                    <Box
+                      width="100%"
+                      borderRadius="16px"
+                      bg="#FAF9F6"
+                      overflowX="auto"
+                      sx={{
+                        "& table": {
+                          tableLayout: "auto",
+                          width: "100%",
+                        },
+                        "& Thead, & td": {
+                          minWidth: "50px",
+                          wordBreak: "break-word",
+                          whiteSpace: "normal",
+                          padding: "8px",
+                        },
+                      }}
+                    >
+                      <Table id="volunteersTable" variant="simple" width="100%" size={["sm", "md"]}>
+                        <Thead bg="#DFED98" minWidth="100px" wordBreak="break-word" whiteSpace="normal" padding="8px">
+                          <Tr>
+                            <Th>#</Th>
+                            <Th>User</Th>
+                            <Th>Role</Th>
+                            <Th>Email</Th>
+                            {/*<Th>Phone Number</Th>*/}
+                            <Th>Activity</Th>
+                            <Th></Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {paginatedUsers.length > 0 ? (
+                            paginatedUsers.map((user: IUser, index) => (
+                              <Tr key={user._id}>
+                                <Td>
+                                  <Box {...CenterStyle} height="100%">
+                                    {index}
+                                  </Box>
+                                </Td>
+                                <Td>{user.name}</Td>
+                                <Td>
+                                  <Box {...CenterStyle} height="100%">
+                                    {user.role}
+                                  </Box>
+                                </Td>
+                                <Td>{user.email}</Td>
+                                {/*
+                                    <Td>
+                                      {user.phoneNumber?.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") || "N/A"}
+                                    </Td>*/}
+                                <Td>
+                                  <Box {...CenterStyle} height="100%">
+                                    <Box
+                                      width="8px"
+                                      height="8px"
+                                      borderRadius="full"
+                                      bg={user.active ? "#596334" : "gray.400"}
+                                    />
+                                  </Box>
+                                </Td>
+                                <Td position="relative">
+                                  <IconButton aria-label="EditUser" variant="ghost" {...CenterStyle}>
+                                    <SquarePen color="#333333" />
+                                  </IconButton>
+                                </Td>
+                              </Tr>
+                            ))
+                          ) : (
+                            <Tr>
+                              <Td colSpan={7} textAlign="center" fontSize="sm" color="gray.500">
+                                No results
+                              </Td>
+                            </Tr>
+                          )}
+                        </Tbody>
+                      </Table>
+                      {/*Table Pages*/}
+                      {totalPages > 1 && (
+                        <HStack spacing={2} justifyContent="center" my={2} py={2} flexWrap="wrap" bottom={0}>
+                          <Button
+                            bg=""
+                            _hover={{ bg: "gray.100" }}
+                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                          >
+                            <HStack height="100%">
+                              <ChevronLeft />
+                              <Text>Previous</Text>
+                            </HStack>
+                          </Button>
+
+                          {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => {
+                            let pageNumber = 0;
+                            if (totalPages <= 3) {
+                              pageNumber = i + 1;
+                            } else if (currentPage === 1) {
+                              pageNumber = i + 1;
+                            } else if (currentPage === totalPages) {
+                              pageNumber = totalPages - 2 + i;
+                            } else {
+                              pageNumber = currentPage - 1 + i;
+                            }
+                            return (
+                              <Button
+                                key={pageNumber}
+                                onClick={() => setCurrentPage(pageNumber)}
+                                bg={pageNumber === currentPage ? "#DFED98" : ""}
+                                color="#333333"
+                                _hover={{ bg: pageNumber === currentPage ? "#DFED98" : "gray.100" }}
+                                borderRadius="23px"
+                                mx={1}
+                              >
+                                {pageNumber}
+                              </Button>
+                            );
+                          })}
+
+                          <Button
+                            bg=""
+                            _hover={{ bg: "gray.100" }}
+                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                          >
+                            <HStack height="100%">
+                              <Text>Next</Text>
+                              <ChevronRight />
+                            </HStack>
+                          </Button>
+                        </HStack>
+                      )}
+                    </Box>
+                  )}
+                </Box>
+              </VStack>
             </Box>
-          )}
-        </Box>
-      </VStack>
-    </Box>
+          </BrowserView>
+          <MobileView>
+            <Box mt={"58px"}>
+              <VStack spacing={"32px"}>
+                {/*Dummy Mobile Navbar*/}
+                <HStack
+                  width="100%"
+                  position={"relative"}
+                  display={"flex"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                >
+                  <IconButton position={"absolute"} left="25px" aria-label="Navbar" key={"ghost"} variant={"ghost"}>
+                    <Menu width="48px" color="#596334" />
+                  </IconButton>
+                  <Box
+                    width="48px"
+                    height="48px"
+                    border={"solid"}
+                    borderWidth={"1px"}
+                    borderRadius="100%"
+                    display="flex"
+                    justifyContent={"center"}
+                    borderColor={"#596334"}
+                    padding={"3px"}
+                  >
+                    <Image src="~/../logo1.png" alt="logo" htmlWidth="36px" htmlHeight="36px" />
+                  </Box>
+                </HStack>
+                {/*Switch to desktop*/}
+                <Box h="80vh" width="90%" bg="#FFFFFF" borderRadius={"25px"}>
+                  <VStack mt="5rem" gap={"2"}>
+                    <Image src="~/../SwitchDevice.svg" alt="SwitchDevice" boxSize={""} />
+                    <Text color="black" fontSize="20px" fontWeight={"600"}>
+                      Please use a laptop or desktop!
+                    </Text>
+                    <Text color="black" fontSize="14px">
+                      This page is optimized for larger screens.
+                    </Text>
+                  </VStack>
+                </Box>
+              </VStack>
+            </Box>
+          </MobileView>
+        </div>
+      ) : (
+        <div></div>
+      )}
+    </div>
   );
 }
 
