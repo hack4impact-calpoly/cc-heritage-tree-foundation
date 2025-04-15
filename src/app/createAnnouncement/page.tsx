@@ -48,8 +48,32 @@ const CreateAnnouncement = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Submitted Data: ", formData);
+  const handleSubmit = async () => {
+    try {
+      const from = "admin"; // placeholder
+      const to = formData.recipients.split(",").map((r) => r.trim());
+
+      const payload = {
+        from,
+        to,
+        message: formData.message,
+      };
+
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Failed to send announcement");
+
+      const data = await res.json();
+      console.log("Announcement sent:", data);
+    } catch (err) {
+      console.error("Error submitting:", err);
+    }
   };
 
   return (
