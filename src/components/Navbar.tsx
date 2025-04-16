@@ -96,10 +96,7 @@ export default function Navbar() {
           left="10px"
           zIndex="100"
           size="lg"
-          colorScheme="green"
-          backgroundColor={COLORS.primary}
-          color={COLORS.white}
-          borderRadius="50%"
+          backgroundColor="#F4F1E8"
         />
 
         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
