@@ -94,11 +94,9 @@ export default function TreeTable() {
         tree.additionalNotes?.toLowerCase().includes(searchValue) ||
         (Array.isArray(tree.treeCondition)
           ? tree.treeCondition.join(", ").toLowerCase().includes(searchValue)
-          : tree.treeCondition?.toString().toLowerCase().includes(searchValue)) ||
+          : false) ||
         tree.treeQuality?.toString().toLowerCase().includes(searchValue) ||
-        (Array.isArray(tree.gpsCoordinates)
-          ? tree.gpsCoordinates.join(", ").includes(searchValue)
-          : tree.gpsCoordinates?.toString().includes(searchValue))
+        (Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ").includes(searchValue) : false)
       );
     });
     console.log("Tree Filtering:", results);
