@@ -86,43 +86,24 @@ export default function Navbar() {
   if (isMobile) {
     return (
       <>
-        {/* Mobile Header Bar */}
-        <Box position="fixed" top="0" left="0" width="100%" height="120px" zIndex="90" backgroundColor="#F4F1E8">
-          {/* Menu Button */}
-          <IconButton
-            aria-label="Open Navigation"
-            icon={<FiMenu />}
-            onClick={onOpen}
-            position="absolute"
-            left="10px"
-            top="50%"
-            transform="translateY(-50%)"
-            zIndex="100"
-            size="lg"
-            backgroundColor="transparent"
-          />
-
-          <Box
-            position="absolute"
-            left="50%"
-            top="50%"
-            transform="translate(-50%, -50%)"
-            width="50px"
-            height="50px"
-            borderRadius="full"
-            backgroundColor="transparent"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            borderWidth="1px"
-            borderColor={COLORS.primary}
-          >
-            <Image src="/logo1.png" alt="Tree Logo" width="36px" height="36px" objectFit="contain" />
-          </Box>
-        </Box>
+        {/* Mobile Toggle Button */}
+        <IconButton
+          aria-label="Open Navigation"
+          icon={<FiMenu />}
+          onClick={onOpen}
+          position="fixed"
+          top="10px"
+          left="10px"
+          zIndex="100"
+          size="lg"
+          colorScheme="green"
+          backgroundColor={COLORS.primary}
+          color={COLORS.white}
+          borderRadius="50%"
+        />
 
         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
-          <DrawerOverlay style={{ backgroundColor: "transparent" }} />
+          <DrawerOverlay />
           <DrawerContent
             backgroundColor={COLORS.primary}
             borderTopRightRadius="30px"
@@ -177,10 +158,13 @@ export default function Navbar() {
                       backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "transparent",
                       color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
                       borderRadius: "20px",
-                      width: "187px",
+                      width: "190px",
                       height: "2.5rem",
                       justifyContent: "flex-start",
                       marginLeft: "20px",
+                    }}
+                    _hover={{
+                      backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "rgba(255,255,255,0.1)",
                     }}
                   >
                     <NavItem.icon
