@@ -243,30 +243,6 @@ export default function TreeTable() {
                       </Td>
                     </Tr>
                   )}
-                  {/*{filteredTrees
-                  .slice((currentPage - 1) * treesPerPage, currentPage * treesPerPage)
-                  .map((tree, index) => (
-                    <Tr key={tree._id}>
-                      <Td>{tree._id}</Td>
-                      <Td>{tree.collectorName}</Td>
-                      <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
-                      <Td>
-                        {Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ") : tree.gpsCoordinates}
-                      </Td>
-                      <Td>{tree.photo && <Image src={tree.photo} alt="Tree" width="50" height="50" />}</Td>
-                      <Td>{tree.dbh.toString()}</Td>
-                      <Td>{tree.canopyBreadth.toString()}</Td>
-                      <Td>
-                        <Button className="species-button">{tree.species}</Button>
-                      </Td>
-                      <Td>
-                        <Button className="condition-button">{String(tree.treeQuality)}</Button>
-                      </Td>
-                      <Td>{Array.isArray(tree.treeCondition) ? tree.treeCondition.join(", ") : tree.treeCondition}</Td>
-                      <Td>{tree.additionalNotes || "N/A"}</Td>
-                      <Td className="clickable-arrow">&gt;</Td>
-                    </Tr>
-                  ))}*/}
                 </Tbody>
               </Table>
             </TableContainer>
@@ -324,34 +300,6 @@ export default function TreeTable() {
             )}
           </Box>
         )}
-
-        {/*<Box className="page-controls">
-          <Button
-            className="previous-button"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-
-          {Array.from({ length: totalPages }, (_, index) => (
-            <Button
-              key={index + 1}
-              className={currentPage === index + 1 ? "active-page" : "page-button"}
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </Button>
-          ))}
-
-          <Button
-            className="page-button"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </Button>
-        </Box>*/}
       </Box>
     </Box>
   );
