@@ -87,7 +87,7 @@ function Messages() {
             Sent
           </button>
         </div>
-        <button className={styles.newMessageButton} onClick={() => router.push("/messages/new")}>
+        <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
           New Message +
         </button>
       </div>
