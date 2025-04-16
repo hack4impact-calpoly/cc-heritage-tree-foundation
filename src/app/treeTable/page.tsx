@@ -24,15 +24,24 @@ import { CenterStyle } from "@/styles/AllStyle";
 import "./treetable.css";
 import { useState, useEffect } from "react";
 import { ITree } from "@/database/treeSchema";
-import { FileDown, SearchIcon } from "lucide-react";
-import { IUser } from "@/database/userSchema";
+import { FileDown, SearchIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function TreeTable() {
   const [loading, setLoading] = useState(true);
-  const [usersData, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [filteredTrees, setFilteredTrees] = useState<ITree[]>([]);
   const [trees, setTrees] = useState<ITree[]>([]);
+
+  // tree table structure
+  const treesPerPage = 8;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filteredTrees.length / treesPerPage);
+
+  const idxLastTree = currentPage * treesPerPage;
+  const idxFirstTree = idxLastTree - treesPerPage;
+  const paginatedTrees = filteredTrees.slice(idxFirstTree, idxLastTree);
+
+  // fetch trees
   useEffect(() => {
     fetch("/api/tree")
       .then((response) => {
@@ -44,6 +53,7 @@ export default function TreeTable() {
         console.log(data);
         if (Array.isArray(data)) {
           setTrees(data);
+          setFilteredTrees(data); // set filteredTrees to data
         } else {
           console.error("Unexpected data format:", data);
           setTrees([]);
@@ -52,14 +62,11 @@ export default function TreeTable() {
       .catch((err) => {
         console.error("Fetch error:", err);
         setTrees([]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
-
-  // tree table structure
-  const treesPerPage = 8;
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = Math.ceil(trees.length / treesPerPage);
 
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -67,43 +74,35 @@ export default function TreeTable() {
     }
   };
 
-  //Fetch Users
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("/api/user");
-        if (!response.ok) throw new Error("Failed to fetch users");
-        const data = await response.json();
-        setUsers(data);
-        setFilteredUsers(data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-  //Search Filter
+  // Search Filter
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent) => {
     if (!searchTerm.trim()) {
-      setFilteredUsers(usersData);
+      setFilteredTrees(trees);
       setCurrentPage(1);
       return;
     }
 
-    const results = usersData.filter((user: IUser) => {
+    const results = trees.filter((tree: ITree) => {
       const searchValue = searchTerm.toLowerCase();
       return (
-        user.name?.toLowerCase().includes(searchValue) ||
-        user.email?.toLowerCase().includes(searchValue) ||
-        user.role?.toLowerCase().includes(searchValue) ||
-        user.phoneNumber?.toLowerCase().includes(searchValue)
+        tree._id?.toLowerCase().includes(searchValue) ||
+        tree.collectorName?.toLowerCase().includes(searchValue) ||
+        new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
+        tree.dbh?.toString().includes(searchValue) ||
+        tree.canopyBreadth?.toString().includes(searchValue) ||
+        tree.species?.toLowerCase().includes(searchValue) ||
+        tree.additionalNotes?.toLowerCase().includes(searchValue) ||
+        (Array.isArray(tree.treeCondition)
+          ? tree.treeCondition.join(", ").toLowerCase().includes(searchValue)
+          : tree.treeCondition?.toString().toLowerCase().includes(searchValue)) ||
+        tree.treeQuality?.toString().toLowerCase().includes(searchValue) ||
+        (Array.isArray(tree.gpsCoordinates)
+          ? tree.gpsCoordinates.join(", ").includes(searchValue)
+          : tree.gpsCoordinates?.toString().includes(searchValue))
       );
     });
-
-    setFilteredUsers(results);
+    console.log("Tree Filtering:", results);
+    setFilteredTrees(results);
     setCurrentPage(1);
   };
 
@@ -139,7 +138,7 @@ export default function TreeTable() {
               Tree Inventory
             </Text>
             <Text fontSize="16px" color="#333" fontWeight="400">
-              {filteredUsers.length} volunteers found
+              {filteredTrees.length} trees found
             </Text>
           </VStack>
         </Box>
@@ -193,49 +192,140 @@ export default function TreeTable() {
             <Spinner size="xl" thickness="4px" speed="0.65s" color="#596334" />
           </Box>
         ) : (
-          <TableContainer bg="white" borderRadius="10px">
-            <Table className="tree-table">
-              <Thead>
-                <Tr>
-                  <Th>Tree ID</Th>
-                  <Th>Collector Name</Th>
-                  <Th>Date Collected</Th>
-                  <Th>GPS Coordinates</Th>
-                  <Th>Photo</Th>
-                  <Th>DBH (inches)</Th>
-                  <Th>Tree Canopy Breadth</Th>
-                  <Th>Species</Th>
-                  <Th>Tree Quality</Th>
-                  <Th>Tree Condition</Th>
-                  <Th>Additional Notes</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {trees.slice((currentPage - 1) * treesPerPage, currentPage * treesPerPage).map((tree, index) => (
-                  <Tr key={tree._id}>
-                    <Td>{tree._id}</Td>
-                    <Td>{tree.collectorName}</Td>
-                    <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
-                    <Td>{Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ") : tree.gpsCoordinates}</Td>
-                    <Td>{tree.photo && <Image src={tree.photo} alt="Tree" width="50" height="50" />}</Td>
-                    <Td>{tree.dbh.toString()}</Td>
-                    <Td>{tree.canopyBreadth.toString()}</Td>
-                    <Td>
-                      <Button className="species-button">{tree.species}</Button>
-                    </Td>
-                    <Td>
-                      <Button className="condition-button">{String(tree.treeQuality)}</Button>
-                    </Td>
-                    <Td>{Array.isArray(tree.treeCondition) ? tree.treeCondition.join(", ") : tree.treeCondition}</Td>
-                    <Td>{tree.additionalNotes || "N/A"}</Td>
-                    <Td className="clickable-arrow">&gt;</Td>
+          <Box width="100%" borderRadius="16px" bg="white" overflowX="auto">
+            <TableContainer bg="white" borderRadius="10px">
+              <Table className="tree-table">
+                <Thead>
+                  <Tr>
+                    <Th>Tree ID</Th>
+                    <Th>Collector Name</Th>
+                    <Th>Date Collected</Th>
+                    <Th>GPS Coordinates</Th>
+                    <Th>Photo</Th>
+                    <Th>DBH (inches)</Th>
+                    <Th>Tree Canopy Breadth</Th>
+                    <Th>Species</Th>
+                    <Th>Tree Quality</Th>
+                    <Th>Tree Condition</Th>
+                    <Th>Additional Notes</Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
+                </Thead>
+                <Tbody>
+                  {paginatedTrees.length > 0 ? (
+                    paginatedTrees.map((tree: ITree, index) => (
+                      <Tr key={tree._id}>
+                        <Td>{tree._id}</Td>
+                        <Td>{tree.collectorName}</Td>
+                        <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
+                        <Td>
+                          {Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ") : tree.gpsCoordinates}
+                        </Td>
+                        <Td>{tree.photo && <Image src={tree.photo} alt="Tree" width="50" height="50" />}</Td>
+                        <Td>{tree.dbh.toString()}</Td>
+                        <Td>{tree.canopyBreadth.toString()}</Td>
+                        <Td>
+                          <Button className="species-button">{tree.species}</Button>
+                        </Td>
+                        <Td>
+                          <Button className="condition-button">{String(tree.treeQuality)}</Button>
+                        </Td>
+                        <Td>
+                          {Array.isArray(tree.treeCondition) ? tree.treeCondition.join(", ") : tree.treeCondition}
+                        </Td>
+                        <Td>{tree.additionalNotes || "N/A"}</Td>
+                        <Td className="clickable-arrow">&gt;</Td>
+                      </Tr>
+                    ))
+                  ) : (
+                    <Tr>
+                      <Td colSpan={7} textAlign="center" fontSize="sm" color="gray.500">
+                        No results
+                      </Td>
+                    </Tr>
+                  )}
+                  {/*{filteredTrees
+                  .slice((currentPage - 1) * treesPerPage, currentPage * treesPerPage)
+                  .map((tree, index) => (
+                    <Tr key={tree._id}>
+                      <Td>{tree._id}</Td>
+                      <Td>{tree.collectorName}</Td>
+                      <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
+                      <Td>
+                        {Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ") : tree.gpsCoordinates}
+                      </Td>
+                      <Td>{tree.photo && <Image src={tree.photo} alt="Tree" width="50" height="50" />}</Td>
+                      <Td>{tree.dbh.toString()}</Td>
+                      <Td>{tree.canopyBreadth.toString()}</Td>
+                      <Td>
+                        <Button className="species-button">{tree.species}</Button>
+                      </Td>
+                      <Td>
+                        <Button className="condition-button">{String(tree.treeQuality)}</Button>
+                      </Td>
+                      <Td>{Array.isArray(tree.treeCondition) ? tree.treeCondition.join(", ") : tree.treeCondition}</Td>
+                      <Td>{tree.additionalNotes || "N/A"}</Td>
+                      <Td className="clickable-arrow">&gt;</Td>
+                    </Tr>
+                  ))}*/}
+                </Tbody>
+              </Table>
+            </TableContainer>
+            {/*Table Pages*/}
+            {totalPages > 1 && (
+              <HStack spacing={2} justifyContent="center" my={2} py={2} flexWrap="wrap" bottom={0}>
+                <Button
+                  bg=""
+                  _hover={{ bg: "gray.100" }}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                >
+                  <HStack height="100%">
+                    <ChevronLeft />
+                    <Text>Previous</Text>
+                  </HStack>
+                </Button>
+
+                {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => {
+                  let pageNumber = 0;
+                  if (totalPages <= 3) {
+                    pageNumber = i + 1;
+                  } else if (currentPage === 1) {
+                    pageNumber = i + 1;
+                  } else if (currentPage === totalPages) {
+                    pageNumber = totalPages - 2 + i;
+                  } else {
+                    pageNumber = currentPage - 1 + i;
+                  }
+                  return (
+                    <Button
+                      key={pageNumber}
+                      onClick={() => setCurrentPage(pageNumber)}
+                      bg={pageNumber === currentPage ? "#DFED98" : ""}
+                      color="#333333"
+                      _hover={{ bg: pageNumber === currentPage ? "#DFED98" : "gray.100" }}
+                      borderRadius="23px"
+                      mx={1}
+                    >
+                      {pageNumber}
+                    </Button>
+                  );
+                })}
+
+                <Button
+                  bg=""
+                  _hover={{ bg: "gray.100" }}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                >
+                  <HStack height="100%">
+                    <Text>Next</Text>
+                    <ChevronRight />
+                  </HStack>
+                </Button>
+              </HStack>
+            )}
+          </Box>
         )}
-        <Box className="page-controls">
+
+        {/*<Box className="page-controls">
           <Button
             className="previous-button"
             onClick={() => handlePageChange(currentPage - 1)}
@@ -261,7 +351,7 @@ export default function TreeTable() {
           >
             Next
           </Button>
-        </Box>
+        </Box>*/}
       </Box>
     </Box>
   );
