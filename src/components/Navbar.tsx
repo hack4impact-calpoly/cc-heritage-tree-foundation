@@ -100,7 +100,7 @@ export default function Navbar() {
         />
 
         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
-          <DrawerOverlay />
+          <DrawerOverlay style={{ backgroundColor: "transparent" }} />
           <DrawerContent
             backgroundColor={COLORS.primary}
             borderTopRightRadius="30px"
@@ -155,13 +155,10 @@ export default function Navbar() {
                       backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "transparent",
                       color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
                       borderRadius: "20px",
-                      width: "190px",
+                      width: "187px",
                       height: "2.5rem",
                       justifyContent: "flex-start",
                       marginLeft: "20px",
-                    }}
-                    _hover={{
-                      backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "rgba(255,255,255,0.1)",
                     }}
                   >
                     <NavItem.icon
