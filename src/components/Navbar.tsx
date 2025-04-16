@@ -1,12 +1,27 @@
 "use client";
-import { Box, VStack, Image, Button, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  VStack,
+  Image,
+  Button,
+  Flex,
+  IconButton,
+  useDisclosure,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+} from "@chakra-ui/react";
 import "@/app/fonts/fonts.css";
 import { LuTrees } from "react-icons/lu";
 import { MdOutlineDashboard, MdOutlinePeopleAlt, MdArrowOutward } from "react-icons/md";
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiMenu } from "react-icons/fi";
 import { IconType } from "react-icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter from Next.js
+import { isMobile } from "react-device-detect";
 
 const COLORS = {
   primary: "#596435",
@@ -57,11 +72,117 @@ const NAV_ITEMS: Array<NavItem> = [
 export default function Navbar() {
   const [activeButton, setActiveButton] = useState("Dashboard");
   const router = useRouter(); // Initialize the router
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleNavigation = (path: string, text: string) => {
     setActiveButton(text);
     router.push(path);
+    if (isMobile) {
+      onClose(); // Close the drawer when navigating on mobile
+    }
   };
+
+  // mobile navbar
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile Toggle Button */}
+        <IconButton
+          aria-label="Open Navigation"
+          icon={<FiMenu />}
+          onClick={onOpen}
+          position="fixed"
+          top="10px"
+          left="10px"
+          zIndex="100"
+          size="lg"
+          colorScheme="green"
+          backgroundColor={COLORS.primary}
+          color={COLORS.white}
+          borderRadius="50%"
+        />
+
+        <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
+          <DrawerOverlay />
+          <DrawerContent
+            backgroundColor={COLORS.primary}
+            borderTopRightRadius="30px"
+            borderBottomRightRadius="30px"
+            maxWidth="270px"
+          >
+            <DrawerHeader pt={6}>
+              <VStack spacing={2}>
+                <Box
+                  style={{
+                    backgroundColor: "white",
+                    borderRadius: "100%",
+                    height: "5rem",
+                    width: "5rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Image
+                    src="/logo1.png"
+                    alt="Logo"
+                    style={{
+                      width: "80%",
+                      height: "80%",
+                      objectFit: "contain",
+                    }}
+                  />
+                </Box>
+                <Box
+                  style={{
+                    color: COLORS.white,
+                    textAlign: "center",
+                    fontSize: "14px",
+                    fontWeight: "medium",
+                    marginTop: "8px",
+                  }}
+                >
+                  Central Coast Heritage
+                  <br />
+                  Tree Foundation
+                </Box>
+              </VStack>
+            </DrawerHeader>
+            <DrawerBody>
+              <VStack spacing={3} align="stretch" mt={4}>
+                {NAV_ITEMS.map((NavItem) => (
+                  <Button
+                    key={NavItem.text}
+                    onClick={() => handleNavigation(NavItem.path, NavItem.text)}
+                    style={{
+                      backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "transparent",
+                      color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
+                      borderRadius: "20px",
+                      width: "190px",
+                      height: "2.5rem",
+                      justifyContent: "flex-start",
+                      marginLeft: "20px",
+                    }}
+                    _hover={{
+                      backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "rgba(255,255,255,0.1)",
+                    }}
+                  >
+                    <NavItem.icon
+                      size={20}
+                      style={{
+                        marginRight: "12px",
+                      }}
+                    />
+                    {NavItem.text}
+                  </Button>
+                ))}
+              </VStack>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      </>
+    );
+  }
 
   return (
     <div
