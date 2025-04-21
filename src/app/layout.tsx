@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </BrowserView>
             <MobileView>
-              <div style={{ display: "flex", minHeight: "100vh" }}>turkey</div>
+              <div style={{ display: "flex", minHeight: "100vh" }}>turkey rice</div>
               {children}
             </MobileView>
           </ChakraProvider>
