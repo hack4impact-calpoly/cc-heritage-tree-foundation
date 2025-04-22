@@ -2,6 +2,7 @@
 import { Center, VStack, Image, Text, Link, Box, Button, Input, FormControl, Circle } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { ClerkProvider, SignUp, SignUpButton, SignedIn, SignIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
 
 export default function SignUpPage() {
   // set original value of email to an empty string

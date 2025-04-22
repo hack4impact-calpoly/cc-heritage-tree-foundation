@@ -4,21 +4,34 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import ProfileCard from "@/components/ProfileCard";
 import Navbar from "@/components/Navbar";
-import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
+import { useEffect, useState } from "react";
+import { isMobile } from "react-device-detect";
 
 import "./globals.css";
 import { usePathname } from "next/navigation";
-import { BsArrowUpSquare } from "react-icons/bs";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathName = usePathname();
+  const [mounted, setMounted] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setIsMobileView(isMobile);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <ClerkProvider>
       <html lang="en">
         <body>
           <ChakraProvider>
-            <BrowserView>
+            {isMobileView ? (
+              <>{children}</>
+            ) : (
               <div style={{ display: "flex", minHeight: "100vh" }}>
                 {pathName !== "/login" && pathName !== "/signup" && <Navbar />}
                 <main
@@ -35,11 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   {children}
                 </main>
               </div>
-            </BrowserView>
-            <MobileView>
-              <div style={{ display: "flex", minHeight: "100vh" }}>turkey rice</div>
-              {children}
-            </MobileView>
+            )}
           </ChakraProvider>
         </body>
       </html>

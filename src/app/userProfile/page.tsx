@@ -1,5 +1,5 @@
 "use client";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, User } from "lucide-react";
 import {
   Grid,
   HStack,
@@ -24,6 +24,7 @@ import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { BoxItem, IconStyle, VO } from "@/styles/AdminDashStyle";
 import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
+import UserProfileMobile from "@/components/UserProfileMobile";
 
 function UserProfile() {
   return (
@@ -208,7 +209,7 @@ function UserProfile() {
       </BrowserView>
 
       <MobileView>
-        <div>hi there</div>
+        <UserProfileMobile />
       </MobileView>
     </div>
   );
