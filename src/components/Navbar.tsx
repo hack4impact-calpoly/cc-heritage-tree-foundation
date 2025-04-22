@@ -86,18 +86,40 @@ export default function Navbar() {
   if (isMobile) {
     return (
       <>
-        {/* Mobile Toggle Button */}
-        <IconButton
-          aria-label="Open Navigation"
-          icon={<FiMenu />}
-          onClick={onOpen}
-          position="fixed"
-          top="10px"
-          left="10px"
-          zIndex="100"
-          size="lg"
-          backgroundColor="#F4F1E8"
-        />
+        {/* Mobile Header Bar */}
+        <Box position="fixed" top="0" left="0" width="100%" height="120px" zIndex="90" backgroundColor="#F4F1E8">
+          {/* Menu Button */}
+          <IconButton
+            aria-label="Open Navigation"
+            icon={<FiMenu />}
+            onClick={onOpen}
+            position="absolute"
+            left="10px"
+            top="50%"
+            transform="translateY(-50%)"
+            zIndex="100"
+            size="lg"
+            backgroundColor="transparent"
+          />
+
+          <Box
+            position="absolute"
+            left="50%"
+            top="50%"
+            transform="translate(-50%, -50%)"
+            width="50px"
+            height="50px"
+            borderRadius="full"
+            backgroundColor="transparent"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            borderWidth="1px"
+            borderColor={COLORS.primary}
+          >
+            <Image src="/logo1.png" alt="Tree Logo" width="36px" height="36px" objectFit="contain" />
+          </Box>
+        </Box>
 
         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
           <DrawerOverlay style={{ backgroundColor: "transparent" }} />
