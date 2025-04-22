@@ -21,11 +21,13 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useUser } from "@clerk/nextjs";
 
 function Messages() {
   const messagesPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("inbox");
+  const { user, isLoaded } = useUser();
 
   const [messages, setMessages] = useState(
     Array.from({ length: 24 }, (_, index) => ({
@@ -36,11 +38,15 @@ function Messages() {
       selected: false,
     })),
   );
-
+  let role = null;
+  if (isLoaded && user) {
+    role = user.organizationMemberships?.[0]?.role;
+  }
   const totalPages = Math.ceil(messages.length / messagesPerPage);
   const indexOfLastMessage = currentPage * messagesPerPage;
   const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
   const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
+  const isAdmin = role === "org:admin";
 
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -83,7 +89,9 @@ function Messages() {
             Sent
           </button>
         </div>
-        <button className={styles.newMessageButton}>New Message +</button>
+        {isAdmin && ( // Only show button if admin
+          <button className={styles.newMessageButton}>New Message +</button>
+        )}
       </div>
 
       {activeTab === "inbox" ? (
