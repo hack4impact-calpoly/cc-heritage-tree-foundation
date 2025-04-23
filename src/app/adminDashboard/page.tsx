@@ -175,7 +175,7 @@ function AdminDashboard() {
                 mt={5}
               >
                 {/* Create New Announcement Button */}
-                <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }} width={350}>
+                <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>
                   <Box mt={5} display="flex" justifyContent="center" {...BoxItem} height={100}>
                     <Button
                       width="100%"
@@ -196,7 +196,7 @@ function AdminDashboard() {
 
                 <Flex justifyContent={"space-between"} mt={5}>
                   {/* Trees Logged This Year */}
-                  <GridItem width={165} height={165}>
+                  <GridItem width="50%" m={1} height={165}>
                     <Box {...BoxItem} height="100%" p={{ base: 2, md: 2 }}>
                       <Text ml={2} fontWeight="bold" color="#596334" fontSize="4xl">
                         123
@@ -210,8 +210,8 @@ function AdminDashboard() {
                     </Box>
                   </GridItem>
 
-                  {/* Trees in Poor Condition */}
-                  <GridItem width={165} height={165}>
+                  {/* Trees in Poor Condition 165*/}
+                  <GridItem width="50%" m={1} height={165}>
                     <Box {...BoxItem} height="100%" p={{ base: 2, md: 2 }}>
                       <Text ml={2} fontWeight="bold" color="#596334" fontSize="4xl">
                         5
@@ -235,7 +235,7 @@ function AdminDashboard() {
                 </Flex>
 
                 {/* Map */}
-                <GridItem width={350} height={250} data-testid="map_id">
+                <GridItem height={250} data-testid="map_id">
                   <Text fontSize="2xl" mb={5} fontWeight={"bold"}>
                     Map
                   </Text>
