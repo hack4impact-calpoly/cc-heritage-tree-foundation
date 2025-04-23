@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     pathName !== "/signup" &&
                     pathName !== "/messages" &&
                     pathName !== "/adminDashboard" &&
-                    pathName !== "/createAnnouncement"
+                    pathName !== "/createAnnouncement" &&
                     pathName !== "/volunteerDashboard" &&
                     pathName !== "/volunteers" &&
                     pathName !== "/treeTable" &&
