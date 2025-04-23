@@ -28,6 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     pathName !== "/messages" &&
                     pathName !== "/adminDashboard" &&
                     pathName !== "/createAnnouncement"
+                    pathName !== "/volunteerDashboard" &&
+                    pathName !== "/volunteers" &&
+                    pathName !== "/treeTable" &&
+                    pathName !== "/newTreeForm"
                       ? "15rem"
                       : "0",
                   width: "100%",
