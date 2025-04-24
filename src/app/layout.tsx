@@ -23,6 +23,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   backgroundColor: "#F4F1E8",
                   flexGrow: 1,
                   paddingLeft:
+                    pathName !== "/login" &&
+                    pathName !== "/signup" &&
+                    pathName !== "/messages" &&
+                    pathName !== "/adminDashboard" &&
+                    pathName !== "/createAnnouncement" &&
                     pathName !== "/volunteerDashboard" &&
                     pathName !== "/volunteers" &&
                     pathName !== "/treeTable" &&
