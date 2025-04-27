@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { from, to, message } = body;
+    const { from, to, subject, message } = body;
 
     const readStatus = to.map((userID: string) => ({
       userID,
@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
     const newAnnouncement = new Announcement({
       from,
       to,
+      subject,
       time: new Date(),
       message,
       readStatus,
