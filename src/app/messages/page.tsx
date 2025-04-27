@@ -20,6 +20,7 @@ import {
   Checkbox,
   Button,
   Box,
+  Tfoot,
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
@@ -132,37 +133,39 @@ function Messages() {
               ))}
             </Tbody>
             {/* Page Controls */}
-            <Tr>
-              <Td colSpan={5}>
-                <Box className={styles.pageControls}>
-                  <Button
-                    className={styles.pageButton}
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </Button>
-
-                  {Array.from({ length: totalPages }, (_, index) => (
+            <Tfoot>
+              <Tr>
+                <Td colSpan={5}>
+                  <Box className={styles.pageControls}>
                     <Button
-                      key={index + 1}
-                      className={currentPage === index + 1 ? styles.activePage : styles.pageButton}
-                      onClick={() => handlePageChange(index + 1)}
+                      className={styles.pageButton}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
                     >
-                      {index + 1}
+                      Previous
                     </Button>
-                  ))}
 
-                  <Button
-                    className={styles.pageButton}
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                  </Button>
-                </Box>
-              </Td>
-            </Tr>
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <Button
+                        key={index + 1}
+                        className={currentPage === index + 1 ? styles.activePage : styles.pageButton}
+                        onClick={() => handlePageChange(index + 1)}
+                      >
+                        {index + 1}
+                      </Button>
+                    ))}
+
+                    <Button
+                      className={styles.pageButton}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </Button>
+                  </Box>
+                </Td>
+              </Tr>
+            </Tfoot>
           </Table>
           {selectedMessage && (
             <div className={styles.messageTable}>
