@@ -4,6 +4,7 @@ export type IAnnouncement = {
   _id: string;
   from: string;
   to: string[];
+  subject: string;
   time: Date;
   message: string;
   readStatus: {
@@ -15,6 +16,7 @@ export type IAnnouncement = {
 const AnnouncementSchema = new Schema<IAnnouncement>({
   from: { type: String, required: true },
   to: { type: [String], required: true },
+  subject: { type: String, required: true },
   time: { type: Date, required: true },
   message: { type: String, required: true },
   readStatus: [

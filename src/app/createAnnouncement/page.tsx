@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
 
 import { useState } from "react";
 import {
@@ -17,6 +18,7 @@ import { AttachmentIcon } from "@chakra-ui/icons";
 import { InputStyleAnnouncement } from "@/styles/CreateAnnouncementStyle";
 
 const CreateAnnouncement = () => {
+  const { user } = useUser();
   type AnnouncementData = {
     recipients: string;
     subject: string;
@@ -50,12 +52,13 @@ const CreateAnnouncement = () => {
 
   const handleSubmit = async () => {
     try {
-      const from = "admin"; // placeholder
+      const from = user?.fullName || "Unknown Sender";
       const to = formData.recipients.split(",").map((r) => r.trim());
 
       const payload = {
         from,
         to,
+        subject: formData.subject,
         message: formData.message,
       };
 
