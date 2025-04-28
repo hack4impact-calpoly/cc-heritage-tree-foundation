@@ -17,6 +17,7 @@ import {
   Flex,
   Tr,
 } from "@chakra-ui/react";
+import { ITree } from "@/database/treeSchema";
 import Map from "@/components/Map";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -29,9 +30,26 @@ function AdminDashboard() {
   const user = useUser();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  const [treeData, setTreeData] = useState<ITree[]>([]);
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+  useEffect(() => {
+    setIsClient(true);
+
+    const fetchTrees = async () => {
+      try {
+        const response = await fetch("/api/tree");
+        if (!response.ok) throw new Error("Failed to fetch trees for dashboard");
+        const data: ITree[] = await response.json();
+        setTreeData(data);
+      } catch (error) {
+        console.error("Error fetching tree data:", error);
+      }
+    };
+
+    fetchTrees();
   }, []);
 
   return (
@@ -138,7 +156,7 @@ function AdminDashboard() {
 
                 {/* Map */}
                 <GridItem rowSpan={{ base: 2, md: 5 }} colSpan={{ base: 1, md: 8 }} data-testid="map_id">
-                  <Map />
+                  <Map trees={treeData} />
                 </GridItem>
               </Grid>
             </Box>
@@ -239,7 +257,7 @@ function AdminDashboard() {
                   <Text fontSize="2xl" mb={5} fontWeight={"bold"}>
                     Map
                   </Text>
-                  <Map />
+                  <Map trees={treeData} />
                 </GridItem>
               </Grid>
             </Box>
