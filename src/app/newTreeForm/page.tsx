@@ -258,33 +258,6 @@ export default function TreeEntryForm() {
     <div>
       {isClient ? (
         <Box p={6} maxW="600px" mx="auto" boxShadow="md" borderRadius="md" bg={COLORS.PureWhite}>
-          <MobileView>
-            <HStack
-              mt={"58px"}
-              width="100%"
-              position={"relative"}
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <IconButton position={"absolute"} left="10px" aria-label="Navbar" key={"ghost"} variant={"ghost"}>
-                <Menu width="48px" color="#596334" />
-              </IconButton>
-              <Box
-                width="48px"
-                height="48px"
-                border={"solid"}
-                borderWidth={"1px"}
-                borderRadius="100%"
-                display="flex"
-                justifyContent={"center"}
-                borderColor={"#596334"}
-                padding={"3px"}
-              >
-                <Image src="~/../logo1.png" alt="logo" htmlWidth="36px" htmlHeight="36px" />
-              </Box>
-            </HStack>
-          </MobileView>
           <Heading mb={4} justifySelf="center" margin="1rem" p={"1rem"}>
             Tell us about this tree!
           </Heading>
@@ -299,7 +272,7 @@ export default function TreeEntryForm() {
                   type="string"
                   name="treeLatitude"
                   value={formData.treeLocation[0]}
-                  placeholder="Latitude"
+                  placeholder="input latitude"
                   onChange={handleTreeLocation}
                 />
                 <TreeFormInput
@@ -307,7 +280,7 @@ export default function TreeEntryForm() {
                   type="string"
                   name="treeLongitude"
                   value={formData.treeLocation[1]}
-                  placeholder="Longitude"
+                  placeholder="input longitude"
                   onChange={handleTreeLocation}
                 />
               </Box>

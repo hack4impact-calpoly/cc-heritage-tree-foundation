@@ -86,13 +86,13 @@ describe("TreeEntryForm", () => {
     const canopySpread = screen.getByLabelText(/Canopy Spread/i) as HTMLInputElement;
     const trunkDBH = screen.getByLabelText(/Trunk DBH/i) as HTMLInputElement;
 
-    await userEvent.type(treeLat, "100");
+    await userEvent.type(treeLat, "10");
     await userEvent.type(treeLong, "30");
     await userEvent.type(treeHeight, "20");
     await userEvent.type(canopySpread, "100");
     await userEvent.type(trunkDBH, "-2");
 
-    expect(treeLat.value).toBe("100");
+    expect(treeLat.value).toBe("10");
     expect(treeLong.value).toBe("30");
     expect(treeHeight.value).toBe("20");
     expect(canopySpread.value).toBe("100");
