@@ -167,6 +167,8 @@ export default function TreeEntryForm() {
 
       const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
       const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
+      // added tree height
+      const treeHeight = mongoose.Types.Decimal128.fromString(formData.treeSpecs.treeHeight.toString());
 
       const gpsCoordinates = formData.treeLocation.map((coord) =>
         mongoose.Types.Decimal128.fromString(coord.toString()),
@@ -183,6 +185,7 @@ export default function TreeEntryForm() {
         treeCondition: formData.treeIssues,
         treeQuality: formData.treeHealth,
         additionalNotes: formData.fieldNotes,
+        treeHeight: treeHeight, // added tree height
       };
 
       console.log("Submitting the following data:", JSON.stringify(dataToSubmit, null, 2));

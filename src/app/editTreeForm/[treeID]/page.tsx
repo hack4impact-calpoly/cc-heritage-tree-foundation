@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import {
   Box,
   Input,
@@ -22,7 +23,7 @@ import {
   TreeType,
   FormValues,
   TREE_TYPE_DATA,
-} from ".././newTreeForm/tree-form-data";
+} from "../../newTreeForm/tree-form-data";
 import { COLORS } from "@/styles/color-styles-data";
 import { LuNotebookPen } from "react-icons/lu";
 import { FaRegCircleCheck } from "react-icons/fa6";
@@ -70,6 +71,7 @@ const disabledStyle = {
 };
 
 export default function EditTreeEntryForm() {
+  const params = useParams(); // to get params.treeID
   const { user } = useUser();
   const [formData, setFormData] = useState<FormValues>({
     treeLocation: ["", ""],
@@ -89,41 +91,43 @@ export default function EditTreeEntryForm() {
     // get specific tree data from the form
     const getTreeData = async () => {
       try {
-        /*const response = await fetch("/api/tree", {
+        const response = await fetch(`/api/tree/${params.treeID}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(dataToSubmit),
         });
 
-        const responseText = await response.text();
-        console.log("Response Text: " + responseText);
+        const treeInfo = await response.json();
+        console.log("Response Text: " + treeInfo);
 
         if (response.ok) {
-          alert("Tree data edited and submitted successfully!");
+          console.log(treeInfo.treeQuality, treeInfo.canopyBreadth);
+          console.log("Specific tree data retreived successfully!");
           setFormData({
-            treeLocation: ["", ""],
-            treeType: "",
+            treeLocation: [
+              treeInfo.gpsCoordinates[0]["$numberDecimal"] ? treeInfo.gpsCoordinates[0]["$numberDecimal"] : "",
+              treeInfo.gpsCoordinates[1]["$numberDecimal"] ? treeInfo.gpsCoordinates[1]["$numberDecimal"] : "",
+            ],
+            treeType: treeInfo.species ? treeInfo.species : "",
             treeSpecs: {
-              treeHeight: 0,
-              canopySpread: 0,
-              trunkDBH: "",
+              treeHeight: treeInfo.treeHeight["$numberDecimal"] ? treeInfo.treeHeight["$numberDecimal"] : 0, // height info not kept
+              canopySpread: treeInfo.canopyBreadth["$numberDecimal"] ? treeInfo.canopyBreadth["$numberDecimal"] : "",
+              trunkDBH: treeInfo.dbh["$numberDecimal"] ? treeInfo.dbh["$numberDecimal"] : "",
             },
-            treeHealth: 0,
-            treeIssues: [],
-            fieldNotes: "",
+            treeHealth: treeInfo.treeQuality["$numberDecimal"] ? treeInfo.treeQuality["$numberDecimal"] : "",
+            treeIssues: treeInfo.treeCondition ? treeInfo.treeCondition : [],
+            fieldNotes: treeInfo.additionalNotes ? treeInfo.additionalNotes : "",
           });
         } else {
-          alert("Failed to edit and submit data.");
+          console.log("Failed to retreive data.");
         }
-      } */
       } catch (error) {
-        console.error("Error editing and submitting tree data:", error);
-        alert("Error editing and submitting tree data.");
+        console.error("Error retreiving tree data:", error);
       }
     };
     console.log("load data into the formData");
+    getTreeData();
   }, []);
 
   const handleTreeType = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -216,6 +220,7 @@ export default function EditTreeEntryForm() {
 
       const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
       const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
+      const treeHeight = mongoose.Types.Decimal128.fromString(formData.treeSpecs.treeHeight.toString());
 
       const gpsCoordinates = formData.treeLocation.map((coord) =>
         mongoose.Types.Decimal128.fromString(coord.toString()),
@@ -232,12 +237,13 @@ export default function EditTreeEntryForm() {
         treeCondition: formData.treeIssues,
         treeQuality: formData.treeHealth,
         additionalNotes: formData.fieldNotes,
+        treeHeight: treeHeight,
       };
 
       console.log("Submitting the following data:", JSON.stringify(dataToSubmit, null, 2));
 
-      const response = await fetch("/api/tree", {
-        method: "PATCH",
+      const response = await fetch(`/api/tree/${params.treeID}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -249,18 +255,6 @@ export default function EditTreeEntryForm() {
 
       if (response.ok) {
         alert("Tree data edited and submitted successfully!");
-        setFormData({
-          treeLocation: ["", ""],
-          treeType: "",
-          treeSpecs: {
-            treeHeight: 0,
-            canopySpread: 0,
-            trunkDBH: "",
-          },
-          treeHealth: 0,
-          treeIssues: [],
-          fieldNotes: "",
-        });
       } else {
         alert("Failed to edit and submit data.");
       }
