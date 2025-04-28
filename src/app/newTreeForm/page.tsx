@@ -92,17 +92,42 @@ export default function TreeEntryForm() {
   };
 
   const handleTreeLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const longOrLat = e.currentTarget.getAttribute("name");
-    const value = e.target.value;
-    if (longOrLat === "treeLatitude") {
+    const { name, value } = e.currentTarget;
+
+    // clears input with no error
+    if (value.trim() === "") {
+      if (name === "treeLatitude") {
+        setFormData((prev) => ({
+          ...prev,
+          treeLocation: ["", prev.treeLocation[1]],
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          treeLocation: [prev.treeLocation[0], ""],
+        }));
+      }
+      return;
+    }
+    const numericValue = parseFloat(value);
+    if (isNaN(numericValue)) {
+      return;
+    }
+    if (name === "treeLatitude") {
+      if (numericValue < -90 || numericValue > 90) {
+        return;
+      }
       setFormData((prev) => ({
         ...prev,
-        treeLocation: [value, formData.treeLocation[1]],
+        treeLocation: [value, prev.treeLocation[1]],
       }));
-    } else {
+    } else if (name === "treeLongitude") {
+      if (numericValue < -180 || numericValue > 180) {
+        return;
+      }
       setFormData((prev) => ({
         ...prev,
-        treeLocation: [formData.treeLocation[0], value],
+        treeLocation: [prev.treeLocation[0], value],
       }));
     }
   };
@@ -274,7 +299,7 @@ export default function TreeEntryForm() {
                   type="string"
                   name="treeLatitude"
                   value={formData.treeLocation[0]}
-                  placeholder="input latitude"
+                  placeholder="Latitude"
                   onChange={handleTreeLocation}
                 />
                 <TreeFormInput
@@ -282,7 +307,7 @@ export default function TreeEntryForm() {
                   type="string"
                   name="treeLongitude"
                   value={formData.treeLocation[1]}
-                  placeholder="input longitude"
+                  placeholder="Longitude"
                   onChange={handleTreeLocation}
                 />
               </Box>
