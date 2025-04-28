@@ -58,7 +58,7 @@ function Messages() {
     }
   };
 
-  const toggleSelect = (id: number) => {
+  const toggleSelect = (id: string) => {
     setMessages((prevMessages) =>
       prevMessages.map((msg) => (msg.id === id ? { ...msg, selected: !msg.selected } : msg)),
     );
@@ -113,7 +113,7 @@ function Messages() {
               {currentMessages.map((msg) => (
                 <Tr key={msg.id} className={styles.clickableRow}>
                   <Td>
-                    <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
+                    <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg._id)} />
                   </Td>
                   <Td className={msg.selected ? styles.fadedText : ""}>
                     <Flex className={styles.avatarContainer}>
