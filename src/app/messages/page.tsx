@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import styles from "./messages.module.css";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import {
   Table,
@@ -29,22 +30,27 @@ function Messages() {
   const [activeTab, setActiveTab] = useState("inbox");
   const router = useRouter();
 
-  const [messages, setMessages] = useState(
-    Array.from({ length: 24 }, (_, index) => ({
-      id: index + 1,
-      sender: "Jane Doe",
-      message: "Hi! This is a message sent to you...",
-      date: "01.01.25",
-      selected: false,
-    })),
-  );
+  const [messages, setMessages] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch("/api/messages");
+        const data = await response.json();
+        setMessages(data);
+      } catch (error) {
+        console.error("Failed to fetch messages:", error);
+      }
+    };
+    fetchMessages();
+  }, []);
 
   const [selectedMessage, setSelectedMessage] = useState<(typeof messages)[0] | null>(null);
-
   const totalPages = Math.ceil(messages.length / messagesPerPage);
   const indexOfLastMessage = currentPage * messagesPerPage;
   const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
   const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
+  const unreadCount = messages.length;
 
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -58,14 +64,13 @@ function Messages() {
     );
   };
 
-  const handleDelete = (id: number) => {
-    setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== id));
-  };
-
   return (
     <div className={styles.container}>
       <h2 className={styles.header}>Messages</h2>
-      <p className={styles.unread}>7 unread announcements</p>
+      <p className={styles.unread}>
+        {unreadCount} unread {unreadCount === 1 ? "announcement" : "announcements"}
+      </p>
+
       <div className={styles.topBar}>
         <div className={styles.tabContainer}>
           <button
@@ -97,11 +102,11 @@ function Messages() {
           <Table className={styles.table}>
             <Thead className={styles.tableHeader}>
               <Tr className={styles.tableHeader}>
-                <Th>Select</Th>
+                <Th></Th>
                 <Th>Sender</Th>
-                <Th>Message</Th>
+                <Th>Subject Line</Th>
                 <Th>Date</Th>
-                <Th>Actions</Th>
+                <Th></Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -110,23 +115,25 @@ function Messages() {
                   <Td>
                     <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
                   </Td>
-                  <Td className={`${msg.selected ? styles.fadedText : ""}`} onClick={() => setSelectedMessage(msg)}>
+                  <Td className={msg.selected ? styles.fadedText : ""}>
                     <Flex className={styles.avatarContainer}>
                       <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
-                      {msg.sender}
+                      {msg.from}
                     </Flex>
                   </Td>
-                  <Td className={`${msg.selected ? styles.fadedText : ""}`} onClick={() => setSelectedMessage(msg)}>
-                    {msg.message}
-                  </Td>
-                  <Td className={msg.selected ? styles.fadedText : ""}>{msg.date}</Td>
+                  <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
+                  <Td className={msg.selected ? styles.fadedText : ""}>{new Date(msg.time).toLocaleDateString()}</Td>
                   <Td>
-                    <Menu>
-                      <MenuButton as={IconButton} icon={<BsThreeDotsVertical />} className={styles.menuButton} />
-                      <MenuList>
-                        <MenuItem onClick={() => handleDelete(msg.id)}>Delete</MenuItem>
-                      </MenuList>
-                    </Menu>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      color="#596334"
+                      fontSize="2xl"
+                      _hover={{ color: "#83924f", transform: "scale(1.2)" }}
+                      onClick={() => setSelectedMessage(msg)}
+                    >
+                      &gt;
+                    </Button>
                   </Td>
                 </Tr>
               ))}
@@ -167,16 +174,12 @@ function Messages() {
           {selectedMessage && (
             <div className={styles.messageTable}>
               <div className={styles.messageHeader}>
-                <h3>Message Title</h3>
-                <p>Admin Name</p>
+                <h3>{selectedMessage.subject}</h3>
+                <p>{selectedMessage.from}</p>
               </div>
               <div className={styles.messageBody}>
-                <h1>MM/DD/YYYY</h1>
-                <p>
-                  Message contents... Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                  incididunt ut labore et dolore magna aliqua. UT enim ad minim veniam, quis nostrud exercitation
-                  ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
+                <h1>{new Date(selectedMessage.time).toLocaleDateString()}</h1>
+                <p>{selectedMessage.message}</p>
               </div>
             </div>
           )}
