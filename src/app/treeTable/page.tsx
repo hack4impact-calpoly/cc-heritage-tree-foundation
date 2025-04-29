@@ -561,7 +561,7 @@ export default function TreeTable() {
                               <Text fontSize="med" color="#596334">
                                 DBH
                               </Text>
-                              <Text fontWeight="bold">{selectedTree.dbh}&quot</Text>
+                              <Text fontWeight="bold">{selectedTree.dbh?.toString()}&quot;</Text>
                             </Box>
                             <Box>
                               <Text fontSize="med" color="#596334">
@@ -570,7 +570,7 @@ export default function TreeTable() {
                               <Text fontSize="med" color="#596334">
                                 Height
                               </Text>
-                              <Text fontWeight="bold">30&apos</Text>
+                              <Text fontWeight="bold">30&apos;</Text>
                             </Box>
                             <Box>
                               <Text fontSize="med" color="#596334">
@@ -579,7 +579,7 @@ export default function TreeTable() {
                               <Text fontSize="med" color="#596334">
                                 Spread
                               </Text>
-                              <Text fontWeight="bold">{selectedTree.canopyBreadth}&apos</Text>
+                              <Text fontWeight="bold">{selectedTree.canopyBreadth?.toString()}&apos;</Text>
                             </Box>
                           </Grid>
 
