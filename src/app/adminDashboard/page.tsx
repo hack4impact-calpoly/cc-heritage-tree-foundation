@@ -24,11 +24,56 @@ import { IconStyle, BoxItem, VO, Condition, ConditionMobile } from "@/styles/Adm
 import { AlignJustify } from "lucide-react";
 import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
+import { COLORS } from "@/styles/color-styles-data";
+import { ITree } from "@/database/treeSchema";
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 function AdminDashboard() {
   const user = useUser();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  const [treesLoggedYear, setTreesLoggedYear] = useState<number>(0);
+  const [treesLastMonth, setTreesLastMonth] = useState<number>(0);
+  const [treesThisMonth, setTreesThisMonth] = useState<number>(0);
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    const fetchTrees = async () => {
+      const response = await fetch("/api/tree/");
+      if (!response.ok) {
+        throw new Error(`Status: ${response.status}`);
+      }
+      const trees: Array<ITree> = await response.json();
+      trees.forEach((tree: ITree) => {
+        const treeDateLogged = new Date(tree.dateCollected);
+        if (treeDateLogged.getFullYear() == currentYear) {
+          const treeMonthLogged = treeDateLogged.getMonth();
+          if (treeMonthLogged == currentMonth) {
+            setTreesThisMonth((prevCount) => prevCount + 1);
+          } else if (treeMonthLogged == currentMonth - 1) {
+            setTreesLastMonth((prevCount) => prevCount + 1);
+          }
+          setTreesLoggedYear((prevCount) => prevCount + 1);
+        }
+      });
+    };
+    fetchTrees().catch(console.error);
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -39,7 +84,18 @@ function AdminDashboard() {
       {isClient ? (
         <div>
           <BrowserView>
-            <Box width="100%" height="100%" p={{ base: "20px", md: "0 50px 50px 50px" }} pt="0px">
+            <Box
+              position="absolute"
+              height="100%"
+              width="100vw"
+              maxWidth="100%"
+              bg="#F4F1E8"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              p={{ base: "20px", md: "0 50px 50px 50px" }}
+              pt="0px"
+            >
               <Grid
                 width="100%"
                 height="100%"
@@ -50,7 +106,7 @@ function AdminDashboard() {
                 {/* Welcome Message */}
                 <GridItem colSpan={{ base: 1, md: 8 }} rowSpan={1} display="flex" alignItems="center">
                   <Text fontSize="3xl" fontWeight="bold" color="#596334">
-                    Welcome back, {user.user?.firstName}!
+                    Welcome back, {user.user ? user.user.firstName : "User"}!
                   </Text>
                 </GridItem>
 
@@ -64,9 +120,11 @@ function AdminDashboard() {
                       </Link>
                     </HStack>
                     <Text mt={5} mb={5} fontWeight="bold" color="#596334" fontSize="7xl">
-                      123
+                      {treesLoggedYear}
                     </Text>
-                    <Text color="#333333">% incr from December</Text>
+                    <Text color="#333333">
+                      {(treesThisMonth / treesLastMonth) * 100}% incr from {MONTHS[currentMonth - 1]}
+                    </Text>
                   </Box>
                 </GridItem>
 
@@ -94,18 +152,18 @@ function AdminDashboard() {
                           {[1, 2, 3].map((item) => (
                             <Tr key={item}>
                               <Td>{item}</Td>
-                              <Td>
+                              <Td justifyItems="center">
                                 <Box {...VO} {...IconStyle}>
                                   VO
                                 </Box>
                               </Td>
-                              <Td>
+                              <Td justifyItems="center">
                                 <Box {...Condition} {...IconStyle}>
                                   {item === 1 ? 10 : item === 2 ? 8 : 9}
                                 </Box>
                               </Td>
                               <Td>{item === 1 ? "12/24/2024" : item === 2 ? "1/3/2025" : "2/6/2025"}</Td>
-                              <Td>
+                              <Td justifyItems="center">
                                 <NotebookPen />
                               </Td>
                             </Tr>
@@ -120,18 +178,33 @@ function AdminDashboard() {
                 <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>
                   <Box display="flex" justifyContent="center" {...BoxItem} height="100%">
                     <Button
-                      width="100%"
+                      display={"flex"}
+                      justifyContent={"space-between"}
+                      paddingLeft="1rem"
+                      paddingRight="5px"
+                      width="85%"
                       maxWidth="300px"
                       height="50px"
                       color="white"
                       bg="#E57300"
-                      borderRadius="50px"
+                      borderRadius="20rem"
                       fontWeight="bold"
                       fontSize="sm"
                       onClick={() => router.push("/createAnnouncement")}
                     >
                       Create new announcement&nbsp;
-                      <SquarePen />
+                      <Box
+                        display={"flex"}
+                        width="40px"
+                        height="40px"
+                        borderRadius="20rem"
+                        bg={COLORS.PureWhite}
+                        justifyContent="center"
+                        alignItems="center"
+                        color="#E57300"
+                      >
+                        <SquarePen />
+                      </Box>
                     </Button>
                   </Box>
                 </GridItem>
