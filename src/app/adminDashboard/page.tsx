@@ -149,7 +149,6 @@ function AdminDashboard() {
     setIsClient(true);
   }, []);
 
-  console.log(worst3Trees);
   return (
     <div>
       {isClient ? (
@@ -182,10 +181,12 @@ function AdminDashboard() {
                 </GridItem>
 
                 {/* Trees Logged This Year */}
-                <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 3 }}>
+                <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 2 }}>
                   <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
                     <HStack>
-                      <Text color="#333333">Trees Logged This Year</Text>
+                      <Text color="#333333" fontSize="1.25rem">
+                        Trees Logged This Year
+                      </Text>
                       <Link href="" ml="auto">
                         <ArrowUpRight />
                       </Link>
@@ -204,7 +205,9 @@ function AdminDashboard() {
                 <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 5 }}>
                   <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
                     <HStack>
-                      <Text color="#333333">Trees in Poor Condition</Text>
+                      <Text color="#333333" fontSize="1.25rem">
+                        Trees in Poor Condition
+                      </Text>
                       <Link href="" ml="auto">
                         <ArrowUpRight />
                       </Link>
@@ -213,7 +216,7 @@ function AdminDashboard() {
                       <Table size="sm" variant="simple">
                         <Thead bg="#DFED98">
                           <Tr h="40px">
-                            <Th width="20%">#</Th>
+                            <Th width="20%">Tree ID</Th>
                             <Th width="20%">Species</Th>
                             <Th width="20%">Condition</Th>
                             <Th width="20%">Date Recorded</Th>
@@ -263,7 +266,7 @@ function AdminDashboard() {
                 </GridItem>
 
                 {/* Create New Announcement Button */}
-                <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>
+                <GridItem rowSpan={1} colSpan={{ base: 1, md: 2 }}>
                   <Box display="flex" justifyContent="center" {...BoxItem} height="100%">
                     <Button
                       display={"flex"}
@@ -298,7 +301,7 @@ function AdminDashboard() {
                 </GridItem>
 
                 {/* Map */}
-                <GridItem rowSpan={{ base: 2, md: 5 }} colSpan={{ base: 1, md: 8 }} data-testid="map_id">
+                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 7 }} data-testid="map_id">
                   <Map />
                 </GridItem>
               </Grid>
