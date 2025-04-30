@@ -103,46 +103,48 @@ function Messages() {
 
               {activeTab === "inbox" ? (
                 <>
-                  <Table className={styles.table}>
-                    <Thead>
-                      <Tr>
-                        <Th>Select</Th>
-                        <Th>Sender</Th>
-                        <Th>Message</Th>
-                        <Th>Date</Th>
-                        <Th>Actions</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {currentMessages.map((msg) => (
-                        <Tr key={msg.id} className={msg.selected ? styles.fadedRow : ""}>
-                          <Td>
-                            <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
-                          </Td>
-                          <Td className={msg.selected ? styles.fadedText : ""}>
-                            <Flex className={styles.avatarContainer}>
-                              <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
-                              {msg.sender}
-                            </Flex>
-                          </Td>
-                          <Td className={msg.selected ? styles.fadedText : ""}>{msg.message}</Td>
-                          <Td className={msg.selected ? styles.fadedText : ""}>{msg.date}</Td>
-                          <Td>
-                            <Menu>
-                              <MenuButton
-                                as={IconButton}
-                                icon={<BsThreeDotsVertical />}
-                                className={styles.menuButton}
-                              />
-                              <MenuList>
-                                <MenuItem onClick={() => handleDelete(msg.id)}>Delete</MenuItem>
-                              </MenuList>
-                            </Menu>
-                          </Td>
+                  <Box height="41rem">
+                    <Table className={styles.table}>
+                      <Thead>
+                        <Tr>
+                          <Th>Select</Th>
+                          <Th>Sender</Th>
+                          <Th>Message</Th>
+                          <Th>Date</Th>
+                          <Th>Actions</Th>
                         </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
+                      </Thead>
+                      <Tbody>
+                        {currentMessages.map((msg) => (
+                          <Tr key={msg.id} className={msg.selected ? styles.fadedRow : ""}>
+                            <Td>
+                              <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
+                            </Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>
+                              <Flex className={styles.avatarContainer}>
+                                <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
+                                {msg.sender}
+                              </Flex>
+                            </Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>{msg.message}</Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>{msg.date}</Td>
+                            <Td>
+                              <Menu>
+                                <MenuButton
+                                  as={IconButton}
+                                  icon={<BsThreeDotsVertical />}
+                                  className={styles.menuButton}
+                                />
+                                <MenuList>
+                                  <MenuItem onClick={() => handleDelete(msg.id)}>Delete</MenuItem>
+                                </MenuList>
+                              </Menu>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
 
                   {/* Pagination Controls */}
                   <Box className={styles.pageControls}>
