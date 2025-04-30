@@ -26,6 +26,13 @@ import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
 import { COLORS } from "@/styles/color-styles-data";
 import { ITree } from "@/database/treeSchema";
+import { treeHealthColors, TREE_TYPE_DATA } from "../newTreeForm/tree-form-data";
+import { tree } from "next/dist/build/templates/app-page";
+import { Decimal128 } from "mongoose";
+
+interface Decimal128WithProperty {
+  $numberDecimal: string;
+}
 
 const MONTHS = [
   "January",
@@ -42,6 +49,44 @@ const MONTHS = [
   "December",
 ];
 
+const getSpeciesAbbreviation = (species: string) => {
+  switch (species) {
+    case "Valley Oak":
+      return "VO";
+    case "Coast Live Oak":
+      return "CLO";
+    case "Blue Oak":
+      return "BO";
+    default:
+      return "ERR";
+  }
+};
+
+const getSpeciesColors = (species: string) => {
+  switch (species) {
+    case "Valley Oak":
+      return {
+        bgColor: COLORS.RobinsEgg,
+        color: COLORS.Steel,
+      };
+    case "Coast Live Oak":
+      return {
+        bgColor: COLORS.Sky,
+        color: COLORS.Charcoal,
+      };
+    case "Blue Oak":
+      return {
+        bgColor: COLORS.Steel,
+        color: COLORS.PureWhite,
+      };
+    default:
+      return {
+        bgColor: COLORS.PureWhite,
+        color: COLORS.PureWhite,
+      };
+  }
+};
+
 function AdminDashboard() {
   const user = useUser();
   const router = useRouter();
@@ -49,12 +94,13 @@ function AdminDashboard() {
   const [treesLoggedYear, setTreesLoggedYear] = useState<number>(0);
   const [treesLastMonth, setTreesLastMonth] = useState<number>(0);
   const [treesThisMonth, setTreesThisMonth] = useState<number>(0);
+  const [worst3Trees, setWorst3Trees] = useState<Array<ITree>>([]);
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
-    const fetchTrees = async () => {
-      const response = await fetch("/api/tree/");
+    const fetchTreeCount = async () => {
+      const response = await fetch("/api/tree");
       if (!response.ok) {
         throw new Error(`Status: ${response.status}`);
       }
@@ -72,13 +118,38 @@ function AdminDashboard() {
         }
       });
     };
-    fetchTrees().catch(console.error);
+    fetchTreeCount().catch(console.error);
+  }, [currentMonth, currentYear]);
+
+  useEffect(() => {
+    const fetchWorstTrees = async () => {
+      const response = await fetch("/api/tree");
+      if (!response.ok) {
+        throw new Error(`HTTP ERROR Status:${response.status}`);
+      }
+      const trees: Array<ITree> = await response.json();
+      // trees.forEach((tree) => {
+      //   console.log(tree.treeQuality);
+      //   console.log(tree.treeQuality ? parseFloat(tree.treeQuality.$numberDecimal) : null);
+      // });
+      console.log(typeof trees[0].treeQuality);
+      trees.sort(
+        (a, b) =>
+          (a.treeQuality ? parseFloat((a.treeQuality as unknown as Decimal128WithProperty).$numberDecimal) : 11) -
+          (b.treeQuality ? parseFloat((b.treeQuality as unknown as Decimal128WithProperty).$numberDecimal) : 11),
+      );
+
+      console.log(trees);
+      setWorst3Trees([trees[0], trees[1], trees[2]]);
+    };
+    fetchWorstTrees().catch(console.error);
   }, []);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  console.log(worst3Trees);
   return (
     <div>
       {isClient ? (
@@ -123,7 +194,8 @@ function AdminDashboard() {
                       {treesLoggedYear}
                     </Text>
                     <Text color="#333333">
-                      {(treesThisMonth / treesLastMonth) * 100}% incr from {MONTHS[currentMonth - 1]}
+                      {treesLastMonth != 0 ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2) : 100}%{" "}
+                      {treesThisMonth / treesLastMonth >= 1 ? "incr" : "decr"} from {MONTHS[currentMonth - 1]}
                     </Text>
                   </Box>
                 </GridItem>
@@ -145,27 +217,43 @@ function AdminDashboard() {
                             <Th width="20%">Species</Th>
                             <Th width="20%">Condition</Th>
                             <Th width="20%">Date Recorded</Th>
-                            <Th width="20%">Volunteer</Th>
+                            <Th width="20%" justifyItems="center">
+                              Volunteer
+                            </Th>
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {[1, 2, 3].map((item) => (
-                            <Tr key={item}>
-                              <Td>{item}</Td>
-                              <Td justifyItems="center">
-                                <Box {...VO} {...IconStyle}>
-                                  VO
+                          {worst3Trees.map((tree) => (
+                            <Tr key={tree._id}>
+                              <Td>{tree._id}</Td>
+                              <Td>
+                                <Box
+                                  {...IconStyle}
+                                  color={getSpeciesColors(tree.species).color}
+                                  background={getSpeciesColors(tree.species).bgColor}
+                                >
+                                  {getSpeciesAbbreviation(tree.species)}
                                 </Box>
                               </Td>
-                              <Td justifyItems="center">
-                                <Box {...Condition} {...IconStyle}>
-                                  {item === 1 ? 10 : item === 2 ? 8 : 9}
+                              <Td>
+                                <Box
+                                  {...IconStyle}
+                                  backgroundColor={
+                                    treeHealthColors[
+                                      parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)
+                                    ][0]
+                                  }
+                                  color={
+                                    treeHealthColors[
+                                      parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)
+                                    ][1]
+                                  }
+                                >
+                                  {parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)}
                                 </Box>
                               </Td>
-                              <Td>{item === 1 ? "12/24/2024" : item === 2 ? "1/3/2025" : "2/6/2025"}</Td>
-                              <Td justifyItems="center">
-                                <NotebookPen />
-                              </Td>
+                              <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
+                              <Td>{tree.collectorName}</Td>
                             </Tr>
                           ))}
                         </Tbody>
