@@ -117,6 +117,7 @@ function Messages() {
               </div>
 
               {activeTab === "inbox" ? (
+<<<<<<< HEAD
                 <div>
                   <Flex>
                     <Table className={styles.table}>
@@ -214,6 +215,81 @@ function Messages() {
                     )}
                   </Flex>
                 </div>
+=======
+                <>
+                  <Box height="41rem">
+                    <Table className={styles.table}>
+                      <Thead>
+                        <Tr>
+                          <Th>Select</Th>
+                          <Th>Sender</Th>
+                          <Th>Message</Th>
+                          <Th>Date</Th>
+                          <Th>Actions</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {currentMessages.map((msg) => (
+                          <Tr key={msg.id} className={msg.selected ? styles.fadedRow : ""}>
+                            <Td>
+                              <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
+                            </Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>
+                              <Flex className={styles.avatarContainer}>
+                                <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
+                                {msg.sender}
+                              </Flex>
+                            </Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>{msg.message}</Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>{msg.date}</Td>
+                            <Td>
+                              <Menu>
+                                <MenuButton
+                                  as={IconButton}
+                                  icon={<BsThreeDotsVertical />}
+                                  className={styles.menuButton}
+                                />
+                                <MenuList>
+                                  <MenuItem onClick={() => handleDelete(msg.id)}>Delete</MenuItem>
+                                </MenuList>
+                              </Menu>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
+
+                  {/* Pagination Controls */}
+                  <Box className={styles.pageControls}>
+                    <Button
+                      className={styles.pageButton}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <Button
+                        key={index + 1}
+                        className={currentPage === index + 1 ? styles.activePage : styles.pageButton}
+                        onClick={() => handlePageChange(index + 1)}
+                      >
+                        {index + 1}
+                      </Button>
+                    ))}
+
+                    <Button
+                      className={styles.pageButton}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </Button>
+                  </Box>
+                </>
+>>>>>>> f135f73 (fix: pagination controls are at constant position independent of messege-dependent table height)
               ) : (
                 <p className={styles.sentMessage}>Sent messages here.</p>
               )}
