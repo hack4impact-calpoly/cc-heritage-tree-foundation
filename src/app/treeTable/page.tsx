@@ -21,6 +21,7 @@ import {
   Flex,
   Grid,
   Tag,
+  Select,
 } from "@chakra-ui/react";
 import * as XLSX from "xlsx";
 import Navbar from "@/components/Navbar";
@@ -89,35 +90,12 @@ export default function TreeTable() {
     }
   };
 
-  // Search Filter
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent) => {
-    if (!searchTerm.trim()) {
-      setFilteredTrees(trees);
-      setCurrentPage(1);
-      return;
-    }
-
-    const results = trees.filter((tree: ITree) => {
-      const searchValue = searchTerm.toLowerCase();
-      return (
-        tree._id?.toLowerCase().includes(searchValue) ||
-        tree.collectorName?.toLowerCase().includes(searchValue) ||
-        new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
-        tree.dbh?.toString().includes(searchValue) ||
-        tree.canopyBreadth?.toString().includes(searchValue) ||
-        tree.species?.toLowerCase().includes(searchValue) ||
-        tree.additionalNotes?.toLowerCase().includes(searchValue) ||
-        (Array.isArray(tree.treeCondition)
-          ? tree.treeCondition.join(", ").toLowerCase().includes(searchValue)
-          : false) ||
-        tree.treeQuality?.toString().toLowerCase().includes(searchValue) ||
-        (Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ").includes(searchValue) : false)
-      );
-    });
-    console.log("Tree Filtering:", results);
-    setFilteredTrees(results);
-    setCurrentPage(1);
+    if (e && "key" in e && e.key !== "Enter") return;
+    // No more filtering here — just trigger effect
+    setSearchTerm(searchTerm.trim());
   };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -151,6 +129,50 @@ export default function TreeTable() {
     setSelectedTree(treeData);
   };
 
+  const [sortOrder, setSortOrder] = useState<"" | "asc" | "desc">("");
+
+  useEffect(() => {
+    let filtered = [...trees];
+
+    // Search
+    if (searchTerm.trim()) {
+      const searchValue = searchTerm.toLowerCase();
+      filtered = filtered.filter((tree: ITree) => {
+        return (
+          tree._id?.toLowerCase().includes(searchValue) ||
+          tree.collectorName?.toLowerCase().includes(searchValue) ||
+          new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
+          tree.dbh?.toString().includes(searchValue) ||
+          tree.canopyBreadth?.toString().includes(searchValue) ||
+          tree.species?.toLowerCase().includes(searchValue) ||
+          tree.additionalNotes?.toLowerCase().includes(searchValue) ||
+          (Array.isArray(tree.treeCondition)
+            ? tree.treeCondition.join(", ").toLowerCase().includes(searchValue)
+            : false) ||
+          tree.treeQuality?.toString().toLowerCase().includes(searchValue) ||
+          (Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ").includes(searchValue) : false)
+        );
+      });
+    }
+
+    // Sort
+    if (sortOrder) {
+      filtered = filtered
+        .filter((tree: ITree) => {
+          const first = tree.treeCondition?.[0];
+          return first !== undefined && !isNaN(Number(first));
+        })
+        .sort((a, b) => {
+          const aVal = Number(a.treeCondition[0]);
+          const bVal = Number(b.treeCondition[0]);
+          return sortOrder === "asc" ? bVal - aVal : aVal - bVal;
+        });
+    }
+
+    setFilteredTrees(filtered);
+    setCurrentPage(1);
+  }, [sortOrder, searchTerm, trees]);
+
   return (
     <div>
       {isClient ? (
@@ -161,9 +183,30 @@ export default function TreeTable() {
                 {/*PageText*/}
                 <Box width="100%" position="relative" minHeight="80px">
                   <VStack alignItems="flex-start" spacing={1} position="relative">
-                    <Text fontSize={["24px", "30px", "38px"]} color="#333" fontWeight="600">
-                      Tree Inventory
-                    </Text>
+                    <HStack>
+                      <Text fontSize={["24px", "30px", "38px"]} color="#333" fontWeight="600">
+                        Tree Inventory
+                      </Text>
+                      {/* Export */}
+                      <HStack spacing={2} width={["100%", "auto"]} justifyContent={["flex-end", "flex-end"]}>
+                        <Button
+                          padding={4}
+                          position="absolute"
+                          bg="white"
+                          borderRadius="24px"
+                          variant="solid"
+                          right={0}
+                          onClick={downloadData}
+                        >
+                          <HStack spacing={2}>
+                            <Text color="#596334" fontWeight="600">
+                              Export to Sheets
+                            </Text>
+                            <FileDown color="#596334" />
+                          </HStack>
+                        </Button>
+                      </HStack>
+                    </HStack>
                     <Text fontSize="16px" color="#333" fontWeight="400">
                       {filteredTrees.length} trees found
                     </Text>
@@ -194,28 +237,21 @@ export default function TreeTable() {
                     </InputRightElement>
                   </InputGroup>
 
-                  <HStack spacing={2} width={["100%", "auto"]} justifyContent={["flex-end", "flex-end"]}>
-                    <Button
-                      padding={4}
-                      position="absolute"
-                      bg="white"
-                      borderRadius="24px"
-                      variant="solid"
-                      right={0}
-                      onClick={downloadData}
-                    >
-                      <HStack spacing={2}>
-                        <Text color="#596334" fontWeight="600">
-                          Export to Sheets
-                        </Text>
-                        <FileDown color="#596334" />
-                      </HStack>
-                    </Button>
-                  </HStack>
+                  <Select
+                    width={["100%", "225px"]}
+                    borderRadius="24px"
+                    placeholder="Sort"
+                    onChange={(e) => setSortOrder(e.target.value as "" | "asc" | "desc")}
+                    bg="white"
+                  >
+                    {/* <option value="">None</option> */}
+                    <option value="asc">Condition best to worst</option>
+                    <option value="desc">Condition worst to best</option>
+                  </Select>
                 </HStack>
 
                 {/* Main content area with table and detail panel */}
-                <Flex width="100%" gap={4} maxH="calc(100vh - 225px)">
+                <Flex width="100%" gap={4} height="auto">
                   {/* Table Container - takes up less width when tree is selected */}
                   <Box
                     width={selectedTree ? "70%" : "100%"}
@@ -224,6 +260,8 @@ export default function TreeTable() {
                     bg="white"
                     overflowX="auto"
                     transition="width 0.3s ease-in-out"
+                    height={selectedTree ? "auto" : "100%"}
+                    alignSelf="start"
                   >
                     {loading ? (
                       <Box {...CenterStyle} height="100%">
@@ -387,6 +425,7 @@ export default function TreeTable() {
                       display={selectedTree ? "block" : "none"}
                       transition="all 0.3s ease-in-out"
                       overflowX={"auto"}
+                      height="100%"
                     >
                       <Box bg="#596334" color="white" p={5} borderTopLeftRadius={20} borderTopRightRadius={20}>
                         <VStack gap={3} align="stretch">
