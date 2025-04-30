@@ -25,8 +25,10 @@ import { AlignJustify } from "lucide-react";
 import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
 import { COLORS } from "@/styles/color-styles-data";
-import Tree, { ITree } from "@/database/treeSchema";
-import { treeHealthColors } from "../newTreeForm/tree-form-data";
+import { ITree } from "@/database/treeSchema";
+import { treeHealthColors, TREE_TYPE_DATA } from "../newTreeForm/tree-form-data";
+import { tree } from "next/dist/build/templates/app-page";
+import { Decimal128 } from "mongoose";
 
 interface Decimal128WithProperty {
   $numberDecimal: string;
@@ -85,6 +87,44 @@ const getSpeciesColors = (species: string) => {
   }
 };
 
+const getSpeciesAbbreviation = (species: string) => {
+  switch (species) {
+    case "Valley Oak":
+      return "VO";
+    case "Coast Live Oak":
+      return "CLO";
+    case "Blue Oak":
+      return "BO";
+    default:
+      return "ERR";
+  }
+};
+
+const getSpeciesColors = (species: string) => {
+  switch (species) {
+    case "Valley Oak":
+      return {
+        bgColor: COLORS.RobinsEgg,
+        color: COLORS.Steel,
+      };
+    case "Coast Live Oak":
+      return {
+        bgColor: COLORS.Sky,
+        color: COLORS.Charcoal,
+      };
+    case "Blue Oak":
+      return {
+        bgColor: COLORS.Steel,
+        color: COLORS.PureWhite,
+      };
+    default:
+      return {
+        bgColor: COLORS.PureWhite,
+        color: COLORS.PureWhite,
+      };
+  }
+};
+
 function AdminDashboard() {
   const user = useUser();
   const router = useRouter();
@@ -98,6 +138,8 @@ function AdminDashboard() {
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
+    const fetchTreeCount = async () => {
+      const response = await fetch("/api/tree");
     const fetchTreeCount = async () => {
       const response = await fetch("/api/tree");
       if (!response.ok) {
@@ -119,7 +161,7 @@ function AdminDashboard() {
       });
     };
     fetchTreeCount().catch(console.error);
-  }, []);
+  }, [currentMonth, currentYear]);
 
   useEffect(() => {
     const fetchWorstTrees = async () => {
@@ -128,14 +170,18 @@ function AdminDashboard() {
         throw new Error(`HTTP ERROR Status:${response.status}`);
       }
       const trees: Array<ITree> = await response.json();
-      trees.forEach((tree) => {
-        // console.log(tree.treeQuality);
-        // console.log(typeof tree.treeQuality);
-      });
-      // console.log(typeof trees[0]);
-      // console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
-      trees.sort((a, b) => parseFloat(a.treeQuality.toString()) - parseFloat(b.treeQuality.toString()));
+      // trees.forEach((tree) => {
+      //   console.log(tree.treeQuality);
+      //   console.log(tree.treeQuality ? parseFloat(tree.treeQuality.$numberDecimal) : null);
+      // });
+      console.log(typeof trees[0].treeQuality);
+      trees.sort(
+        (a, b) =>
+          (a.treeQuality ? parseFloat((a.treeQuality as unknown as Decimal128WithProperty).$numberDecimal) : 11) -
+          (b.treeQuality ? parseFloat((b.treeQuality as unknown as Decimal128WithProperty).$numberDecimal) : 11),
+      );
 
+      console.log(trees);
       setWorst3Trees([trees[0], trees[1], trees[2]]);
     };
     fetchWorstTrees().catch(console.error);
@@ -179,13 +225,8 @@ function AdminDashboard() {
                       {treesLoggedYear}
                     </Text>
                     <Text color="#333333">
-                      {treesThisMonth > treesLastMonth
-                        ? treesLastMonth != 0
-                          ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2)
-                          : 100
-                        : "No "}
-                      % incr from
-                      {" " + MONTHS[currentMonth - 1]}
+                      {treesLastMonth != 0 ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2) : 100}%{" "}
+                      {treesThisMonth / treesLastMonth >= 1 ? "incr" : "decr"} from {MONTHS[currentMonth - 1]}
                     </Text>
                   </Box>
                 </GridItem>
@@ -209,6 +250,9 @@ function AdminDashboard() {
                             <Th width="20%">Species</Th>
                             <Th width="20%">Condition</Th>
                             <Th width="20%">Date Recorded</Th>
+                            <Th width="20%" justifyItems="center">
+                              Volunteer
+                            </Th>
                             <Th width="20%" justifyItems="center">
                               Volunteer
                             </Th>
