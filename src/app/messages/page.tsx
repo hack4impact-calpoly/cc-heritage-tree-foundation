@@ -35,7 +35,13 @@ function Messages() {
   const [activeTab, setActiveTab] = useState("inbox");
   const [isClient, setIsClient] = useState(false);
   const [openMessagePopUp, setOpenMessagePopUp] = useState(false);
-  const [messageProps, setMessageProps] = useState({});
+  const [messageProps, setMessageProps] = useState({
+    date: "",
+    adminName: "",
+    messageContent: "",
+    messageTitle: "",
+    id: -1,
+  });
 
   useEffect(() => {
     setIsClient(true);
