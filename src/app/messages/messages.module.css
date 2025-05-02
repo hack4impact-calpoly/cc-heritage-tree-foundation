@@ -1,7 +1,7 @@
 /* messages.module.css */
 .container {
-  padding: 50px;
-  border-radius: 15px;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .header {
@@ -33,7 +33,7 @@
   font-size: 16px;
   cursor: pointer;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: 20px;
   transition: background-color 0.3s;
 }
 
@@ -60,23 +60,15 @@
 }
 
 .table {
-  border-radius: 15px;
-  width: 50%;
-  border-collapse: separate;
+  width: 100%;
+  border-collapse: collapse;
   margin-top: 10px;
   background: white;
-  overflow: hidden;
-}
-
-.tableHeader {
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-  background: #dfed98;
 }
 
 .table th {
-  background: transparent;
-  padding: 15px;
+  background-color: #dfed98;
+  padding: 10px;
   text-align: left;
 }
 
@@ -95,7 +87,6 @@
   background: none;
   border: none;
   cursor: pointer;
-  opacity: 1;
 }
 
 .sentMessage {
@@ -105,6 +96,13 @@
 }
 
 .fadedText {
+  text-decoration: line-through;
+  opacity: 0.5;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.fadedRow {
+  transition: opacity 0.4s ease-in-out;
   opacity: 0.5;
 }
 
@@ -131,7 +129,6 @@
 .activePage {
   background-color: #596334 !important;
   color: white !important;
-  border-radius: 30px !important;
 }
 
 .sentMessage {
@@ -139,56 +136,4 @@
   font-size: 18px;
   color: #555;
   margin-top: 20px;
-}
-
-.messageTable {
-  border-radius: 15px;
-  width: 45%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  background: white;
-  min-height: 550px;
-}
-
-.messageHeader {
-  border-top-right-radius: 15px;
-  border-top-left-radius: 15px;
-  background-color: #596334;
-  padding: 25px;
-}
-
-.messageHeader h3 {
-  font-stretch: expanded;
-  font-weight: bolder;
-  color: white;
-  text-align: text-top;
-}
-
-.messageHeader p {
-  color: white;
-  text-align: text-top;
-}
-
-.messageBody p {
-  margin-top: 50px;
-  margin-left: 12px;
-}
-
-.messageBody h1 {
-  margin-top: 20px;
-  margin-right: 5px;
-  text-align: right;
-}
-
-.mainContent {
-  display: flex;
-  flex-direction: row;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-.clickableRow:hover {
-  cursor: pointer;
-  background-color: #f0f0f0;
-  transition: background-color 0.2s;
 }
