@@ -68,7 +68,7 @@
   overflow: hidden;
 }
 
-.tableHeader{
+.tableHeader {
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   background: #dfed98;
@@ -79,7 +79,6 @@
   padding: 15px;
   text-align: left;
 }
-
 
 .table td {
   padding: 10px;
@@ -142,7 +141,6 @@
   margin-top: 20px;
 }
 
-
 .messageTable {
   border-radius: 15px;
   width: 45%;
@@ -152,20 +150,18 @@
   min-height: 550px;
 }
 
-.messageHeader{
+.messageHeader {
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
   background-color: #596334;
   padding: 25px;
 }
 
-
 .messageHeader h3 {
   font-stretch: expanded;
   font-weight: bolder;
   color: white;
   text-align: text-top;
-  
 }
 
 .messageHeader p {
@@ -173,12 +169,12 @@
   text-align: text-top;
 }
 
-.messageBody p{
+.messageBody p {
   margin-top: 50px;
   margin-left: 12px;
 }
 
-.messageBody h1{
+.messageBody h1 {
   margin-top: 20px;
   margin-right: 5px;
   text-align: right;
@@ -186,6 +182,7 @@
 
 .mainContent {
   display: flex;
+  flex-direction: row;
   gap: 2rem;
   align-items: flex-start;
 }
