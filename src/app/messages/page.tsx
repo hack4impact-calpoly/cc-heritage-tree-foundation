@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { AlignJustify } from "lucide-react";
+import { AlignJustify, ChevronRight } from "lucide-react";
 import styles from "./messages.module.css";
 import {
   Table,
@@ -27,12 +27,15 @@ import {
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { BrowserView, MobileView } from "react-device-detect";
+import MessagePopUp from "@/components/MessagePopUp";
 
 function Messages() {
   const messagesPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("inbox");
   const [isClient, setIsClient] = useState(false);
+  const [openMessagePopUp, setOpenMessagePopUp] = useState(false);
+  const [messageProps, setMessageProps] = useState({});
 
   useEffect(() => {
     setIsClient(true);
@@ -103,32 +106,46 @@ function Messages() {
 
               {activeTab === "inbox" ? (
                 <>
-                  <Table className={styles.table}>
-                    <Thead>
-                      <Tr>
-                        <Th>Select</Th>
-                        <Th>Sender</Th>
-                        <Th>Message</Th>
-                        <Th>Date</Th>
-                        <Th>Actions</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {currentMessages.map((msg) => (
-                        <Tr key={msg.id} className={msg.selected ? styles.fadedRow : ""}>
-                          <Td>
-                            <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
-                          </Td>
-                          <Td className={msg.selected ? styles.fadedText : ""}>
-                            <Flex className={styles.avatarContainer}>
-                              <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
-                              {msg.sender}
-                            </Flex>
-                          </Td>
-                          <Td className={msg.selected ? styles.fadedText : ""}>{msg.message}</Td>
-                          <Td className={msg.selected ? styles.fadedText : ""}>{msg.date}</Td>
-                          <Td>
-                            <Menu>
+                  <Flex>
+                    <Table className={styles.table}>
+                      <Thead>
+                        <Tr>
+                          <Th>Select</Th>
+                          <Th>Sender</Th>
+                          <Th>Message</Th>
+                          <Th>Date</Th>
+                          <Th></Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {currentMessages.map((msg) => (
+                          <Tr key={msg.id} className={msg.selected ? styles.fadedRow : ""}>
+                            <Td>
+                              <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
+                            </Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>
+                              <Flex className={styles.avatarContainer}>
+                                <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
+                                {msg.sender}
+                              </Flex>
+                            </Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>{msg.message}</Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>{msg.date}</Td>
+                            <Td>
+                              <ChevronRight
+                                onClick={() => {
+                                  setOpenMessagePopUp(!openMessagePopUp);
+                                  setMessageProps({
+                                    date: msg.date,
+                                    adminName: msg.sender,
+                                    messageContent: msg.message,
+                                    messageTitle: msg.message,
+                                    id: msg.id,
+                                  });
+                                }}
+                              />
+                              {/* saving for deleting button */}
+                              {/*<Menu>
                               <MenuButton
                                 as={IconButton}
                                 icon={<BsThreeDotsVertical />}
@@ -137,13 +154,24 @@ function Messages() {
                               <MenuList>
                                 <MenuItem onClick={() => handleDelete(msg.id)}>Delete</MenuItem>
                               </MenuList>
-                            </Menu>
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-
+                            </Menu>*/}
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                    {openMessagePopUp === true ? (
+                      <MessagePopUp
+                        date={messageProps.date}
+                        messageTitle={messageProps.messageTitle}
+                        adminName={messageProps.adminName}
+                        messageContent={messageProps.messageContent}
+                        id={messageProps.id}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </Flex>
                   {/* Pagination Controls */}
                   <Box className={styles.pageControls}>
                     <Button
