@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Grid, GridItem, Text, Button, HStack, VStack, Link, IconButton, Flex, Image } from "@chakra-ui/react";
 import { Plus, ArrowUpRight, EllipsisVertical, Menu } from "lucide-react";
+import { ITree } from "@/database/treeSchema";
 import Map from "@/components/Map";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -18,9 +19,27 @@ export default function VolunteerDashboard() {
   const router = useRouter();
   const user = useUser();
   const [isClient, setIsClient] = useState(false);
+  const [treeData, setTreeData] = useState<ITree[]>([]);
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    setIsClient(true);
+
+    const fetchTrees = async () => {
+      try {
+        const response = await fetch("/api/tree");
+        if (!response.ok) throw new Error("Failed to fetch trees for dashboard");
+        const data: ITree[] = await response.json();
+        setTreeData(data);
+      } catch (error) {
+        console.error("Error fetching tree data:", error);
+      }
+    };
+
+    fetchTrees();
   }, []);
 
   return (
@@ -143,7 +162,7 @@ export default function VolunteerDashboard() {
                     {...CenterStyle}
                     minHeight="300px"
                   >
-                    <Map />
+                    <Map trees={treeData} />
                   </GridItem>
 
                   {/* Announcements */}
