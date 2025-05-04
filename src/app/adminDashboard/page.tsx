@@ -17,7 +17,6 @@ import {
   Flex,
   Tr,
 } from "@chakra-ui/react";
-import { ITree } from "@/database/treeSchema";
 import Map from "@/components/Map";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -107,6 +106,7 @@ function AdminDashboard() {
         throw new Error(`Status: ${response.status}`);
       }
       const trees: Array<ITree> = await response.json();
+      setTreeData(trees);
       trees.forEach((tree: ITree) => {
         const treeDateLogged = new Date(tree.dateCollected);
         if (treeDateLogged.getFullYear() == currentYear) {
@@ -149,22 +149,6 @@ function AdminDashboard() {
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
-  useEffect(() => {
-    setIsClient(true);
-
-    const fetchTrees = async () => {
-      try {
-        const response = await fetch("/api/tree");
-        if (!response.ok) throw new Error("Failed to fetch trees for dashboard");
-        const data: ITree[] = await response.json();
-        setTreeData(data);
-      } catch (error) {
-        console.error("Error fetching tree data:", error);
-      }
-    };
-
-    fetchTrees();
   }, []);
 
   return (
@@ -213,8 +197,13 @@ function AdminDashboard() {
                       {treesLoggedYear}
                     </Text>
                     <Text color="#333333">
-                      {treesLastMonth != 0 ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2) : 100}%{" "}
-                      {treesThisMonth / treesLastMonth >= 1 ? "incr" : "decr"} from {MONTHS[currentMonth - 1]}
+                      {treesThisMonth > treesLastMonth
+                        ? treesLastMonth != 0
+                          ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2)
+                          : 100
+                        : "No "}
+                      % incr from
+                      {" " + MONTHS[currentMonth - 1]}
                     </Text>
                   </Box>
                 </GridItem>
@@ -244,39 +233,55 @@ function AdminDashboard() {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {worst3Trees.map((tree) => (
-                            <Tr key={tree._id}>
-                              <Td>{tree._id}</Td>
-                              <Td>
-                                <Box
-                                  {...IconStyle}
-                                  color={getSpeciesColors(tree.species).color}
-                                  background={getSpeciesColors(tree.species).bgColor}
-                                >
-                                  {getSpeciesAbbreviation(tree.species)}
-                                </Box>
-                              </Td>
-                              <Td>
-                                <Box
-                                  {...IconStyle}
-                                  backgroundColor={
-                                    treeHealthColors[
-                                      parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)
-                                    ][0]
-                                  }
-                                  color={
-                                    treeHealthColors[
-                                      parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)
-                                    ][1]
-                                  }
-                                >
-                                  {parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)}
-                                </Box>
-                              </Td>
-                              <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
-                              <Td>{tree.collectorName}</Td>
-                            </Tr>
-                          ))}
+                          {worst3Trees.map((tree) =>
+                            tree ? (
+                              <Tr key={tree._id}>
+                                <Td>{tree._id}</Td>
+                                <Td>
+                                  <Box
+                                    {...IconStyle}
+                                    color={getSpeciesColors(tree.species).color}
+                                    background={getSpeciesColors(tree.species).bgColor}
+                                  >
+                                    {getSpeciesAbbreviation(tree.species)}
+                                  </Box>
+                                </Td>
+                                <Td>
+                                  <Box
+                                    {...IconStyle}
+                                    backgroundColor={
+                                      treeHealthColors[
+                                        parseFloat(
+                                          (tree.treeQuality as unknown as Decimal128WithProperty)
+                                            ? (tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal
+                                            : "0",
+                                        )
+                                      ][0]
+                                    }
+                                    color={
+                                      treeHealthColors[
+                                        parseFloat(
+                                          (tree.treeQuality as unknown as Decimal128WithProperty)
+                                            ? (tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal
+                                            : "0",
+                                        )
+                                      ][1]
+                                    }
+                                  >
+                                    {parseFloat(
+                                      (tree.treeQuality as unknown as Decimal128WithProperty)
+                                        ? (tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal
+                                        : "0",
+                                    )}
+                                  </Box>
+                                </Td>
+                                <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
+                                <Td>{tree.collectorName}</Td>
+                              </Tr>
+                            ) : (
+                              <></>
+                            ),
+                          )}
                         </Tbody>
                       </Table>
                     </Box>
