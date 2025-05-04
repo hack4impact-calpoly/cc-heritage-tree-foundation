@@ -26,9 +26,7 @@ import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
 import { COLORS } from "@/styles/color-styles-data";
 import { ITree } from "@/database/treeSchema";
-import { treeHealthColors, TREE_TYPE_DATA } from "../newTreeForm/tree-form-data";
-import { tree } from "next/dist/build/templates/app-page";
-import { Decimal128 } from "mongoose";
+import { treeHealthColors } from "../newTreeForm/tree-form-data";
 
 interface Decimal128WithProperty {
   $numberDecimal: string;
@@ -152,28 +150,17 @@ function AdminDashboard() {
   }, []);
 
   return (
-    <div>
+    <Box>
       {isClient ? (
-        <div>
+        <Box>
           <BrowserView>
-            <Box
-              position="absolute"
-              height="100%"
-              width="100vw"
-              maxWidth="100%"
-              bg="#F4F1E8"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              p={{ base: "20px", md: "0 50px 50px 50px" }}
-              pt="0px"
-            >
+            <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center">
               <Grid
-                width="100%"
-                height="100%"
-                templateRows={{ base: "auto auto auto auto", md: "repeat(10, 1fr)" }}
+                templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
                 templateColumns={{ base: "1fr", md: "repeat(8, 1fr)" }}
                 gap={4}
+                borderWidth={"4"}
+                borderColor={"red"}
               >
                 {/* Welcome Message */}
                 <GridItem colSpan={{ base: 1, md: 8 }} rowSpan={1} display="flex" alignItems="center">
@@ -209,7 +196,7 @@ function AdminDashboard() {
                 </GridItem>
 
                 {/* Trees in Poor Condition */}
-                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 5 }}>
+                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 6 }}>
                   <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
                     <HStack>
                       <Text color="#333333" fontSize="1.25rem">
@@ -324,7 +311,7 @@ function AdminDashboard() {
                 </GridItem>
 
                 {/* Map */}
-                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 7 }} data-testid="map_id">
+                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 8 }} data-testid="map_id">
                   <Map trees={treeData} />
                 </GridItem>
               </Grid>
@@ -332,7 +319,7 @@ function AdminDashboard() {
           </BrowserView>
 
           <MobileView>
-            <div
+            <Box
               style={{
                 position: "absolute",
                 marginLeft: "20px",
@@ -340,9 +327,9 @@ function AdminDashboard() {
               }}
             >
               <AlignJustify></AlignJustify>
-            </div>
+            </Box>
             {/* add tree icon */}
-            <div
+            <Box
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -351,7 +338,7 @@ function AdminDashboard() {
               }}
             >
               <Image src="./logo1.png" alt="tree icon" height={"50px"}></Image>
-            </div>
+            </Box>
             <Box width="100%" height="100%" p={{ base: "20px", md: "0 50px 50px 50px" }} pt="0px">
               <Grid
                 width="100%"
@@ -431,11 +418,11 @@ function AdminDashboard() {
               </Grid>
             </Box>
           </MobileView>
-        </div>
+        </Box>
       ) : (
         <></>
       )}
-    </div>
+    </Box>
   );
 }
 
