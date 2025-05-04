@@ -147,6 +147,7 @@ function AdminDashboard() {
       }
       const trees: Array<ITree> = await response.json();
       setTreeData(trees);
+      setTreeData(trees);
       trees.forEach((tree: ITree) => {
         const treeDateLogged = new Date(tree.dateCollected);
         if (treeDateLogged.getFullYear() == currentYear) {
@@ -225,8 +226,13 @@ function AdminDashboard() {
                       {treesLoggedYear}
                     </Text>
                     <Text color="#333333">
-                      {treesLastMonth != 0 ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2) : 100}%{" "}
-                      {treesThisMonth / treesLastMonth >= 1 ? "incr" : "decr"} from {MONTHS[currentMonth - 1]}
+                      {treesThisMonth > treesLastMonth
+                        ? treesLastMonth != 0
+                          ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2)
+                          : 100
+                        : "No "}
+                      % incr from
+                      {" " + MONTHS[currentMonth - 1]}
                     </Text>
                   </Box>
                 </GridItem>
