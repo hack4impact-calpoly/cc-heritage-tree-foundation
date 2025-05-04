@@ -26,9 +26,7 @@ import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
 import { COLORS } from "@/styles/color-styles-data";
 import { ITree } from "@/database/treeSchema";
-import { treeHealthColors, TREE_TYPE_DATA } from "../newTreeForm/tree-form-data";
-import { tree } from "next/dist/build/templates/app-page";
-import { Decimal128 } from "mongoose";
+import { treeHealthColors } from "../newTreeForm/tree-form-data";
 
 interface Decimal128WithProperty {
   $numberDecimal: string;
@@ -193,14 +191,20 @@ function AdminDashboard() {
   }, []);
   return (
     <Box>
+    <Box>
       {isClient ? (
+        <Box>
         <Box>
           <BrowserView>
             <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center">
+            <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center">
               <Grid
+                templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
                 templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
                 templateColumns={{ base: "1fr", md: "repeat(8, 1fr)" }}
                 gap={4}
+                borderWidth={"4"}
+                borderColor={"red"}
                 borderWidth={"4"}
                 borderColor={"red"}
               >
@@ -238,6 +242,7 @@ function AdminDashboard() {
                 </GridItem>
 
                 {/* Trees in Poor Condition */}
+                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 6 }}>
                 <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 6 }}>
                   <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
                     <HStack>
@@ -352,7 +357,26 @@ function AdminDashboard() {
           </BrowserView>
 
           <MobileView>
+            <Box
+              style={{
+                position: "absolute",
+                marginLeft: "20px",
+                marginTop: "15px",
+              }}
+            >
+              <AlignJustify></AlignJustify>
+            </Box>
             {/* add tree icon */}
+            <Box
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: "50px",
+              }}
+            >
+              <Image src="./logo1.png" alt="tree icon" height={"50px"}></Image>
+            </Box>
             <Box width="100%" height="100%" p={{ base: "20px", md: "0 50px 50px 50px" }} pt="0px">
               <Grid
                 width="100%"
