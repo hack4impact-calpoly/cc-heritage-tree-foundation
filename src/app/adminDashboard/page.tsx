@@ -26,6 +26,9 @@ import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
 import { COLORS } from "@/styles/color-styles-data";
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
 import Tree, { ITree } from "@/database/treeSchema";
 import { treeHealthColors } from "../newTreeForm/tree-form-data";
 =======
@@ -140,10 +143,14 @@ function AdminDashboard() {
       }
       const trees: Array<ITree> = await response.json();
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
       trees.forEach((tree) => {
         // console.log(tree.treeQuality);
         // console.log(typeof tree.treeQuality);
       });
+<<<<<<< HEAD
       // console.log(typeof trees[0]);
       // console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
       trees.sort((a, b) => parseFloat(a.treeQuality.toString()) - parseFloat(b.treeQuality.toString()));
@@ -154,14 +161,19 @@ function AdminDashboard() {
       //   console.log(tree.treeQuality ? parseFloat(tree.treeQuality.$numberDecimal) : null);
       // });
       console.log(typeof trees[0].treeQuality);
+=======
+      console.log(typeof trees[0]);
+      console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
+>>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
       trees.sort(
-        (a, b) =>
-          (a.treeQuality ? parseFloat((a.treeQuality as unknown as Decimal128WithProperty).$numberDecimal) : 11) -
-          (b.treeQuality ? parseFloat((b.treeQuality as unknown as Decimal128WithProperty).$numberDecimal) : 11),
+        (a, b) => (a.treeQuality ? parseFloat(a.treeQuality) : 11) - (b.treeQuality ? parseFloat(b.treeQuality) : 11),
       );
 
+<<<<<<< HEAD
       console.log(trees);
 >>>>>>> 3c0ad5c (feat: treeTable widget finds worst trees)
+=======
+>>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
       setWorst3Trees([trees[0], trees[1], trees[2]]);
     };
     fetchWorstTrees().catch(console.error);
@@ -269,6 +281,7 @@ function AdminDashboard() {
                                   <Box
                                     {...IconStyle}
                                     backgroundColor={
+<<<<<<< HEAD
                                       treeHealthColors[
                                         parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")
                                       ][0]
@@ -277,9 +290,17 @@ function AdminDashboard() {
                                       treeHealthColors[
                                         parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")
                                       ][1]
+=======
+                                      treeHealthColors[parseInt(tree.treeQuality ? tree.treeQuality : "0")][0]
+>>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
                                     }
+                                    color={treeHealthColors[parseInt(tree.treeQuality ? tree.treeQuality : "0")][1]}
                                   >
+<<<<<<< HEAD
                                     {parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")}
+=======
+                                    {parseFloat(tree.treeQuality ? tree.treeQuality : "0")}
+>>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
                                   </Box>
                                 </Td>
                                 <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
