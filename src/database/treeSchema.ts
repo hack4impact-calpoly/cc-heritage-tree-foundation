@@ -25,7 +25,7 @@ const TreeSchema = new Schema<ITree>({
   canopyBreadth: { type: mongoose.Types.Decimal128, required: true },
   species: { type: String, required: true },
   treeCondition: { type: [String], required: true },
-  treeQuality: { type: mongoose.Types.Decimal128, required: true },
+  treeQuality: { type: String, required: true },
   additionalNotes: {
     type: String,
     required: false,
