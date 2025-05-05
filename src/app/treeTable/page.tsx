@@ -285,7 +285,7 @@ export default function TreeTable() {
                               {paginatedTrees.length > 0 ? (
                                 paginatedTrees.map((tree: ITree, index) => (
                                   <Tr key={tree._id}>
-                                    <Td>{tree._id}</Td>
+                                    <Td>{index + 1}</Td>
                                     <Td>
                                       <Button
                                         style={{
