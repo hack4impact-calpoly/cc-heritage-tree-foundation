@@ -14,12 +14,8 @@ import {
   Th,
   Td,
   Text,
-  IconButton,
-  Menu,
-  MenuButton,
+  VStack,
   Image,
-  MenuList,
-  MenuItem,
   Flex,
   Avatar,
   Checkbox,
@@ -112,83 +108,83 @@ function Messages() {
 
               {activeTab === "inbox" ? (
                 <div className={styles.mainContent}>
-                  <Table className={styles.table}>
-                    <Thead className={styles.tableHeader}>
-                      <Tr className={styles.tableHeader}>
-                        <Th>Select</Th>
-                        <Th>Sender</Th>
-                        <Th>Message</Th>
-                        <Th>Date</Th>
-                        <Th>Actions</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {currentMessages.map((msg) => (
-                        <Tr key={msg.id} className={styles.clickableRow}>
-                          <Td>
-                            <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
-                          </Td>
-                          <Td
-                            className={`${msg.selected ? styles.fadedText : ""}`}
-                            onClick={() => setSelectedMessage(msg)}
-                          >
-                            <Flex className={styles.avatarContainer}>
-                              <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
-                              {msg.from}
-                            </Flex>
-                          </Td>
-                          <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
-                          <Td className={msg.selected ? styles.fadedText : ""}>
-                            {new Date(msg.time).toLocaleDateString()}
-                          </Td>
-                          <Td>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              color="#596334"
-                              fontSize="2xl"
-                              _hover={{ color: "#83924f", transform: "scale(1.2)" }}
-                              onClick={() => setSelectedMessage(msg)}
-                            >
-                              &gt;
-                            </Button>
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                    {/* Page Controls */}
-                    <Tr>
-                      <Td colSpan={5}>
-                        <Box className={styles.pageControls}>
-                          <Button
-                            className={styles.pageButton}
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                          >
-                            Previous
-                          </Button>
-
-                          {Array.from({ length: totalPages }, (_, index) => (
-                            <Button
-                              key={index + 1}
-                              className={currentPage === index + 1 ? styles.activePage : styles.pageButton}
-                              onClick={() => handlePageChange(index + 1)}
-                            >
-                              {index + 1}
-                            </Button>
+                  <VStack width="100%">
+                    <Box width="100%" minH="28rem">
+                      <Table className={styles.table}>
+                        <Thead className={styles.tableHeader}>
+                          <Tr className={styles.tableHeader}>
+                            <Th>Select</Th>
+                            <Th>Sender</Th>
+                            <Th>Message</Th>
+                            <Th>Date</Th>
+                            <Th>Actions</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {currentMessages.map((msg) => (
+                            <Tr key={msg.id} className={styles.clickableRow}>
+                              <Td>
+                                <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
+                              </Td>
+                              <Td
+                                className={`${msg.selected ? styles.fadedText : ""}`}
+                                onClick={() => setSelectedMessage(msg)}
+                              >
+                                <Flex className={styles.avatarContainer}>
+                                  <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
+                                  {msg.from}
+                                </Flex>
+                              </Td>
+                              <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
+                              <Td className={msg.selected ? styles.fadedText : ""}>
+                                {new Date(msg.time).toLocaleDateString()}
+                              </Td>
+                              <Td>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  color="#596334"
+                                  fontSize="2xl"
+                                  _hover={{ color: "#83924f", transform: "scale(1.2)" }}
+                                  onClick={() => setSelectedMessage(msg)}
+                                >
+                                  &gt;
+                                </Button>
+                              </Td>
+                            </Tr>
                           ))}
+                        </Tbody>
+                      </Table>
+                    </Box>
+                    {/* Page Controls */}
+                    <Box className={styles.pageControls} display="flex" justifyContent="center" alignItems="center">
+                      <Button
+                        className={styles.pageButton}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </Button>
 
-                          <Button
-                            className={styles.pageButton}
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                          >
-                            Next
-                          </Button>
-                        </Box>
-                      </Td>
-                    </Tr>
-                  </Table>
+                      {Array.from({ length: totalPages }, (_, index) => (
+                        <Button
+                          key={index + 1}
+                          className={currentPage === index + 1 ? styles.activePage : styles.pageButton}
+                          onClick={() => handlePageChange(index + 1)}
+                        >
+                          {index + 1}
+                        </Button>
+                      ))}
+
+                      <Button
+                        className={styles.pageButton}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </Button>
+                    </Box>
+                  </VStack>
                   {selectedMessage && (
                     <div className={styles.messageTable}>
                       <div className={styles.messageHeader}>
