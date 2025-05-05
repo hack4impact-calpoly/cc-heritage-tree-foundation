@@ -71,6 +71,7 @@ export default function TreeTable() {
         if (Array.isArray(data)) {
           setTrees(data);
           setFilteredTrees(data); // set filteredTrees to data
+          setFilteredTrees(data); // set filteredTrees to data
         } else {
           console.error("Unexpected data format:", data);
           setTrees([]);
@@ -79,6 +80,9 @@ export default function TreeTable() {
       .catch((err) => {
         console.error("Fetch error:", err);
         setTrees([]);
+      })
+      .finally(() => {
+        setLoading(false);
       })
       .finally(() => {
         setLoading(false);
@@ -92,12 +96,35 @@ export default function TreeTable() {
     }
   };
 
+  // Search Filter
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent) => {
-    if (e && "key" in e && e.key !== "Enter") return;
-    // No more filtering here — just trigger effect
-    setSearchTerm(searchTerm.trim());
-  };
+    if (!searchTerm.trim()) {
+      setFilteredTrees(trees);
+      setCurrentPage(1);
+      return;
+    }
 
+    const results = trees.filter((tree: ITree) => {
+      const searchValue = searchTerm.toLowerCase();
+      return (
+        tree._id?.toLowerCase().includes(searchValue) ||
+        tree.collectorName?.toLowerCase().includes(searchValue) ||
+        new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
+        tree.dbh?.toString().includes(searchValue) ||
+        tree.canopyBreadth?.toString().includes(searchValue) ||
+        tree.species?.toLowerCase().includes(searchValue) ||
+        tree.additionalNotes?.toLowerCase().includes(searchValue) ||
+        (Array.isArray(tree.treeCondition)
+          ? tree.treeCondition.join(", ").toLowerCase().includes(searchValue)
+          : false) ||
+        tree.treeQuality?.toString().toLowerCase().includes(searchValue) ||
+        (Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ").includes(searchValue) : false)
+      );
+    });
+    console.log("Tree Filtering:", results);
+    setFilteredTrees(results);
+    setCurrentPage(1);
+  };
   useEffect(() => {
     setIsClient(true);
   }, []);
