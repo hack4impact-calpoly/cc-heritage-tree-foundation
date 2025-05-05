@@ -13,6 +13,7 @@ export async function GET(request: Request) {
       gpsCoordinates: tree.gpsCoordinates.map((coord: any) => coord.toString()),
       dbh: tree.dbh.toString(),
       canopyBreadth: tree.canopyBreadth.toString(),
+      treeQuality: tree.treeQuality.toString(),
     }));
     console.log(serializedTrees);
     return NextResponse.json(serializedTrees, { status: 200 });
