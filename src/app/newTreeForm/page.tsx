@@ -68,6 +68,7 @@ const disabledStyle = {
 export default function TreeEntryForm() {
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const [formData, setFormData] = useState<FormValues>({
     treeLocation: ["", ""],
@@ -81,6 +82,11 @@ export default function TreeEntryForm() {
     treeIssues: [],
     fieldNotes: "",
   });
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedImage(file); // Save the file directly
+  };
 
   const handleTreeType = (e: React.MouseEvent<HTMLButtonElement>) => {
     const treeType = e.currentTarget.getAttribute("name") as TreeType;
@@ -157,54 +163,40 @@ export default function TreeEntryForm() {
     }
 
     try {
-      // Fetch user's name from backend using email
-      const userResponse = await fetch(`/api/user/${user.primaryEmailAddress}`);
+      const form = new FormData();
 
-      if (!userResponse.ok) {
-        throw new Error("Failed to fetch user details.");
+      if (selectedImage) {
+        form.append("file", selectedImage); // Append File directly
       }
 
-      const userData = await userResponse.json();
+      form.append("collectorName", user.fullName || "Unknown Collector");
+      form.append("dateCollected", new Date().toISOString());
 
-      const collectorName = userData.name || "Unknown Collector"; // Fallback if no name is found
+      form.append("species", formData.treeType);
+      form.append("dbh", formData.treeSpecs.trunkDBH.toString());
+      form.append("canopyBreadth", formData.treeSpecs.canopySpread.toString());
+      form.append("treeQuality", formData.treeHealth.toString());
+      form.append("additionalNotes", formData.fieldNotes);
 
-      const currentDate = new Date();
+      // GPS Coordinates as individual fields or comma-separated string
+      form.append("gpsCoordinates[0]", formData.treeLocation[0]);
+      form.append("gpsCoordinates[1]", formData.treeLocation[1]);
 
-      const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
-      const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
-
-      const gpsCoordinates = formData.treeLocation.map((coord) =>
-        mongoose.Types.Decimal128.fromString(coord.toString()),
-      );
-
-      // Construct the submission data
-      const dataToSubmit = {
-        collectorName, // Use the fetched name
-        dateCollected: currentDate,
-        gpsCoordinates,
-        dbh: dbhDecimal,
-        canopyBreadth: canopyBreadthDecimal,
-        species: formData.treeType,
-        treeCondition: formData.treeIssues,
-        treeQuality: formData.treeHealth,
-        additionalNotes: formData.fieldNotes,
-      };
-
-      console.log("Submitting the following data:", JSON.stringify(dataToSubmit, null, 2));
-
-      const response = await fetch("/api/tree", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSubmit),
+      // Multiple tree issues as repeated form values
+      formData.treeIssues.forEach((issue, idx) => {
+        form.append(`treeCondition[${idx}]`, issue);
       });
 
-      const responseText = await response.text();
-      console.log("Response Text: " + responseText);
+      const response = await fetch("/api/tree/", {
+        method: "POST",
+        body: form,
+      });
+
+      const result = await response.json();
 
       if (response.ok) {
         alert("Tree data submitted successfully!");
+        // Reset form
         setFormData({
           treeLocation: ["", ""],
           treeType: "",
@@ -217,14 +209,114 @@ export default function TreeEntryForm() {
           treeIssues: [],
           fieldNotes: "",
         });
+        setSelectedImage(null);
       } else {
-        alert("Failed to submit data.");
+        alert("Failed to submit tree: " + result);
       }
-    } catch (error) {
-      console.error("Error submitting tree data:", error);
-      alert("Error submitting tree data.");
+    } catch (err) {
+      console.error("Submission error:", err);
+      alert("An error occurred while submitting the tree.");
     }
   };
+
+  // const handleSubmit = async (event: React.FormEvent<HTMLDivElement>) => {
+  //   event.preventDefault();
+
+  //   if (!user) {
+  //     alert("Please log in to submit the form.");
+  //     return;
+  //   }
+  //   if (!selectedImage) return;
+
+  //   try {
+  //     // Step 1: Upload the image first (if selectedImage exists)
+  //     let imageUrl = "";
+  //     if (selectedImage) {
+  //       const imageFormData = new FormData();
+  //       imageFormData.append("file", selectedImage);
+
+  //       const uploadResponse = await fetch("/api/tree/", {
+  //         method: "POST",
+  //         body: imageFormData,
+  //       });
+
+  //       if (!uploadResponse.ok) {
+  //         throw new Error("Failed to upload image.");
+  //       }
+
+  //       const uploadData = await uploadResponse.json();
+  //       imageUrl = uploadData.url; // Get the uploaded S3 URL
+  //     }
+
+  //     // Step 2: Fetch user's name from backend using email
+  //     const userResponse = await fetch(`/api/user/${user.primaryEmailAddress}`);
+
+  //     if (!userResponse.ok) {
+  //       throw new Error("Failed to fetch user details.");
+  //     }
+
+  //     const userData = await userResponse.json();
+  //     const collectorName = userData.name || "Unknown Collector"; // Fallback if no name is found
+
+  //     const currentDate = new Date();
+
+  //     const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
+  //     const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
+
+  //     const gpsCoordinates = formData.treeLocation.map((coord) =>
+  //       mongoose.Types.Decimal128.fromString(coord.toString()),
+  //     );
+
+  //     // Step 3: Construct the submission data
+  //     const dataToSubmit = {
+  //       collectorName,
+  //       dateCollected: currentDate,
+  //       gpsCoordinates,
+  //       dbh: dbhDecimal,
+  //       canopyBreadth: canopyBreadthDecimal,
+  //       species: formData.treeType,
+  //       treeCondition: formData.treeIssues,
+  //       treeQuality: formData.treeHealth,
+  //       additionalNotes: formData.fieldNotes,
+  //       imageUrl,
+  //     };
+
+  //     console.log("Submitting the following data:", JSON.stringify(dataToSubmit, null, 2));
+
+  //     const response = await fetch("/api/tree", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(dataToSubmit),
+  //     });
+
+  //     const responseText = await response.text();
+  //     console.log("Response Text: " + responseText);
+
+  //     if (response.ok) {
+  //       alert("Tree data submitted successfully!");
+  //       setFormData({
+  //         treeLocation: ["", ""],
+  //         treeType: "",
+  //         treeSpecs: {
+  //           treeHeight: 0,
+  //           canopySpread: 0,
+  //           trunkDBH: "",
+  //         },
+  //         treeHealth: 0,
+  //         treeIssues: [],
+  //         fieldNotes: "",
+  //       });
+  //     } else {
+  //       alert("Failed to submit data.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting tree data:", error);
+  //     alert("Error submitting tree data.");
+  //   }
+  // };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -528,6 +620,42 @@ export default function TreeEntryForm() {
                   onChange={handleFieldNotes}
                 ></Textarea>
               </Box>
+            </TreeFormSection>
+            <TreeFormSection>
+              <HStack gap="3">
+                <TreeFormHeading style={{ fontSize: "23px", marginBottom: "10px" }}>Upload Tree Image</TreeFormHeading>
+              </HStack>
+
+              {/* Trigger visible label button */}
+              <label htmlFor="treeImage">
+                <Box
+                  as="span"
+                  cursor="pointer"
+                  padding="10px"
+                  backgroundColor={COLORS.Cream}
+                  color={COLORS.Olive}
+                  borderRadius="md"
+                  display="inline-block"
+                >
+                  Choose Image
+                </Box>
+              </label>
+
+              {/* Fully hidden native file input */}
+              <input
+                style={{ display: "none" }}
+                type="file"
+                id="treeImage"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+
+              {/* Show filename if image is selected */}
+              {selectedImage && (
+                <Box mt={2}>
+                  <Text className="text-sm text-gray-600">{selectedImage.name}</Text>
+                </Box>
+              )}
             </TreeFormSection>
             <Button type="submit" backgroundColor={COLORS.Olive} color={COLORS.PureWhite} borderRadius="5rem">
               Submit
