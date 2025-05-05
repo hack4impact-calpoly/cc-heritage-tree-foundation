@@ -14,6 +14,16 @@ export const IconStyle = {
   borderRadius: 11,
 };
 
+export const ConditionMobile = {
+  color: "white",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: 9,
+  width: 9,
+  borderRadius: 11,
+};
+
 export const VO = {
   color: "#4A7B90",
   bg: "#CFEFF9",

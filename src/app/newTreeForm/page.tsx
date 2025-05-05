@@ -92,17 +92,42 @@ export default function TreeEntryForm() {
   };
 
   const handleTreeLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const longOrLat = e.currentTarget.getAttribute("name");
-    const value = e.target.value;
-    if (longOrLat === "treeLatitude") {
+    const { name, value } = e.currentTarget;
+
+    // clears input with no error
+    if (value.trim() === "") {
+      if (name === "treeLatitude") {
+        setFormData((prev) => ({
+          ...prev,
+          treeLocation: ["", prev.treeLocation[1]],
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          treeLocation: [prev.treeLocation[0], ""],
+        }));
+      }
+      return;
+    }
+    const numericValue = parseFloat(value);
+    if (isNaN(numericValue)) {
+      return;
+    }
+    if (name === "treeLatitude") {
+      if (numericValue < -90 || numericValue > 90) {
+        return;
+      }
       setFormData((prev) => ({
         ...prev,
-        treeLocation: [value, formData.treeLocation[1]],
+        treeLocation: [value, prev.treeLocation[1]],
       }));
-    } else {
+    } else if (name === "treeLongitude") {
+      if (numericValue < -180 || numericValue > 180) {
+        return;
+      }
       setFormData((prev) => ({
         ...prev,
-        treeLocation: [formData.treeLocation[0], value],
+        treeLocation: [prev.treeLocation[0], value],
       }));
     }
   };
@@ -172,6 +197,8 @@ export default function TreeEntryForm() {
 
       const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
       const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
+      // added tree height
+      const treeHeight = mongoose.Types.Decimal128.fromString(formData.treeSpecs.treeHeight.toString());
 
       const gpsCoordinates = formData.treeLocation.map((coord) =>
         mongoose.Types.Decimal128.fromString(coord.toString()),
@@ -188,6 +215,7 @@ export default function TreeEntryForm() {
         treeCondition: formData.treeIssues,
         treeQuality: formData.treeHealth,
         additionalNotes: formData.fieldNotes,
+        treeHeight: treeHeight, // added tree height
       };
 
       console.log("Submitting the following data:", JSON.stringify(dataToSubmit, null, 2));
@@ -233,33 +261,6 @@ export default function TreeEntryForm() {
     <div>
       {isClient ? (
         <Box p={6} maxW="600px" mx="auto" boxShadow="md" borderRadius="md" bg={COLORS.PureWhite}>
-          <MobileView>
-            <HStack
-              mt={"58px"}
-              width="100%"
-              position={"relative"}
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <IconButton position={"absolute"} left="10px" aria-label="Navbar" key={"ghost"} variant={"ghost"}>
-                <Menu width="48px" color="#596334" />
-              </IconButton>
-              <Box
-                width="48px"
-                height="48px"
-                border={"solid"}
-                borderWidth={"1px"}
-                borderRadius="100%"
-                display="flex"
-                justifyContent={"center"}
-                borderColor={"#596334"}
-                padding={"3px"}
-              >
-                <Image src="~/../logo1.png" alt="logo" htmlWidth="36px" htmlHeight="36px" />
-              </Box>
-            </HStack>
-          </MobileView>
           <Heading mb={4} justifySelf="center" margin="1rem" p={"1rem"}>
             Tell us about this tree!
           </Heading>
