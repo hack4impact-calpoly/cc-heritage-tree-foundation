@@ -11,7 +11,7 @@ export type ITree = {
   treeHeight: Decimal128; // added treeHeight
   species: string;
   treeCondition: string[];
-  treeQuality: Decimal128;
+  treeQuality: string;
   additionalNotes?: string;
 };
 

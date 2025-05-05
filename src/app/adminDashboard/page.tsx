@@ -25,7 +25,7 @@ import { AlignJustify } from "lucide-react";
 import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
 import { COLORS } from "@/styles/color-styles-data";
-import { ITree } from "@/database/treeSchema";
+import Tree, { ITree } from "@/database/treeSchema";
 import { treeHealthColors } from "../newTreeForm/tree-form-data";
 
 interface Decimal128WithProperty {
@@ -128,18 +128,16 @@ function AdminDashboard() {
         throw new Error(`HTTP ERROR Status:${response.status}`);
       }
       const trees: Array<ITree> = await response.json();
-      // trees.forEach((tree) => {
-      //   console.log(tree.treeQuality);
-      //   console.log(tree.treeQuality ? parseFloat(tree.treeQuality.$numberDecimal) : null);
-      // });
-      console.log(typeof trees[0].treeQuality);
+      trees.forEach((tree) => {
+        // console.log(tree.treeQuality);
+        // console.log(typeof tree.treeQuality);
+      });
+      console.log(typeof trees[0]);
+      console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
       trees.sort(
-        (a, b) =>
-          (a.treeQuality ? parseFloat((a.treeQuality as unknown as Decimal128WithProperty).$numberDecimal) : 11) -
-          (b.treeQuality ? parseFloat((b.treeQuality as unknown as Decimal128WithProperty).$numberDecimal) : 11),
+        (a, b) => (a.treeQuality ? parseFloat(a.treeQuality) : 11) - (b.treeQuality ? parseFloat(b.treeQuality) : 11),
       );
 
-      console.log(trees);
       setWorst3Trees([trees[0], trees[1], trees[2]]);
     };
     fetchWorstTrees().catch(console.error);
@@ -237,29 +235,11 @@ function AdminDashboard() {
                                   <Box
                                     {...IconStyle}
                                     backgroundColor={
-                                      treeHealthColors[
-                                        parseFloat(
-                                          (tree.treeQuality as unknown as Decimal128WithProperty)
-                                            ? (tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal
-                                            : "0",
-                                        )
-                                      ][0]
+                                      treeHealthColors[parseInt(tree.treeQuality ? tree.treeQuality : "0")][0]
                                     }
-                                    color={
-                                      treeHealthColors[
-                                        parseFloat(
-                                          (tree.treeQuality as unknown as Decimal128WithProperty)
-                                            ? (tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal
-                                            : "0",
-                                        )
-                                      ][1]
-                                    }
+                                    color={treeHealthColors[parseInt(tree.treeQuality ? tree.treeQuality : "0")][1]}
                                   >
-                                    {parseFloat(
-                                      (tree.treeQuality as unknown as Decimal128WithProperty)
-                                        ? (tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal
-                                        : "0",
-                                    )}
+                                    {parseFloat(tree.treeQuality ? tree.treeQuality : "0")}
                                   </Box>
                                 </Td>
                                 <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
@@ -319,26 +299,7 @@ function AdminDashboard() {
           </BrowserView>
 
           <MobileView>
-            <Box
-              style={{
-                position: "absolute",
-                marginLeft: "20px",
-                marginTop: "15px",
-              }}
-            >
-              <AlignJustify></AlignJustify>
-            </Box>
             {/* add tree icon */}
-            <Box
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: "50px",
-              }}
-            >
-              <Image src="./logo1.png" alt="tree icon" height={"50px"}></Image>
-            </Box>
             <Box width="100%" height="100%" p={{ base: "20px", md: "0 50px 50px 50px" }} pt="0px">
               <Grid
                 width="100%"
@@ -348,32 +309,16 @@ function AdminDashboard() {
                 gap={4}
                 mt={5}
               >
-                {/* Create New Announcement Button */}
-                <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>
-                  <Box mt={5} display="flex" justifyContent="center" {...BoxItem} height={100}>
-                    <Button
-                      width="100%"
-                      maxWidth="300px"
-                      height="50px"
-                      color="white"
-                      bg="#E57300"
-                      borderRadius="50px"
-                      fontWeight="bold"
-                      fontSize="sm"
-                      onClick={() => router.push("/createAnnouncement")}
-                    >
-                      Create new announcement&nbsp;
-                      <SquarePen />
-                    </Button>
-                  </Box>
-                </GridItem>
+                <Text fontSize="3xl" fontWeight="bold" color="#596334">
+                  Welcome back, {user.user ? user.user.firstName : "User"}!
+                </Text>
 
                 <Flex justifyContent={"space-between"} mt={5}>
                   {/* Trees Logged This Year */}
                   <GridItem width="50%" m={1} height={165}>
                     <Box {...BoxItem} height="100%" p={{ base: 2, md: 2 }}>
                       <Text ml={2} fontWeight="bold" color="#596334" fontSize="4xl">
-                        123
+                        {treesLoggedYear}
                       </Text>
                       <Text ml={2} color="#333333">
                         Trees Logged This Year
@@ -407,6 +352,26 @@ function AdminDashboard() {
                     </Box>
                   </GridItem>
                 </Flex>
+
+                {/* Create New Announcement Button */}
+                <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>
+                  <Box mt={5} display="flex" justifyContent="center" {...BoxItem} height={100}>
+                    <Button
+                      width="100%"
+                      maxWidth="300px"
+                      height="50px"
+                      color="white"
+                      bg="#E57300"
+                      borderRadius="50px"
+                      fontWeight="bold"
+                      fontSize="sm"
+                      onClick={() => router.push("/createAnnouncement")}
+                    >
+                      Create new announcement&nbsp;
+                      <SquarePen />
+                    </Button>
+                  </Box>
+                </GridItem>
 
                 {/* Map */}
                 <GridItem height={250} data-testid="map_id">
