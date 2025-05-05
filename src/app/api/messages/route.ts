@@ -9,6 +9,7 @@ async function connectDB() {
 }
 
 // new announcement
+
 export async function POST(req: NextRequest) {
   await connectDB();
 
@@ -38,5 +39,16 @@ export async function POST(req: NextRequest) {
     );
   } catch (err) {
     return NextResponse.json("Failed to send announcement: " + err, { status: 400 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  await connectDB();
+
+  try {
+    const announcements = await Announcement.find();
+    return NextResponse.json(announcements, { status: 200 });
+  } catch (err) {
+    return NextResponse.json("Failed to fetch announcements: " + err, { status: 400 });
   }
 }
