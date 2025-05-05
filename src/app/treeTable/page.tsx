@@ -31,6 +31,7 @@ import { useState, useEffect } from "react";
 import { ITree } from "@/database/treeSchema";
 import { FileDown, Menu, SearchIcon, ChevronLeft, ChevronRight, TreePine, Edit } from "lucide-react";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
+import { Decimal128 } from "mongodb"; // or "bson"
 
 export default function TreeTable() {
   const [loading, setLoading] = useState(true);
@@ -82,6 +83,7 @@ export default function TreeTable() {
       .finally(() => {
         setLoading(false);
       });
+    console.log(trees);
   }, []);
 
   const handlePageChange = (pageNumber: number) => {
@@ -112,7 +114,7 @@ export default function TreeTable() {
         "DBH (inches)": tree.dbh.toString(),
         "Tree Canopy Breadth": tree.canopyBreadth.toString(),
         Species: tree.species,
-        "Tree Quality": String(tree.treeQuality),
+        "Tree Quality": tree.treeQuality.toString(),
         "Tree Condition": Array.isArray(tree.treeCondition) ? tree.treeCondition.join(", ") : tree.treeCondition,
         "Additional Notes": tree.additionalNotes || "N/A",
       })),
@@ -159,12 +161,12 @@ export default function TreeTable() {
     if (sortOrder) {
       filtered = filtered
         .filter((tree: ITree) => {
-          const first = tree.treeCondition?.[0];
+          const first = tree.treeQuality.toString();
           return first !== undefined && !isNaN(Number(first));
         })
         .sort((a, b) => {
-          const aVal = Number(a.treeCondition[0]);
-          const bVal = Number(b.treeCondition[0]);
+          const aVal = Number(a.treeQuality.toString());
+          const bVal = Number(b.treeQuality.toString());
           return sortOrder === "asc" ? bVal - aVal : aVal - bVal;
         });
     }
@@ -331,15 +333,9 @@ export default function TreeTable() {
                                         borderRadius={5}
                                         px={2}
                                         py={1}
-                                        bg={
-                                          tree.treeCondition.length > 0
-                                            ? getRedOrangeColor(tree.treeCondition[0])
-                                            : "#B6E1EF"
-                                        }
+                                        bg={getRedOrangeColor(tree.treeQuality.toString())}
                                       >
-                                        {Array.isArray(tree.treeCondition)
-                                          ? tree.treeCondition.join(", ")
-                                          : tree.treeCondition}
+                                        {tree.treeQuality.toString()}
                                       </Tag>
                                     </Td>
                                     <Td>
@@ -528,12 +524,11 @@ export default function TreeTable() {
                               <VStack spacing={1} justify="center" align="center" h="100%" overflow="hidden">
                                 <Text>Condition</Text>
                                 <Tag size="med" bg="#596334" color="white" borderRadius="md" px={2} py={1}>
-                                  {selectedTree.treeCondition.length > 0 &&
-                                  !isNaN(Number(selectedTree.treeCondition[0]))
-                                    ? selectedTree.treeCondition[0]
-                                    : "-"}
+                                  {selectedTree.treeQuality.toString()}
                                 </Tag>
-                                <Text>Healthy</Text>
+                                <Text>
+                                  {parseInt(selectedTree.treeQuality.toString()) >= 7 ? "Healthy" : "Unhealt"}
+                                </Text>
                               </VStack>
                             </Box>
                             <Box bg="transparent" height="100px" borderRadius="md" p={2}>
