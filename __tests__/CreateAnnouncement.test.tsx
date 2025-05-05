@@ -8,6 +8,27 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CreateAnnouncement from "@/app/createAnnouncement/page";
 
+jest.mock("@clerk/nextjs", () => ({
+  ClerkProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+
+  useUser: () => ({
+    isLoaded: true,
+    isSignedIn: true,
+    user: {
+      id: "user_123",
+      fullName: "Test User",
+      primaryEmailAddress: { emailAddress: "test@example.com" },
+    },
+  }),
+
+  useAuth: () => ({
+    getToken: () => Promise.resolve("mock-token"),
+    userId: "user_123",
+    sessionId: "sess_abc",
+    isSignedIn: true,
+  }),
+}));
+
 describe("CreateAnnouncement", () => {
   it("renders the form correctly", () => {
     render(<CreateAnnouncement />);

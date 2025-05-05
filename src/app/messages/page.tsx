@@ -213,7 +213,6 @@ function Messages() {
                       <></>
                     )}
                   </Flex>
-
                   {selectedMessage && (
                     <div className={styles.messageTable}>
                       <div className={styles.messageHeader}>
