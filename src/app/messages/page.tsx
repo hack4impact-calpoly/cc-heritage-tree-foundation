@@ -117,7 +117,7 @@ function Messages() {
               </div>
 
               {activeTab === "inbox" ? (
-                <div className={styles.mainContent}>
+                <div>
                   <Flex>
                     <Table className={styles.table}>
                       <Thead className={styles.tableHeader}>
