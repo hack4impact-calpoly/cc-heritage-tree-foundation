@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 //! Example user schema. Not guaranteed to work
 const UserSchema = new Schema({
+  _id: { type: String },
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phoneNumber: { type: String, required: false },
@@ -10,7 +11,7 @@ const UserSchema = new Schema({
 });
 
 export type IUser = {
-  _id: string;
+  _id?: string;
   name: string;
   email: string;
   phoneNumber: string;
