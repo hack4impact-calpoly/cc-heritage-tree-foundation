@@ -32,12 +32,14 @@ import { ITree } from "@/database/treeSchema";
 import { FileDown, Menu, SearchIcon, ChevronLeft, ChevronRight, TreePine, Edit } from "lucide-react";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
 import { Decimal128 } from "mongodb"; // or "bson"
+import { useUser } from "@clerk/nextjs";
 
 export default function TreeTable() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTrees, setFilteredTrees] = useState<ITree[]>([]);
   const [trees, setTrees] = useState<ITree[]>([]);
+  const { user } = useUser();
 
   // tree table structure
   const treesPerPage = 8;
@@ -60,35 +62,46 @@ export default function TreeTable() {
   };
 
   useEffect(() => {
-    fetch("/api/tree")
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-      })
-      .then((data) => {
-        console.log("datata");
-        console.log(data);
-        if (Array.isArray(data)) {
-          setTrees(data);
-          setFilteredTrees(data); // set filteredTrees to data
-          setFilteredTrees(data); // set filteredTrees to data
+    if (!user) return; // Exit early if no user
+
+    console.log("User available:", user);
+
+    const fetchData = async () => {
+      try {
+        // Fetch user data
+        const userRes = await fetch(`/api/user?email=${user.primaryEmailAddress?.emailAddress}`);
+        if (!userRes.ok) throw new Error(`User fetch failed: ${userRes.status}`);
+        const userData = await userRes.json();
+
+        // Fetch trees based on role
+        let apiString: string;
+
+        if (userData?.role === "Volunteer") {
+          apiString = `/api/tree?collectorName=${user.fullName}`;
+        } else if (userData?.role === "Admin") {
+          apiString = "/api/tree";
         } else {
-          console.error("Unexpected data format:", data);
-          setTrees([]);
+          throw new Error("Role not found");
         }
-      })
-      .catch((err) => {
+
+        const treesRes = await fetch(apiString);
+        if (!treesRes.ok) throw new Error(`Trees fetch failed: ${treesRes.status}`);
+        const treesData = await treesRes.json();
+
+        if (Array.isArray(treesData)) {
+          setTrees(treesData);
+          setFilteredTrees(treesData);
+        }
+      } catch (err) {
         console.error("Fetch error:", err);
         setTrees([]);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-    console.log(trees);
-  }, []);
+      }
+    };
+
+    fetchData();
+  }, [user]);
 
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {

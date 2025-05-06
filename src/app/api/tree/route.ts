@@ -64,7 +64,20 @@ export async function GET(request: Request) {
   await connectDB();
 
   try {
-    const trees = await Tree.find().lean();
+    // Get query parameters from the request URL
+    const { searchParams } = new URL(request.url);
+    const collectorName = searchParams.get("collectorName");
+
+    // Build the query object
+    const query: any = {};
+    if (collectorName) {
+      query.collectorName = collectorName;
+    }
+
+    // Find trees based on the query (filtered if collectorName exists)
+    const trees = await Tree.find(query).lean();
+
+    // Serialize the tree data
     const serializedTrees = trees.map((tree) => ({
       ...tree,
       gpsCoordinates: tree.gpsCoordinates.map((coord: any) => coord.toString()),
@@ -74,13 +87,13 @@ export async function GET(request: Request) {
       treeQuality: tree.treeQuality.toString(),
       photo: tree.photo?.toString(),
     }));
+
     console.log(serializedTrees);
     return NextResponse.json(serializedTrees, { status: 200 });
   } catch (err) {
-    return NextResponse.json("Failed to fetch trees: " + err, { status: 400 });
+    return NextResponse.json({ message: "Failed to fetch trees: " + err }, { status: 400 });
   }
 }
-
 // export async function POST(req: NextRequest) {
 //   await connectDB();
 //   console.log("Received data: ", req.body);
