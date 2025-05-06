@@ -160,7 +160,7 @@ function AdminDashboard() {
       });
     };
     fetchTreeCount().catch(console.error);
-  }, [currentMonth, currentYear]);
+  }, []);
 
   useEffect(() => {
     const fetchWorstTrees = async () => {
@@ -173,8 +173,8 @@ function AdminDashboard() {
         // console.log(tree.treeQuality);
         // console.log(typeof tree.treeQuality);
       });
-      console.log(typeof trees[0]);
-      console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
+      // console.log(typeof trees[0]);
+      // console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
       trees.sort(
         (a, b) => (a.treeQuality ? parseFloat(a.treeQuality) : 11) - (b.treeQuality ? parseFloat(b.treeQuality) : 11),
       );
