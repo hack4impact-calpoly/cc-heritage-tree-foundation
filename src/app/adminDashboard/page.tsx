@@ -25,18 +25,8 @@ import { AlignJustify } from "lucide-react";
 import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
 import { COLORS } from "@/styles/color-styles-data";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
 import Tree, { ITree } from "@/database/treeSchema";
 import { treeHealthColors } from "../newTreeForm/tree-form-data";
-=======
-import { ITree } from "@/database/treeSchema";
-import { treeHealthColors, TREE_TYPE_DATA } from "../newTreeForm/tree-form-data";
-import { tree } from "next/dist/build/templates/app-page";
-import { Decimal128 } from "mongoose";
->>>>>>> 3c0ad5c (feat: treeTable widget finds worst trees)
 
 interface Decimal128WithProperty {
   $numberDecimal: string;
@@ -129,11 +119,7 @@ function AdminDashboard() {
       });
     };
     fetchTreeCount().catch(console.error);
-<<<<<<< HEAD
   }, []);
-=======
-  }, [currentMonth, currentYear]);
->>>>>>> 3c0ad5c (feat: treeTable widget finds worst trees)
 
   useEffect(() => {
     const fetchWorstTrees = async () => {
@@ -142,38 +128,14 @@ function AdminDashboard() {
         throw new Error(`HTTP ERROR Status:${response.status}`);
       }
       const trees: Array<ITree> = await response.json();
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
       trees.forEach((tree) => {
         // console.log(tree.treeQuality);
         // console.log(typeof tree.treeQuality);
       });
-<<<<<<< HEAD
       // console.log(typeof trees[0]);
       // console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
       trees.sort((a, b) => parseFloat(a.treeQuality.toString()) - parseFloat(b.treeQuality.toString()));
 
-=======
-      // trees.forEach((tree) => {
-      //   console.log(tree.treeQuality);
-      //   console.log(tree.treeQuality ? parseFloat(tree.treeQuality.$numberDecimal) : null);
-      // });
-      console.log(typeof trees[0].treeQuality);
-=======
-      console.log(typeof trees[0]);
-      console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
->>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
-      trees.sort(
-        (a, b) => (a.treeQuality ? parseFloat(a.treeQuality) : 11) - (b.treeQuality ? parseFloat(b.treeQuality) : 11),
-      );
-
-<<<<<<< HEAD
-      console.log(trees);
->>>>>>> 3c0ad5c (feat: treeTable widget finds worst trees)
-=======
->>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
       setWorst3Trees([trees[0], trees[1], trees[2]]);
     };
     fetchWorstTrees().catch(console.error);
@@ -182,11 +144,6 @@ function AdminDashboard() {
   useEffect(() => {
     setIsClient(true);
   }, []);
-<<<<<<< HEAD
-=======
-
-  console.log(worst3Trees);
->>>>>>> 3c0ad5c (feat: treeTable widget finds worst trees)
   return (
     <Box>
       {isClient ? (
@@ -222,7 +179,6 @@ function AdminDashboard() {
                       {treesLoggedYear}
                     </Text>
                     <Text color="#333333">
-<<<<<<< HEAD
                       {treesThisMonth > treesLastMonth
                         ? treesLastMonth != 0
                           ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2)
@@ -230,10 +186,6 @@ function AdminDashboard() {
                         : "No "}
                       % incr from
                       {" " + MONTHS[currentMonth - 1]}
-=======
-                      {treesLastMonth != 0 ? ((treesThisMonth / treesLastMonth - 1) * 100).toFixed(2) : 100}%{" "}
-                      {treesThisMonth / treesLastMonth >= 1 ? "incr" : "decr"} from {MONTHS[currentMonth - 1]}
->>>>>>> 3c0ad5c (feat: treeTable widget finds worst trees)
                     </Text>
                   </Box>
                 </GridItem>
@@ -263,7 +215,6 @@ function AdminDashboard() {
                           </Tr>
                         </Thead>
                         <Tbody>
-<<<<<<< HEAD
                           {worst3Trees.map((tree) =>
                             tree ? (
                               <Tr key={tree._id}>
@@ -281,7 +232,6 @@ function AdminDashboard() {
                                   <Box
                                     {...IconStyle}
                                     backgroundColor={
-<<<<<<< HEAD
                                       treeHealthColors[
                                         parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")
                                       ][0]
@@ -290,17 +240,9 @@ function AdminDashboard() {
                                       treeHealthColors[
                                         parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")
                                       ][1]
-=======
-                                      treeHealthColors[parseInt(tree.treeQuality ? tree.treeQuality : "0")][0]
->>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
                                     }
-                                    color={treeHealthColors[parseInt(tree.treeQuality ? tree.treeQuality : "0")][1]}
                                   >
-<<<<<<< HEAD
                                     {parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")}
-=======
-                                    {parseFloat(tree.treeQuality ? tree.treeQuality : "0")}
->>>>>>> bdf3b3b (fix: adapt for treeQuality schema change)
                                   </Box>
                                 </Td>
                                 <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
@@ -310,41 +252,6 @@ function AdminDashboard() {
                               <></>
                             ),
                           )}
-=======
-                          {worst3Trees.map((tree) => (
-                            <Tr key={tree._id}>
-                              <Td>{tree._id}</Td>
-                              <Td>
-                                <Box
-                                  {...IconStyle}
-                                  color={getSpeciesColors(tree.species).color}
-                                  background={getSpeciesColors(tree.species).bgColor}
-                                >
-                                  {getSpeciesAbbreviation(tree.species)}
-                                </Box>
-                              </Td>
-                              <Td>
-                                <Box
-                                  {...IconStyle}
-                                  backgroundColor={
-                                    treeHealthColors[
-                                      parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)
-                                    ][0]
-                                  }
-                                  color={
-                                    treeHealthColors[
-                                      parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)
-                                    ][1]
-                                  }
-                                >
-                                  {parseFloat((tree.treeQuality as unknown as Decimal128WithProperty).$numberDecimal)}
-                                </Box>
-                              </Td>
-                              <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
-                              <Td>{tree.collectorName}</Td>
-                            </Tr>
-                          ))}
->>>>>>> 3c0ad5c (feat: treeTable widget finds worst trees)
                         </Tbody>
                       </Table>
                     </Box>
