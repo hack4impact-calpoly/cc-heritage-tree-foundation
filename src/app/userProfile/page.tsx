@@ -24,10 +24,7 @@ import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { BoxItem, IconStyle, VO } from "@/styles/AdminDashStyle";
 import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
-<<<<<<< HEAD
 import UserProfileMobile from "@/components/UserProfileMobile";
-=======
->>>>>>> 1b43f60 (changed the default view on the mobile)
 
 function UserProfile() {
   return (
@@ -212,11 +209,7 @@ function UserProfile() {
       </BrowserView>
 
       <MobileView>
-<<<<<<< HEAD
         <UserProfileMobile />
-=======
-        <div>hi there</div>
->>>>>>> 1b43f60 (changed the default view on the mobile)
       </MobileView>
     </div>
   );
