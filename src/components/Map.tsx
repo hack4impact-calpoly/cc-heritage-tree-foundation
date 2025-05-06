@@ -111,7 +111,7 @@ function PopupContent({ tree }: { tree: ITree }) {
                   justifyContent="center"
                 >
                   <Text textColor="#ffffff" fontSize="14px" fontWeight="semibold">
-                    {parseFloat(tree.treeQuality.toString())}
+                    {parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")}
                   </Text>
                 </Box>
 
