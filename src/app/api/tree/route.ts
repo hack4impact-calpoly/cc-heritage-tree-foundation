@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
       species: formData.get("species"),
       dbh: formData.get("dbh"),
       canopyBreadth: formData.get("canopyBreadth"),
+      treeHeight: Number(formData.get("treeHeight")),
       treeQuality: Number(formData.get("treeQuality")),
       additionalNotes: formData.get("additionalNotes"),
       gpsCoordinates: [formData.get("gpsCoordinates[0]"), formData.get("gpsCoordinates[1]")],
@@ -68,8 +69,10 @@ export async function GET(request: Request) {
       ...tree,
       gpsCoordinates: tree.gpsCoordinates.map((coord: any) => coord.toString()),
       dbh: tree.dbh.toString(),
+      treeHeight: tree.treeHeight?.toString(),
       canopyBreadth: tree.canopyBreadth.toString(),
       treeQuality: tree.treeQuality.toString(),
+      photo: tree.photo?.toString(),
     }));
     console.log(serializedTrees);
     return NextResponse.json(serializedTrees, { status: 200 });

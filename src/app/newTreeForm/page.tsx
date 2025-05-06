@@ -196,13 +196,12 @@ export default function TreeEntryForm() {
 
       form.append("collectorName", user.fullName || "Unknown Collector");
       form.append("dateCollected", new Date().toISOString());
-
       form.append("species", formData.treeType);
       form.append("dbh", formData.treeSpecs.trunkDBH.toString());
       form.append("canopyBreadth", formData.treeSpecs.canopySpread.toString());
+      form.append("treeHeight", formData.treeSpecs.treeHeight.toString());
       form.append("treeQuality", formData.treeHealth.toString());
       form.append("additionalNotes", formData.fieldNotes);
-
       // GPS Coordinates as individual fields or comma-separated string
       form.append("gpsCoordinates[0]", formData.treeLocation[0]);
       form.append("gpsCoordinates[1]", formData.treeLocation[1]);
@@ -213,7 +212,7 @@ export default function TreeEntryForm() {
       });
       // added tree height
       const treeHeight = mongoose.Types.Decimal128.fromString(formData.treeSpecs.treeHeight.toString());
-
+      console.log(form);
       const response = await fetch("/api/tree/", {
         method: "POST",
         body: form,
