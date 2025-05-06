@@ -77,7 +77,12 @@ export default function VolunteerDashboard() {
                   </GridItem>
 
                   {/* Tree Logs */}
-                  <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 3 }} minWidth="300px">
+                  <GridItem
+                    rowSpan={{ base: 1, md: 3 }}
+                    colSpan={{ base: 1, md: 3 }}
+                    minWidth="300px"
+                    overflow="scroll"
+                  >
                     <Flex w="100%" h="100%" borderRadius="16px" bg="white" p="20px" flexDir="column" gap="15px">
                       <HStack position="relative">
                         <Button
@@ -110,6 +115,7 @@ export default function VolunteerDashboard() {
                           flexGrow={1}
                           display="flex"
                           flexDir="column"
+                          minHeight="100px"
                         >
                           <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                             You&#39;ve logged
@@ -133,6 +139,7 @@ export default function VolunteerDashboard() {
                           flexGrow={1}
                           display="flex"
                           flexDir="column"
+                          minHeight="100px"
                         >
                           <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                             Total logged
