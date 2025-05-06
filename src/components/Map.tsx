@@ -111,7 +111,11 @@ function PopupContent({ tree }: { tree: ITree }) {
                   justifyContent="center"
                 >
                   <Text textColor="#ffffff" fontSize="14px" fontWeight="semibold">
+<<<<<<< HEAD
                     {parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")}
+=======
+                    {parseFloat(tree.treeQuality.toString())}
+>>>>>>> 9d9594d (feat: update schema to use Decimal128 again, also update map markers to properly indicate tree quality)
                   </Text>
                 </Box>
 
