@@ -71,7 +71,7 @@ export default function TreeEntryForm() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const [formData, setFormData] = useState<FormValues>({
-    treeLocation: ["", ""],
+    treeLocation: "",
     treeType: "",
     treeSpecs: {
       treeHeight: 0,
@@ -98,44 +98,11 @@ export default function TreeEntryForm() {
   };
 
   const handleTreeLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.currentTarget;
+    const value = e.target.value;
 
-    // clears input with no error
-    if (value.trim() === "") {
-      if (name === "treeLatitude") {
-        setFormData((prev) => ({
-          ...prev,
-          treeLocation: ["", prev.treeLocation[1]],
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          treeLocation: [prev.treeLocation[0], ""],
-        }));
-      }
-      return;
-    }
-    const numericValue = parseFloat(value);
-    if (isNaN(numericValue)) {
-      return;
-    }
-    if (name === "treeLatitude") {
-      if (numericValue < -90 || numericValue > 90) {
-        return;
-      }
-      setFormData((prev) => ({
-        ...prev,
-        treeLocation: [value, prev.treeLocation[1]],
-      }));
-    } else if (name === "treeLongitude") {
-      if (numericValue < -180 || numericValue > 180) {
-        return;
-      }
-      setFormData((prev) => ({
-        ...prev,
-        treeLocation: [prev.treeLocation[0], value],
-      }));
-    }
+    // Always update the input value to allow typing
+    setFormData((prev) => ({ ...prev, treeLocation: value }));
+    setFormData((prev) => ({ ...prev, treeLocation: value }));
   };
 
   const handleTreeSpecs = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,6 +154,14 @@ export default function TreeEntryForm() {
       return;
     }
 
+    const coordMatch = formData.treeLocation.match(/\(?\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\)?/);
+    if (!coordMatch) {
+      alert("Please use correct formatting for location");
+      return;
+    }
+
+    const [latitude, longitude] = coordMatch ? [coordMatch[1], coordMatch[2]] : ["", ""];
+
     try {
       const form = new FormData();
 
@@ -203,8 +178,8 @@ export default function TreeEntryForm() {
       form.append("treeQuality", formData.treeHealth.toString());
       form.append("additionalNotes", formData.fieldNotes);
       // GPS Coordinates as individual fields or comma-separated string
-      form.append("gpsCoordinates[0]", formData.treeLocation[0]);
-      form.append("gpsCoordinates[1]", formData.treeLocation[1]);
+      form.append("gpsCoordinates[0]", latitude);
+      form.append("gpsCoordinates[1]", longitude);
 
       // Multiple tree issues as repeated form values
       formData.treeIssues.forEach((issue, idx) => {
@@ -224,7 +199,7 @@ export default function TreeEntryForm() {
         alert("Tree data submitted successfully!");
         // Reset form
         setFormData({
-          treeLocation: ["", ""],
+          treeLocation: "",
           treeType: "",
           treeSpecs: {
             treeHeight: 0,
@@ -356,27 +331,25 @@ export default function TreeEntryForm() {
           </Heading>
           <VStack spacing={4} as="form" onSubmit={handleSubmit}>
             <TreeFormSection isRequired>
-              <TreeFormHeading id="treeLocation" style={{ fontSize: "24px" }} marginBottom="20px">
+              <TreeFormLabel
+                id="treeLocation"
+                htmlFor="treeCoordinates"
+                style={{ fontSize: "24px" }}
+                marginBottom="20px"
+              >
                 Location
-              </TreeFormHeading>
-              <Box display="flex" flexDirection="row" gap="20px">
-                <TreeFormInput
-                  id="treeLatitude"
-                  type="string"
-                  name="treeLatitude"
-                  value={formData.treeLocation[0]}
-                  placeholder="input latitude"
-                  onChange={handleTreeLocation}
-                />
-                <TreeFormInput
-                  id="treeLongitude"
-                  type="string"
-                  name="treeLongitude"
-                  value={formData.treeLocation[1]}
-                  placeholder="input longitude"
-                  onChange={handleTreeLocation}
-                />
-              </Box>
+              </TreeFormLabel>
+              <TreeFormInput
+                id="treeCoordinates"
+                type="text"
+                name="treeCoordinates"
+                value={formData.treeLocation}
+                placeholder="(latitude, longitude) e.g. (35.555386, -120.713429)"
+                onChange={handleTreeLocation}
+              />
+              <Text fontSize="sm" color="gray.500" mt={2}>
+                Example format: (35.555386, -120.713429)
+              </Text>
             </TreeFormSection>
             <TreeFormSection isRequired>
               <TreeFormHeading id="treeSpecies" style={{ fontSize: "24px" }} marginBottom="20px">
