@@ -1,5 +1,6 @@
 "use client";
-import { ArrowUpRight } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import {
   Grid,
   HStack,
@@ -18,13 +19,45 @@ import {
   Thead,
   Tr,
   FormControl,
+  Spinner,
 } from "@chakra-ui/react";
-import React from "react";
+import { ArrowUpRight } from "lucide-react";
 import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { BoxItem, IconStyle, VO } from "@/styles/AdminDashStyle";
 
 function UserProfile() {
+  const { user, isLoaded } = useUser();
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const email = user.primaryEmailAddress.emailAddress;
+        const res = await fetch(`/api/user/${email}`);
+        const data = await res.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [isLoaded, user]);
+
+  if (loading || !userData) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    );
+  }
+
   return (
     <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
       <Box maxH="90vh">
@@ -67,7 +100,7 @@ function UserProfile() {
                       </Center>
                       <Center {...LeftUser}>
                         <Text fontSize="xs" color="black" align="left" mt={2} mr={30}>
-                          Jane Doe
+                          {userData.name}
                         </Text>
                       </Center>
                       <Center {...LeftUser}>
@@ -77,7 +110,7 @@ function UserProfile() {
                       </Center>
                       <Center {...LeftUser}>
                         <Text fontSize="xs" {...LeftUser} color="black" mt={2} mr={30}>
-                          janedoe123@gmail.com
+                          {userData.email}
                         </Text>
                       </Center>
                       <Center {...LeftUser}>
@@ -87,7 +120,7 @@ function UserProfile() {
                       </Center>
                       <Center fontSize="xs" {...LeftUser}>
                         <Text color="black" mt={2}>
-                          000-000-0000
+                          {userData.phoneNumber || "N/A"}
                         </Text>
                       </Center>
                       <Center {...LeftUser}>
@@ -97,7 +130,7 @@ function UserProfile() {
                       </Center>
                       <Center {...LeftUser}>
                         <Text fontSize="xs" color="black" mt={2}>
-                          Admin, Volunteer
+                          {userData.role}
                         </Text>
                       </Center>
                       <Center mt={5} {...LeftUser}>
