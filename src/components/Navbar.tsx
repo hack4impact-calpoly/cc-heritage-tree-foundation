@@ -74,16 +74,29 @@ export default function Navbar() {
   const router = useRouter(); // Initialize the router
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [hasMounted, setHasMounted] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (hasMounted) {
+      setShowMobileNav(isMobile);
+    }
+  }, [hasMounted]);
+
   const handleNavigation = (path: string, text: string) => {
     setActiveButton(text);
     router.push(path);
-    if (isMobile) {
-      onClose(); // Close the drawer when navigating on mobile
+    if (showMobileNav) {
+      onClose();
     }
   };
 
   // mobile navbar
-  if (isMobile) {
+  if (showMobileNav) {
     return (
       <>
         {/* Mobile Toggle Button */}

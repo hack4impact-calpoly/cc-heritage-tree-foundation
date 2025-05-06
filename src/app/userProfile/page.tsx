@@ -40,8 +40,7 @@ function UserProfile() {
     return null;
   }
 
-  if (isMobile) {
-    // Render the mobile version
+  if (isMobileDevice) {
     return <UserProfileMobile />;
   } else {
     return (

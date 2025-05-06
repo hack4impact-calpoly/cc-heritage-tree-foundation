@@ -1,7 +1,7 @@
 "use client";
 import { ChevronDown } from "lucide-react";
 import { Grid, GridItem, Image, Text, Button, Flex, Link, Box, Center, Input, FormControl } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
@@ -17,9 +17,24 @@ function EditUserProfile() {
     console.log(name, email, phoneNumber);
   };
 
-  return (
-    <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
-      <BrowserView>
+  const [isClient, setIsClient] = useState(false);
+
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    setIsMobileDevice(isMobile);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
+  if (isMobileDevice) {
+    return <EditUserProfileMobile />;
+  } else {
+    return (
+      <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
         <Box maxH="90vh">
           <Flex direction="row" justify="right">
             <Box mt={5} mr={5} borderRadius={"15px"} borderColor="black" bg="white" w="250px" h="100px" p={5}>
@@ -141,12 +156,9 @@ function EditUserProfile() {
             </Flex>
           </Center>
         </Box>
-      </BrowserView>
-      <MobileView>
-        <EditUserProfileMobile />
-      </MobileView>
-    </div>
-  );
+      </div>
+    );
+  }
 }
 
 export default EditUserProfile;
