@@ -134,9 +134,7 @@ function AdminDashboard() {
       });
       // console.log(typeof trees[0]);
       // console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
-      trees.sort(
-        (a, b) => (a.treeQuality ? parseFloat(a.treeQuality) : 11) - (b.treeQuality ? parseFloat(b.treeQuality) : 11),
-      );
+      trees.sort((a, b) => parseFloat(a.treeQuality.toString()) - parseFloat(b.treeQuality.toString()));
 
       setWorst3Trees([trees[0], trees[1], trees[2]]);
     };
@@ -146,7 +144,6 @@ function AdminDashboard() {
   useEffect(() => {
     setIsClient(true);
   }, []);
-
   return (
     <Box>
       {isClient ? (
@@ -234,12 +231,10 @@ function AdminDashboard() {
                                 <Td>
                                   <Box
                                     {...IconStyle}
-                                    backgroundColor={
-                                      treeHealthColors[parseInt(tree.treeQuality ? tree.treeQuality : "0")][0]
-                                    }
-                                    color={treeHealthColors[parseInt(tree.treeQuality ? tree.treeQuality : "0")][1]}
+                                    backgroundColor={treeHealthColors[parseFloat(tree.treeQuality.toString())][0]}
+                                    color={treeHealthColors[parseFloat(tree.treeQuality.toString())][1]}
                                   >
-                                    {parseFloat(tree.treeQuality ? tree.treeQuality : "0")}
+                                    {parseFloat(tree.treeQuality.toString())}
                                   </Box>
                                 </Td>
                                 <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
