@@ -175,9 +175,7 @@ function AdminDashboard() {
       });
       // console.log(typeof trees[0]);
       // console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
-      trees.sort(
-        (a, b) => (a.treeQuality ? parseFloat(a.treeQuality) : 11) - (b.treeQuality ? parseFloat(b.treeQuality) : 11),
-      );
+      trees.sort((a, b) => parseFloat(a.treeQuality.toString()) - parseFloat(b.treeQuality.toString()));
 
       setWorst3Trees([trees[0], trees[1], trees[2]]);
     };
