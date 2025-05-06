@@ -112,6 +112,7 @@ export default function TreeTable() {
         new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
         tree.dbh?.toString().includes(searchValue) ||
         tree.canopyBreadth?.toString().includes(searchValue) ||
+        tree.treeHeight?.toString().includes(searchValue) ||
         tree.species?.toLowerCase().includes(searchValue) ||
         tree.additionalNotes?.toLowerCase().includes(searchValue) ||
         (Array.isArray(tree.treeCondition)
@@ -140,6 +141,7 @@ export default function TreeTable() {
         "GPS Coordinates": Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ") : tree.gpsCoordinates,
         "DBH (inches)": tree.dbh.toString(),
         "Tree Canopy Breadth": tree.canopyBreadth.toString(),
+        "Tree Height": tree.treeHeight.toString(),
         Species: tree.species,
         "Tree Quality": tree.treeQuality.toString(),
         "Tree Condition": Array.isArray(tree.treeCondition) ? tree.treeCondition.join(", ") : tree.treeCondition,
@@ -156,6 +158,7 @@ export default function TreeTable() {
 
   const handleArrowClick = (treeData: ITree) => {
     setSelectedTree(treeData);
+    console.log(treeData);
   };
 
   const [sortOrder, setSortOrder] = useState<"" | "asc" | "desc">("");
@@ -173,6 +176,7 @@ export default function TreeTable() {
           new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
           tree.dbh?.toString().includes(searchValue) ||
           tree.canopyBreadth?.toString().includes(searchValue) ||
+          tree.treeHeight?.toString().includes(searchValue) ||
           tree.species?.toLowerCase().includes(searchValue) ||
           tree.additionalNotes?.toLowerCase().includes(searchValue) ||
           (Array.isArray(tree.treeCondition)
@@ -554,7 +558,7 @@ export default function TreeTable() {
                                   {selectedTree.treeQuality.toString()}
                                 </Tag>
                                 <Text>
-                                  {parseInt(selectedTree.treeQuality.toString()) >= 7 ? "Healthy" : "Unhealt"}
+                                  {parseInt(selectedTree.treeQuality.toString()) >= 7 ? "Healthy" : "Unhealty"}
                                 </Text>
                               </VStack>
                             </Box>
@@ -631,7 +635,7 @@ export default function TreeTable() {
                               <Text fontSize="med" color="#596334">
                                 Height
                               </Text>
-                              <Text fontWeight="bold">30&apos;</Text>
+                              <Text fontWeight="bold">{selectedTree.treeHeight?.toString()}&apos;</Text>
                             </Box>
                             <Box>
                               <Text fontSize="med" color="#596334">
@@ -647,40 +651,9 @@ export default function TreeTable() {
                           {/* Photos */}
                           <Box>
                             <Text fontSize="med" color="#596334" mb={2}>
-                              Photos
+                              Photo
                             </Text>
-                            <Grid templateColumns="repeat(3, 1fr)" gap={2}>
-                              <Box
-                                bg="gray.100"
-                                height="80px"
-                                borderRadius="md"
-                                display="flex"
-                                justifyContent="right"
-                                alignItems="flex-start"
-                              >
-                                <IconButton aria-label="Expand" icon={<Text fontSize="xl">⤢</Text>} variant="ghost" />
-                              </Box>
-                              <Box
-                                bg="gray.100"
-                                height="80px"
-                                borderRadius="md"
-                                display="flex"
-                                justifyContent="right"
-                                alignItems="flex-start"
-                              >
-                                <IconButton aria-label="Expand" icon={<Text fontSize="xl">⤢</Text>} variant="ghost" />
-                              </Box>
-                              <Box
-                                bg="gray.100"
-                                height="80px"
-                                borderRadius="md"
-                                display="flex"
-                                justifyContent="right"
-                                alignItems="flex-start"
-                              >
-                                <IconButton aria-label="Expand" icon={<Text fontSize="xl">⤢</Text>} variant="ghost" />
-                              </Box>
-                            </Grid>
+                            <Image src={selectedTree.photo} borderRadius="10px"></Image>
                           </Box>
                         </VStack>
                       </Box>
