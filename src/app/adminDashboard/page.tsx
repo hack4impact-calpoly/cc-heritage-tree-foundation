@@ -231,10 +231,18 @@ function AdminDashboard() {
                                 <Td>
                                   <Box
                                     {...IconStyle}
-                                    backgroundColor={treeHealthColors[parseFloat(tree.treeQuality.toString())][0]}
-                                    color={treeHealthColors[parseFloat(tree.treeQuality.toString())][1]}
+                                    backgroundColor={
+                                      treeHealthColors[
+                                        parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")
+                                      ][0]
+                                    }
+                                    color={
+                                      treeHealthColors[
+                                        parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")
+                                      ][1]
+                                    }
                                   >
-                                    {parseFloat(tree.treeQuality.toString())}
+                                    {parseFloat(tree.treeQuality ? tree.treeQuality.toString() : "0")}
                                   </Box>
                                 </Td>
                                 <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
