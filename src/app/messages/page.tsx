@@ -213,18 +213,6 @@ function Messages() {
                       <></>
                     )}
                   </Flex>
-                  {selectedMessage && (
-                    <div className={styles.messageTable}>
-                      <div className={styles.messageHeader}>
-                        <h3>{selectedMessage.subject}</h3>
-                        <p>{selectedMessage.from}</p>
-                      </div>
-                      <div className={styles.messageBody}>
-                        <h1>{new Date(selectedMessage.time).toLocaleDateString()}</h1>
-                        <p>{selectedMessage.message}</p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <p className={styles.sentMessage}>Sent messages here.</p>
