@@ -7,6 +7,7 @@ export type ITree = {
   gpsCoordinates: Decimal128[];
   dbh: Decimal128;
   canopyBreadth: Decimal128;
+  treeHeight: Decimal128; // added treeHeight
   species: string;
   treeCondition: string[];
   treeQuality: Decimal128;
@@ -19,6 +20,7 @@ const TreeSchema = new Schema<ITree>({
   dateCollected: { type: Date, required: true },
   gpsCoordinates: { type: [mongoose.Types.Decimal128], required: true },
   dbh: { type: mongoose.Types.Decimal128, required: true },
+  treeHeight: { type: mongoose.Types.Decimal128, required: true }, // added treeHeight
   canopyBreadth: { type: mongoose.Types.Decimal128, required: true },
   species: { type: String, required: true },
   treeCondition: { type: [String], required: true },

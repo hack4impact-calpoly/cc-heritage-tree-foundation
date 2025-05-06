@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
 
 import { useState, useEffect } from "react";
 import {
@@ -20,6 +21,7 @@ import { AttachmentIcon } from "@chakra-ui/icons";
 import { InputStyleAnnouncement } from "@/styles/CreateAnnouncementStyle";
 
 const CreateAnnouncement = () => {
+  const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -57,8 +59,35 @@ const CreateAnnouncement = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Submitted Data: ", formData);
+  const handleSubmit = async () => {
+    try {
+      const from = user?.fullName || "Unknown Sender";
+      const to = formData.recipients.split(",").map((r) => r.trim());
+
+      const payload = {
+        from,
+        to,
+        subject: formData.subject,
+        message: formData.message,
+      };
+
+      console.log("Submitted Data: ", formData);
+
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Failed to send announcement");
+
+      const data = await res.json();
+      console.log("Announcement sent:", data);
+    } catch (err) {
+      console.error("Error submitting:", err);
+    }
   };
 
   return (
