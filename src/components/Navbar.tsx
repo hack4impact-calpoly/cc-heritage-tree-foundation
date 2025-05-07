@@ -7,6 +7,7 @@ import { FiBell } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter from Next.js
+import { useUser } from "@clerk/nextjs";
 
 const COLORS = {
   primary: "#596435",
@@ -57,7 +58,14 @@ const NAV_ITEMS: Array<NavItem> = [
 export default function Navbar() {
   const [activeButton, setActiveButton] = useState("Dashboard");
   const router = useRouter(); // Initialize the router
+  const { user, isLoaded } = useUser();
 
+  let role = null;
+  if (isLoaded && user) {
+    role = user.organizationMemberships?.[0]?.role;
+  }
+
+  const isAdmin = role === "org:admin";
   const handleNavigation = (path: string, text: string) => {
     setActiveButton(text);
     router.push(path);
@@ -112,29 +120,32 @@ export default function Navbar() {
         </Box>
         {/*VStack for Items*/}
         <VStack>
-          {NAV_ITEMS.map((NavItem) => (
-            <Button
-              key={NavItem.text}
-              onClick={() => handleNavigation(NavItem.path, NavItem.text)}
-              style={{
-                backgroundColor: activeButton === NavItem.text ? COLORS.secondary : COLORS.primary,
-                color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
-                borderRadius: "20px",
-                width: "100%",
-                height: "2rem",
-                justifyContent: "left",
-                marginTop: "1rem",
-              }}
-            >
-              <NavItem.icon
-                size="25"
+          {NAV_ITEMS.map((NavItem) => {
+            if (NavItem.path === "/volunteers" && !isAdmin) return null;
+            return (
+              <Button
+                key={NavItem.text}
+                onClick={() => handleNavigation(NavItem.path, NavItem.text)}
                 style={{
-                  marginRight: "0.5rem",
+                  backgroundColor: activeButton === NavItem.text ? COLORS.secondary : COLORS.primary,
+                  color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
+                  borderRadius: "20px",
+                  width: "100%",
+                  height: "2rem",
+                  justifyContent: "left",
+                  marginTop: "1rem",
                 }}
-              />
-              {NavItem.text}
-            </Button>
-          ))}
+              >
+                <NavItem.icon
+                  size="25"
+                  style={{
+                    marginRight: "0.5rem",
+                  }}
+                />
+                {NavItem.text}
+              </Button>
+            );
+          })}
         </VStack>
       </VStack>
     </div>
