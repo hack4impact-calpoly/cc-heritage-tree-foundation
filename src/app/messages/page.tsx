@@ -32,7 +32,6 @@ import { useUser } from "@clerk/nextjs";
 import { BrowserView, MobileView } from "react-device-detect";
 import MessagePopUp from "@/components/MessagePopUp";
 
-
 function Messages() {
   const messagesPerPage = 7;
   const [currentPage, setCurrentPage] = useState(1);
