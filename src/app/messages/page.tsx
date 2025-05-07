@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { AlignJustify, ChevronRight } from "lucide-react";
+import { AlignJustify, ChevronRight, Trash2 } from "lucide-react";
 import styles from "./messages.module.css";
 import { useRouter } from "next/navigation";
 import {
@@ -30,13 +30,17 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { BrowserView, MobileView } from "react-device-detect";
 import MessagePopUp from "@/components/MessagePopUp";
+import DeleteMessagePopUp from "@/components/DeleteMessagePopUp";
 
 function Messages() {
   const messagesPerPage = 7;
   const [currentPage, setCurrentPage] = useState(1);
+  const [messageID, setMessageID] = useState(-1);
   const [activeTab, setActiveTab] = useState("inbox");
   const [isClient, setIsClient] = useState(false);
   const [openMessagePopUp, setOpenMessagePopUp] = useState(false);
+  const [openDeletePopUp, setOpenDeletePopUp] = useState(false);
+  const [blurAmount, setBlurAmount] = useState("0px");
   const [messageProps, setMessageProps] = useState({
     date: "",
     adminName: "",
@@ -53,17 +57,18 @@ function Messages() {
   const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
   const unreadCount = messages.length;
 
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch("/api/messages");
+      const data = await response.json();
+      setMessages(data);
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+    }
+  };
+
   useEffect(() => {
     setIsClient(true);
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch("/api/messages");
-        const data = await response.json();
-        setMessages(data);
-      } catch (error) {
-        console.error("Failed to fetch messages:", error);
-      }
-    };
     fetchMessages();
   }, []);
 
@@ -79,145 +84,199 @@ function Messages() {
     );
   };
 
+  const deleteMessageFromTable = async () => {
+    // delete message ID
+    console.log("deleting message id:", messageID);
+    try {
+      const response = await fetch(`/api/messages/${messageID}`, {
+        method: "DELETE",
+      });
+      const res = await response.json();
+      console.log(res);
+
+      // refresh table
+      fetchMessages();
+      console.log("refreshed table");
+    } catch (error) {
+      console.error("Failed to delete message:", error);
+    }
+  };
+
   return (
     <div>
       {isClient ? (
         <>
           <BrowserView>
-            <div className={styles.container}>
-              <h2 className={styles.header}>Messages</h2>
-              <p className={styles.unread}>
-                {unreadCount} unread {unreadCount === 1 ? "announcement" : "announcements"}
-              </p>
+            {openDeletePopUp && (
+              <Flex
+                zIndex="1000"
+                w={"100vw"}
+                h={"100vh"}
+                left={0}
+                top={0}
+                justifyContent={"center"}
+                alignItems={"center"}
+                position="absolute"
+              >
+                <DeleteMessagePopUp
+                  closePopup={() => {
+                    setOpenDeletePopUp(false);
+                    setBlurAmount("0px");
+                  }}
+                  deleteMessage={() => {
+                    deleteMessageFromTable();
+                    setOpenDeletePopUp(false);
+                    setBlurAmount("0px");
+                  }}
+                />
+              </Flex>
+            )}
+            <Box filter="auto" blur={blurAmount}>
+              <div className={styles.container}>
+                <h2 className={styles.header}>Messages</h2>
+                <p className={styles.unread}>
+                  {unreadCount} unread {unreadCount === 1 ? "announcement" : "announcements"}
+                </p>
 
-              <div className={styles.topBar}>
-                <div className={styles.tabContainer}>
-                  <button
-                    className={`${styles.tab} ${activeTab === "inbox" ? styles.activeTab : ""}`}
-                    onClick={() => {
-                      setActiveTab("inbox");
-                      setCurrentPage(1);
-                    }}
-                  >
-                    Inbox
-                  </button>
-                  <button
-                    className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
-                    onClick={() => {
-                      setActiveTab("sent");
-                      setCurrentPage(1);
-                    }}
-                  >
-                    Sent
-                  </button>
+                <div className={styles.topBar}>
+                  <div className={styles.tabContainer}>
+                    <button
+                      className={`${styles.tab} ${activeTab === "inbox" ? styles.activeTab : ""}`}
+                      onClick={() => {
+                        setActiveTab("inbox");
+                        setCurrentPage(1);
+                      }}
+                    >
+                      Inbox
+                    </button>
+                    <button
+                      className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
+                      onClick={() => {
+                        setActiveTab("sent");
+                        setCurrentPage(1);
+                      }}
+                    >
+                      Sent
+                    </button>
+                  </div>
+                  <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
+                    New Message +
+                  </button>{" "}
                 </div>
-                <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
-                  New Message +
-                </button>{" "}
-              </div>
 
-              {activeTab === "inbox" ? (
-                <div>
-                  <Flex>
-                    <Table className={styles.table}>
-                      <Thead className={styles.tableHeader}>
-                        <Tr className={styles.tableHeader}>
-                          <Th>Select</Th>
-                          <Th>Sender</Th>
-                          <Th>Subject Line</Th>
-                          <Th>Date</Th>
-                          <Th>Actions</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {currentMessages.map((msg) => (
-                          <Tr key={msg._id} className={styles.clickableRow}>
-                            <Td>
-                              <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
-                            </Td>
-                            <Td
-                              className={`${msg.selected ? styles.fadedText : ""}`}
-                              onClick={() => setSelectedMessage(msg)}
-                            >
-                              <Flex className={styles.avatarContainer}>
-                                <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
-                                {msg.from}
-                              </Flex>
-                            </Td>
-                            <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
-                            <Td className={msg.selected ? styles.fadedText : ""}>
-                              {new Date(msg.time).toLocaleDateString()}
-                            </Td>
-                            <Td>
-                              <ChevronRight
-                                onClick={() => {
-                                  setOpenMessagePopUp(!openMessagePopUp);
-                                  setMessageProps({
-                                    date: new Date(msg.time).toLocaleDateString(),
-                                    adminName: msg.from,
-                                    messageContent: msg.message,
-                                    messageTitle: msg.subject,
-                                    id: msg._id,
-                                  });
-                                }}
-                              />
+                {activeTab === "inbox" ? (
+                  <div>
+                    <Flex>
+                      <Table className={styles.table}>
+                        <Thead className={styles.tableHeader}>
+                          <Tr className={styles.tableHeader}>
+                            <Th>Select</Th>
+                            <Th>Sender</Th>
+                            <Th>Subject Line</Th>
+                            <Th>Date</Th>
+                            <Th>Actions</Th>
+                            <Th></Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {currentMessages.map((msg) => (
+                            <Tr key={msg._id} className={styles.clickableRow}>
+                              <Td>
+                                <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
+                              </Td>
+                              <Td
+                                className={`${msg.selected ? styles.fadedText : ""}`}
+                                onClick={() => setSelectedMessage(msg)}
+                              >
+                                <Flex className={styles.avatarContainer}>
+                                  <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
+                                  {msg.from}
+                                </Flex>
+                              </Td>
+                              <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
+                              <Td className={msg.selected ? styles.fadedText : ""}>
+                                {new Date(msg.time).toLocaleDateString()}
+                              </Td>
+                              <Td>
+                                <Trash2
+                                  onClick={() => {
+                                    setOpenDeletePopUp(true);
+                                    setBlurAmount("3px");
+                                    setMessageID(msg._id);
+                                  }}
+                                />
+                              </Td>
+                              <Td>
+                                <ChevronRight
+                                  onClick={() => {
+                                    setOpenMessagePopUp(!openMessagePopUp);
+                                    setMessageProps({
+                                      date: new Date(msg.time).toLocaleDateString(),
+                                      adminName: msg.from,
+                                      messageContent: msg.message,
+                                      messageTitle: msg.subject,
+                                      id: msg._id,
+                                    });
+                                  }}
+                                />
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+
+                        {/* Page Controls */}
+                        <Tfoot>
+                          <Tr>
+                            <Td colSpan={5}>
+                              <Box className={styles.pageControls}>
+                                <Button
+                                  className={styles.pageButton}
+                                  onClick={() => handlePageChange(currentPage - 1)}
+                                  disabled={currentPage === 1}
+                                >
+                                  Previous
+                                </Button>
+
+                                {Array.from({ length: totalPages }, (_, index) => (
+                                  <Button
+                                    key={index + 1}
+                                    className={currentPage === index + 1 ? styles.activePage : styles.pageButton}
+                                    onClick={() => handlePageChange(index + 1)}
+                                  >
+                                    {index + 1}
+                                  </Button>
+                                ))}
+
+                                <Button
+                                  className={styles.pageButton}
+                                  onClick={() => handlePageChange(currentPage + 1)}
+                                  disabled={currentPage === totalPages}
+                                >
+                                  Next
+                                </Button>
+                              </Box>
                             </Td>
                           </Tr>
-                        ))}
-                      </Tbody>
-
-                      {/* Page Controls */}
-                      <Tfoot>
-                        <Tr>
-                          <Td colSpan={5}>
-                            <Box className={styles.pageControls}>
-                              <Button
-                                className={styles.pageButton}
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                disabled={currentPage === 1}
-                              >
-                                Previous
-                              </Button>
-
-                              {Array.from({ length: totalPages }, (_, index) => (
-                                <Button
-                                  key={index + 1}
-                                  className={currentPage === index + 1 ? styles.activePage : styles.pageButton}
-                                  onClick={() => handlePageChange(index + 1)}
-                                >
-                                  {index + 1}
-                                </Button>
-                              ))}
-
-                              <Button
-                                className={styles.pageButton}
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                              >
-                                Next
-                              </Button>
-                            </Box>
-                          </Td>
-                        </Tr>
-                      </Tfoot>
-                    </Table>
-                    {openMessagePopUp === true ? (
-                      <MessagePopUp
-                        date={messageProps.date}
-                        messageTitle={messageProps.messageTitle}
-                        adminName={messageProps.adminName}
-                        messageContent={messageProps.messageContent}
-                        id={messageProps.id}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </Flex>
-                </div>
-              ) : (
-                <p className={styles.sentMessage}>Sent messages here.</p>
-              )}
-            </div>
+                        </Tfoot>
+                      </Table>
+                      {openMessagePopUp === true ? (
+                        <MessagePopUp
+                          date={messageProps.date}
+                          messageTitle={messageProps.messageTitle}
+                          adminName={messageProps.adminName}
+                          messageContent={messageProps.messageContent}
+                          id={messageProps.id}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </Flex>
+                  </div>
+                ) : (
+                  <p className={styles.sentMessage}>Sent messages here.</p>
+                )}
+              </div>
+            </Box>
           </BrowserView>
 
           <MobileView>
