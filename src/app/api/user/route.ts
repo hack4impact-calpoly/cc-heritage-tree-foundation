@@ -7,6 +7,16 @@ export async function GET(request: Request) {
   await connectDB();
 
   try {
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get("email");
+
+    if (email) {
+      const user = await User.findOne({ email }).lean();
+      if (!user) {
+        return NextResponse.json({ message: "User not found" }, { status: 404 });
+      }
+      return NextResponse.json(user, { status: 200 });
+    }
     const users = await User.find().lean();
     return NextResponse.json(users, { status: 200 });
   } catch (err) {

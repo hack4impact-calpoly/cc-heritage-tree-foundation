@@ -80,20 +80,17 @@ describe("TreeEntryForm", () => {
   it("updates tree spec fields when user types", async () => {
     render(<TreeEntryForm />);
 
-    const treeLat = screen.getByPlaceholderText(/input latitude/i) as HTMLInputElement;
-    const treeLong = screen.getByPlaceholderText(/input longitude/i) as HTMLInputElement;
+    const treeCoord = screen.getByLabelText(/Location/i) as HTMLInputElement;
     const treeHeight = screen.getByLabelText(/Tree Height/i) as HTMLInputElement;
     const canopySpread = screen.getByLabelText(/Canopy Spread/i) as HTMLInputElement;
     const trunkDBH = screen.getByLabelText(/Trunk DBH/i) as HTMLInputElement;
 
-    await userEvent.type(treeLat, "100");
-    await userEvent.type(treeLong, "30");
+    await userEvent.type(treeCoord, "(35.555386, -120.713429)");
     await userEvent.type(treeHeight, "20");
     await userEvent.type(canopySpread, "100");
     await userEvent.type(trunkDBH, "-2");
 
-    expect(treeLat.value).toBe("100");
-    expect(treeLong.value).toBe("30");
+    expect(treeCoord.value).toBe("(35.555386, -120.713429)");
     expect(treeHeight.value).toBe("20");
     expect(canopySpread.value).toBe("100");
     expect(trunkDBH.value).toBe("-2");
