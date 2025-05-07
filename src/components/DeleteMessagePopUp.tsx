@@ -2,7 +2,13 @@
 import { Box, Flex, Text, Button } from "@chakra-ui/react";
 import { Trash2, X } from "lucide-react";
 
-export default function DeleteMessagePopUp({ closePopup, deleteMessage }) {
+export default function DeleteMessagePopUp({
+  closePopup,
+  deleteMessage,
+}: {
+  closePopup: () => void;
+  deleteMessage: () => void;
+}) {
   return (
     <>
       <Box shadow="lg" width={"300px"} height={"350px"} bg={"white"} borderRadius={20}>
