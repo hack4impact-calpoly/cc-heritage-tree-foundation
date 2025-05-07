@@ -91,37 +91,6 @@ function Messages() {
   };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.header}>Messages</h2>
-      <p className={styles.unread}>10 unread announcements</p>
-      <div className={styles.topBar}>
-        <div className={styles.tabContainer}>
-          <button
-            className={`${styles.tab} ${activeTab === "inbox" ? styles.activeTab : ""}`}
-            onClick={() => {
-              setActiveTab("inbox");
-              setCurrentPage(1);
-            }}
-          >
-            Inbox
-          </button>
-          <button
-            className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
-            onClick={() => {
-              setActiveTab("sent");
-              setCurrentPage(1);
-            }}
-          >
-            Sent
-          </button>
-        </div>
-        {isAdmin && ( // Only show button if admin
-          <button className={styles.newMessageButton}>New Message +</button>
-        )}
-      </div>
-
-      {activeTab === "inbox" ? (
-
     <div>
       {isClient ? (
         <>
@@ -153,9 +122,11 @@ function Messages() {
                     Sent
                   </button>
                 </div>
-                <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
-                  New Message +
-                </button>{" "}
+                {isAdmin && (
+                  <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
+                    New Message +
+                  </button>
+                )}
               </div>
 
               {activeTab === "inbox" ? (
