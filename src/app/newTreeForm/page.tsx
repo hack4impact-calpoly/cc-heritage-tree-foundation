@@ -350,6 +350,46 @@ export default function TreeEntryForm() {
               <Text fontSize="sm" color="gray.500" mt={2}>
                 Example format: (35.555386, -120.713429)
               </Text>
+              <Button
+                mt={2}
+                size="sm"
+                backgroundColor={COLORS.Olive}
+                color={COLORS.PureWhite}
+                borderRadius="md"
+                onClick={() => {
+                  try {
+                    if (typeof navigator === "undefined" || !navigator.geolocation) {
+                      alert("Geolocation is not supported by your browser.");
+                      return;
+                    }
+
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lon = position.coords.longitude.toFixed(6);
+                        const coords = `(${lat}, ${lon})`;
+
+                        setFormData((prev) => ({
+                          ...prev,
+                          treeLocation: coords,
+                        }));
+                      },
+                      (error) => {
+                        alert(`Error getting location: ${error.message}`);
+                      },
+                      {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0,
+                      },
+                    );
+                  } catch (e) {
+                    alert("Unexpected error");
+                  }
+                }}
+              >
+                Use Current Location
+              </Button>
             </TreeFormSection>
             <TreeFormSection isRequired>
               <TreeFormHeading id="treeSpecies" style={{ fontSize: "24px" }} marginBottom="20px">
