@@ -1,14 +1,42 @@
 "use client";
 import { ChevronDown } from "lucide-react";
 import { Grid, GridItem, Image, Text, Button, Flex, Link, Box, Center, Input, FormControl } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
+import { useUser } from "@clerk/nextjs";
 
 function EditUserProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [missingPhone, setMissingPhone] = useState(false);
+
+  const { user, isLoaded } = useUser();
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (isLoaded && user?.id) {
+        try {
+          const res = await fetch(`/api/users/${user.id}`);
+          const data = await res.json();
+
+          if (!res.ok) throw new Error(data.error || "Failed to fetch user");
+
+          setName(data.name || "");
+          setEmail(data.email || "");
+          setPhoneNumber(data.phoneNumber || "");
+
+          if (!data.phoneNumber) {
+            setMissingPhone(true);
+          }
+        } catch (err) {
+          console.error("Failed to load user:", err);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [isLoaded, user]);
 
   const saveUserInfo = () => {
     console.log("Saving user info...");
@@ -18,34 +46,17 @@ function EditUserProfile() {
   return (
     <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
       <Box maxH="90vh">
-        <Flex direction="row" justify="right">
-          <Box mt={5} mr={5} borderRadius={"15px"} borderColor="black" bg="white" w="250px" h="100px" p={5}>
-            <Image
-              mt={1}
-              boxSize="50px"
-              borderRadius="full"
-              fit="cover"
-              alt="Small Profile Picture Not Appearing"
-              src="/pfp.png"
-              ml={1}
-            ></Image>
-            <Flex direction="row">
-              <Flex mt={-49} ml={20} direction="column">
-                <Text>User Name</Text>
-                <Text color="#868686">Volunteer</Text>
-              </Flex>
-              <Box ml={5} mt={-9}>
-                <ChevronDown></ChevronDown>
-              </Box>
-            </Flex>
-          </Box>
-        </Flex>
-
         <Center>
           <Flex mt={25} direction="column">
             <Text fontSize="3xl" fontWeight="bold" textStyle="4xl">
               Edit User Profile
             </Text>
+
+            {missingPhone && (
+              <Text color="red.600" fontSize="2xl" fontWeight="bold" textAlign="center" mt={4}>
+                Please add a phone number and save!
+              </Text>
+            )}
             <Box
               borderRadius={"15px"}
               mt={30}
