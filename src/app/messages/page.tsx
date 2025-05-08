@@ -28,6 +28,7 @@ import {
   Tfoot,
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useUser } from "@clerk/nextjs";
 import { BrowserView, MobileView } from "react-device-detect";
 import MessagePopUp from "@/components/MessagePopUp";
 
@@ -35,6 +36,14 @@ function Messages() {
   const messagesPerPage = 7;
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("inbox");
+
+  const { user, isLoaded } = useUser();
+
+  let role = null;
+  if (isLoaded && user) {
+    role = user.organizationMemberships?.[0]?.role;
+  }
+
   const [isClient, setIsClient] = useState(false);
   const [openMessagePopUp, setOpenMessagePopUp] = useState(false);
   const [messageProps, setMessageProps] = useState({
@@ -51,6 +60,7 @@ function Messages() {
   const indexOfLastMessage = currentPage * messagesPerPage;
   const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
   const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
+  const isAdmin = role === "org:admin";
   const unreadCount = messages.length;
 
   useEffect(() => {
@@ -111,9 +121,11 @@ function Messages() {
                     Sent
                   </button>
                 </div>
-                <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
-                  New Message +
-                </button>{" "}
+                {isAdmin && (
+                  <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
+                    New Message +
+                  </button>
+                )}
               </div>
 
               {activeTab === "inbox" ? (
@@ -267,22 +279,23 @@ function Messages() {
                       Sent
                     </button>
                   </div>
-                  <button
-                    className={styles.newMessageButton}
-                    style={{
-                      position: "fixed",
-                      bottom: "20px",
-                      right: "20px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      zIndex: "9",
-                    }}
-                  >
-                    New Message +
-                  </button>
+                  {isAdmin && ( // Only show button if admin
+                    <button
+                      className={styles.newMessageButton}
+                      style={{
+                        position: "fixed",
+                        bottom: "20px",
+                        right: "20px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: "9",
+                      }}
+                    >
+                      New Message +
+                    </button>
+                  )}
                 </div>
-
                 {activeTab === "inbox" ? (
                   <>
                     <Stack backgroundColor={"white"} marginTop={7} borderRadius={10} padding={5} margin={3}>
