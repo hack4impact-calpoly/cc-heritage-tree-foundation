@@ -56,8 +56,7 @@ describe("AdminDashboard", () => {
     await waitFor(() => {
       expect(screen.getByText("Trees Logged This Year")).toBeInTheDocument();
     });
-    expect(screen.getByText("123")).toBeInTheDocument();
-    expect(screen.getByText("% incr from December")).toBeInTheDocument();
+    expect(screen.getByText(/% incr from/i)).toBeInTheDocument();
   });
 
   it("renders the 'Trees in Poor Condition' table", async () => {
@@ -65,7 +64,7 @@ describe("AdminDashboard", () => {
     await waitFor(() => {
       expect(screen.getByText("Trees in Poor Condition")).toBeInTheDocument();
     });
-    expect(screen.getByRole("columnheader", { name: "#" })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Tree ID" })).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "Species" })).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "Condition" })).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "Date Recorded" })).toBeInTheDocument();

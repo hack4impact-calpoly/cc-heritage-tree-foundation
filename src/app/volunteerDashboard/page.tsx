@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Grid, GridItem, Text, Button, HStack, VStack, Link, IconButton, Flex, Image } from "@chakra-ui/react";
 import { Plus, ArrowUpRight, EllipsisVertical, Menu } from "lucide-react";
+import { ITree } from "@/database/treeSchema";
 import Map from "@/components/Map";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -18,9 +19,27 @@ export default function VolunteerDashboard() {
   const router = useRouter();
   const user = useUser();
   const [isClient, setIsClient] = useState(false);
+  const [treeData, setTreeData] = useState<ITree[]>([]);
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    setIsClient(true);
+
+    const fetchTrees = async () => {
+      try {
+        const response = await fetch("/api/tree");
+        if (!response.ok) throw new Error("Failed to fetch trees for dashboard");
+        const data: ITree[] = await response.json();
+        setTreeData(data);
+      } catch (error) {
+        console.error("Error fetching tree data:", error);
+      }
+    };
+
+    fetchTrees();
   }, []);
 
   return (
@@ -58,7 +77,12 @@ export default function VolunteerDashboard() {
                   </GridItem>
 
                   {/* Tree Logs */}
-                  <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 3 }} minWidth="300px">
+                  <GridItem
+                    rowSpan={{ base: 1, md: 3 }}
+                    colSpan={{ base: 1, md: 3 }}
+                    minWidth="300px"
+                    overflow="scroll"
+                  >
                     <Flex w="100%" h="100%" borderRadius="16px" bg="white" p="20px" flexDir="column" gap="15px">
                       <HStack position="relative">
                         <Button
@@ -91,6 +115,7 @@ export default function VolunteerDashboard() {
                           flexGrow={1}
                           display="flex"
                           flexDir="column"
+                          minHeight="100px"
                         >
                           <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                             You&#39;ve logged
@@ -114,6 +139,7 @@ export default function VolunteerDashboard() {
                           flexGrow={1}
                           display="flex"
                           flexDir="column"
+                          minHeight="100px"
                         >
                           <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                             Total logged
@@ -143,7 +169,7 @@ export default function VolunteerDashboard() {
                     {...CenterStyle}
                     minHeight="300px"
                   >
-                    <Map />
+                    <Map trees={treeData} />
                   </GridItem>
 
                   {/* Announcements */}

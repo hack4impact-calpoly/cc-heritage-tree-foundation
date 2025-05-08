@@ -68,11 +68,7 @@
   overflow: hidden;
 }
 
-<<<<<<< HEAD
-.tableHeader{
-=======
 .tableHeader {
->>>>>>> b365cfe (update)
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   background: #dfed98;
@@ -83,7 +79,6 @@
   padding: 15px;
   text-align: left;
 }
-
 
 .table td {
   padding: 10px;
@@ -146,10 +141,6 @@
   margin-top: 20px;
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> b365cfe (update)
 .messageTable {
   border-radius: 15px;
   width: 45%;
@@ -159,30 +150,18 @@
   min-height: 550px;
 }
 
-<<<<<<< HEAD
-.messageHeader{
-=======
 .messageHeader {
->>>>>>> b365cfe (update)
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
   background-color: #596334;
   padding: 25px;
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> b365cfe (update)
 .messageHeader h3 {
   font-stretch: expanded;
   font-weight: bolder;
   color: white;
   text-align: text-top;
-<<<<<<< HEAD
-  
-=======
->>>>>>> b365cfe (update)
 }
 
 .messageHeader p {
@@ -190,20 +169,12 @@
   text-align: text-top;
 }
 
-<<<<<<< HEAD
-.messageBody p{
-=======
 .messageBody p {
->>>>>>> b365cfe (update)
   margin-top: 50px;
   margin-left: 12px;
 }
 
-<<<<<<< HEAD
-.messageBody h1{
-=======
 .messageBody h1 {
->>>>>>> b365cfe (update)
   margin-top: 20px;
   margin-right: 5px;
   text-align: right;
@@ -211,10 +182,7 @@
 
 .mainContent {
   display: flex;
-<<<<<<< HEAD
-=======
   flex-direction: row;
->>>>>>> b365cfe (update)
   gap: 2rem;
   align-items: flex-start;
 }
@@ -223,8 +191,4 @@
   cursor: pointer;
   background-color: #f0f0f0;
   transition: background-color 0.2s;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> b365cfe (update)

@@ -74,7 +74,7 @@ export default function EditTreeEntryForm() {
   const params = useParams(); // to get params.treeID
   const { user } = useUser();
   const [formData, setFormData] = useState<FormValues>({
-    treeLocation: ["", ""],
+    treeLocation: "",
     treeType: "",
     treeSpecs: {
       treeHeight: 0,
@@ -105,10 +105,10 @@ export default function EditTreeEntryForm() {
           console.log(treeInfo.treeQuality, treeInfo.canopyBreadth);
           console.log("Specific tree data retreived successfully!");
           setFormData({
-            treeLocation: [
-              treeInfo.gpsCoordinates[0]["$numberDecimal"] ? treeInfo.gpsCoordinates[0]["$numberDecimal"] : "",
-              treeInfo.gpsCoordinates[1]["$numberDecimal"] ? treeInfo.gpsCoordinates[1]["$numberDecimal"] : "",
-            ],
+            treeLocation:
+              treeInfo.gpsCoordinates[0] && treeInfo.gpsCoordinates[1]
+                ? `(${treeInfo.gpsCoordinates[0]["$numberDecimal"]}, ${treeInfo.gpsCoordinates[1]["$numberDecimal"]})`
+                : "",
             treeType: treeInfo.species ? treeInfo.species : "",
             treeSpecs: {
               treeHeight: treeInfo.treeHeight["$numberDecimal"] ? treeInfo.treeHeight["$numberDecimal"] : 0, // height info not kept
@@ -140,19 +140,8 @@ export default function EditTreeEntryForm() {
   };
 
   const handleTreeLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const longOrLat = e.currentTarget.getAttribute("name");
     const value = e.target.value;
-    if (longOrLat === "treeLatitude") {
-      setFormData((prev) => ({
-        ...prev,
-        treeLocation: [value, formData.treeLocation[1]],
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        treeLocation: [formData.treeLocation[0], value],
-      }));
-    }
+    setFormData((prev) => ({ ...prev, treeLocation: value }));
   };
 
   const handleTreeSpecs = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,11 +185,49 @@ export default function EditTreeEntryForm() {
     }));
   };
 
+  const validateCoordinates = () => {
+    if (!formData.treeLocation.trim()) {
+      return { valid: false, error: "Location is required" };
+    }
+
+    const coordinatePattern = /^\(?\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\)?$/;
+    const match = formData.treeLocation.match(coordinatePattern);
+
+    if (!match) {
+      return { valid: false, error: "Invalid format. Use: (lat, lng)" };
+    }
+
+    const [, latStr, lngStr] = match;
+    const latitude = parseFloat(latStr);
+    const longitude = parseFloat(lngStr);
+
+    if (isNaN(latitude)) {
+      return { valid: false, error: "Invalid latitude" };
+    }
+    if (isNaN(longitude)) {
+      return { valid: false, error: "Invalid longitude" };
+    }
+    if (latitude < -90 || latitude > 90) {
+      return { valid: false, error: "Latitude must be between -90 and 90" };
+    }
+    if (longitude < -180 || longitude > 180) {
+      return { valid: false, error: "Longitude must be between -180 and 180" };
+    }
+
+    return { valid: true, latitude, longitude };
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLDivElement>) => {
     event.preventDefault();
 
     if (!user) {
       alert("Please log in to submit the form.");
+      return;
+    }
+
+    const coordValidation = validateCoordinates();
+    if (!coordValidation.valid) {
+      alert(coordValidation.error);
       return;
     }
 
@@ -222,9 +249,10 @@ export default function EditTreeEntryForm() {
       const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
       const treeHeight = mongoose.Types.Decimal128.fromString(formData.treeSpecs.treeHeight.toString());
 
-      const gpsCoordinates = formData.treeLocation.map((coord) =>
-        mongoose.Types.Decimal128.fromString(coord.toString()),
-      );
+      const gpsCoordinates = [
+        mongoose.Types.Decimal128.fromString(coordValidation.latitude ? coordValidation.latitude?.toString() : ""),
+        mongoose.Types.Decimal128.fromString(coordValidation.longitude ? coordValidation.longitude.toString() : ""),
+      ];
 
       // Construct the submission data
       const dataToSubmit = {
@@ -274,24 +302,24 @@ export default function EditTreeEntryForm() {
           <TreeFormHeading id="treeLocation" style={{ fontSize: "24px" }} marginBottom="20px">
             Location
           </TreeFormHeading>
-          <Box display="flex" flexDirection="row" gap="20px">
-            <TreeFormInput
-              id="treeLatitude"
-              type="string"
-              name="treeLatitude"
-              value={formData.treeLocation[0]}
-              placeholder="input latitude"
-              onChange={handleTreeLocation}
-            />
-            <TreeFormInput
-              id="treeLongitude"
-              type="string"
-              name="treeLongitude"
-              value={formData.treeLocation[1]}
-              placeholder="input longitude"
-              onChange={handleTreeLocation}
-            />
-          </Box>
+          <TreeFormInput
+            id="treeCoordinates"
+            type="text"
+            name="treeCoordinates"
+            value={formData.treeLocation}
+            placeholder="(latitude, longitude) e.g. (35.555386, -120.713429)"
+            onChange={handleTreeLocation}
+            onBlur={() => {
+              const validation = validateCoordinates();
+              if (!validation.valid) {
+                // You could set an error state here to display to the user
+                console.warn(validation.error);
+              }
+            }}
+          />
+          <Text fontSize="sm" color="gray.500" mt={2}>
+            Example format: (35.555386, -120.713429)
+          </Text>
         </TreeFormSection>
         <TreeFormSection isRequired>
           <TreeFormHeading id="treeSpecies" style={{ fontSize: "24px" }} marginBottom="20px">

@@ -21,10 +21,7 @@ import { AttachmentIcon } from "@chakra-ui/icons";
 import { InputStyleAnnouncement } from "@/styles/CreateAnnouncementStyle";
 
 const CreateAnnouncement = () => {
-<<<<<<< HEAD
-=======
   const { user } = useUser();
->>>>>>> b365cfe (update)
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
