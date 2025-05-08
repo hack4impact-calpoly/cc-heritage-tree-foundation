@@ -85,44 +85,6 @@ const getSpeciesColors = (species: string) => {
   }
 };
 
-const getSpeciesAbbreviation = (species: string) => {
-  switch (species) {
-    case "Valley Oak":
-      return "VO";
-    case "Coast Live Oak":
-      return "CLO";
-    case "Blue Oak":
-      return "BO";
-    default:
-      return "ERR";
-  }
-};
-
-const getSpeciesColors = (species: string) => {
-  switch (species) {
-    case "Valley Oak":
-      return {
-        bgColor: COLORS.RobinsEgg,
-        color: COLORS.Steel,
-      };
-    case "Coast Live Oak":
-      return {
-        bgColor: COLORS.Sky,
-        color: COLORS.Charcoal,
-      };
-    case "Blue Oak":
-      return {
-        bgColor: COLORS.Steel,
-        color: COLORS.PureWhite,
-      };
-    default:
-      return {
-        bgColor: COLORS.PureWhite,
-        color: COLORS.PureWhite,
-      };
-  }
-};
-
 function AdminDashboard() {
   const user = useUser();
   const router = useRouter();
@@ -138,13 +100,10 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchTreeCount = async () => {
       const response = await fetch("/api/tree");
-    const fetchTreeCount = async () => {
-      const response = await fetch("/api/tree");
       if (!response.ok) {
         throw new Error(`Status: ${response.status}`);
       }
       const trees: Array<ITree> = await response.json();
-      setTreeData(trees);
       setTreeData(trees);
       trees.forEach((tree: ITree) => {
         const treeDateLogged = new Date(tree.dateCollected);
@@ -187,20 +146,14 @@ function AdminDashboard() {
   }, []);
   return (
     <Box>
-    <Box>
       {isClient ? (
-        <Box>
         <Box>
           <BrowserView>
             <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center">
-            <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center">
               <Grid
-                templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
                 templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
                 templateColumns={{ base: "1fr", md: "repeat(8, 1fr)" }}
                 gap={4}
-                borderWidth={"4"}
-                borderColor={"red"}
                 borderWidth={"4"}
                 borderColor={"red"}
               >
@@ -239,7 +192,6 @@ function AdminDashboard() {
 
                 {/* Trees in Poor Condition */}
                 <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 6 }}>
-                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 6 }}>
                   <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
                     <HStack>
                       <Text color="#333333" fontSize="1.25rem">
@@ -257,9 +209,6 @@ function AdminDashboard() {
                             <Th width="20%">Species</Th>
                             <Th width="20%">Condition</Th>
                             <Th width="20%">Date Recorded</Th>
-                            <Th width="20%" justifyItems="center">
-                              Volunteer
-                            </Th>
                             <Th width="20%" justifyItems="center">
                               Volunteer
                             </Th>
@@ -366,16 +315,12 @@ function AdminDashboard() {
                 <Text fontSize="3xl" fontWeight="bold" color="#596334">
                   Welcome back, {user.user ? user.user.firstName : "User"}!
                 </Text>
-                <Text fontSize="3xl" fontWeight="bold" color="#596334">
-                  Welcome back, {user.user ? user.user.firstName : "User"}!
-                </Text>
 
                 <Flex justifyContent={"space-between"} mt={5}>
                   {/* Trees Logged This Year */}
                   <GridItem width="50%" m={1} height={165}>
                     <Box {...BoxItem} height="100%" p={{ base: 2, md: 2 }}>
                       <Text ml={2} fontWeight="bold" color="#596334" fontSize="4xl">
-                        {treesLoggedYear}
                         {treesLoggedYear}
                       </Text>
                       <Text ml={2} color="#333333">
@@ -410,26 +355,6 @@ function AdminDashboard() {
                     </Box>
                   </GridItem>
                 </Flex>
-
-                {/* Create New Announcement Button */}
-                <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>
-                  <Box mt={5} display="flex" justifyContent="center" {...BoxItem} height={100}>
-                    <Button
-                      width="100%"
-                      maxWidth="300px"
-                      height="50px"
-                      color="white"
-                      bg="#E57300"
-                      borderRadius="50px"
-                      fontWeight="bold"
-                      fontSize="sm"
-                      onClick={() => router.push("/createAnnouncement")}
-                    >
-                      Create new announcement&nbsp;
-                      <SquarePen />
-                    </Button>
-                  </Box>
-                </GridItem>
 
                 {/* Create New Announcement Button */}
                 <GridItem rowSpan={1} colSpan={{ base: 1, md: 3 }}>

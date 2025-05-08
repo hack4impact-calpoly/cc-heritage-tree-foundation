@@ -12,32 +12,6 @@ function EditUserProfile() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [missingPhone, setMissingPhone] = useState(false);
 
-  const { user, isLoaded } = useUser();
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (isLoaded && user?.id) {
-        try {
-          const res = await fetch(`/api/users/${user.id}`);
-          const data = await res.json();
-
-          if (!res.ok) throw new Error(data.error || "Failed to fetch user");
-
-          setName(data.name || "");
-          setEmail(data.email || "");
-          setPhoneNumber(data.phoneNumber || "");
-
-          if (!data.phoneNumber) {
-            setMissingPhone(true);
-          }
-        } catch (err) {
-          console.error("Failed to load user:", err);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [isLoaded, user]);
-
   const saveUserInfo = () => {
     console.log("Saving user info...");
     console.log(name, email, phoneNumber);
