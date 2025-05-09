@@ -8,6 +8,45 @@ async function connectDB() {
   }
 }
 
+// update read status
+export async function PATCH(req: NextRequest, { params }: { params: { messageID: string } }) {
+  await connectDB();
+
+  try {
+    const messageID = params.messageID; // get message ID
+    const { userID, read } = await req.json();
+
+    if (!messageID || !userID) {
+      return new Response(JSON.stringify({ error: "Message and User IDs are required" }), {
+        status: 400,
+      });
+    }
+
+    const updatedMessage = await Announcement.findOneAndUpdate(
+      { _id: messageID, "readStatus.userID": userID },
+      { $set: { "readStatus.$.read": read } },
+      { new: true, runValidators: true },
+    );
+
+    if (!updatedMessage) {
+      return new Response(JSON.stringify({ message: "Message not found" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(JSON.stringify(updatedMessage), { status: 200 });
+  } catch (err) {
+    let errorMessage = "An unknown error occurred";
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    }
+
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+    });
+  }
+}
+
 // delete message from database
 export async function DELETE(req: NextRequest, { params }: { params: { messageID: string } }) {
   await connectDB();

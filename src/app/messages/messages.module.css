@@ -187,8 +187,17 @@
   align-items: flex-start;
 }
 
-.clickableRow:hover {
+.clickableRowIsRead:hover,
+.clickableRowNotRead:hover {
   cursor: pointer;
   background-color: #f0f0f0;
   transition: background-color 0.2s;
+}
+
+.clickableRowIsRead {
+  color: grey;
+}
+
+.clickableRowNotRead {
+  color: black;
 }

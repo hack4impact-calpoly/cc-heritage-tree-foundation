@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { AlignJustify, ChevronRight, Trash2 } from "lucide-react";
 import styles from "./messages.module.css";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import {
   Table,
   Thead,
@@ -33,6 +34,7 @@ import MessagePopUp from "@/components/MessagePopUp";
 import DeleteMessagePopUp from "@/components/DeleteMessagePopUp";
 
 function Messages() {
+  const { isLoaded, isSignedIn, user } = useUser();
   const messagesPerPage = 7;
   const [currentPage, setCurrentPage] = useState(1);
   const [messageID, setMessageID] = useState(-1);
@@ -82,6 +84,29 @@ function Messages() {
     setMessages((prevMessages) =>
       prevMessages.map((msg) => (msg.id === id ? { ...msg, selected: !msg.selected } : msg)),
     );
+  };
+
+  const updateReadStatus = async (messageID: string, name: string) => {
+    // check if user is logged in as sender or receiver
+    // if it's a sender who looked at their own mail, then do nothing
+    // only impact the read status if the person logged in viewing it has the same name as the receiever
+    if (user?.fullName == name) {
+      // update read status to true for receiver
+      try {
+        const response = await fetch(`/api/messages/${messageID}`, {
+          method: "PATCH",
+          body: JSON.stringify({ userID: name, read: true }),
+        });
+        const res = await response.json();
+        console.log(res);
+
+        // refresh table
+        fetchMessages();
+        console.log("refreshed table");
+      } catch (error) {
+        console.error("Failed to update read status:", error);
+      }
+    }
   };
 
   const deleteMessageFromTable = async () => {
@@ -170,32 +195,36 @@ function Messages() {
                       <Table className={styles.table}>
                         <Thead className={styles.tableHeader}>
                           <Tr className={styles.tableHeader}>
-                            <Th>Select</Th>
-                            <Th>Sender</Th>
+                            <Th>Recipient</Th>
                             <Th>Subject Line</Th>
                             <Th>Date</Th>
-                            <Th>Actions</Th>
+                            <Th></Th>
                             <Th></Th>
                           </Tr>
                         </Thead>
                         <Tbody>
                           {currentMessages.map((msg) => (
-                            <Tr key={msg._id} className={styles.clickableRow}>
-                              <Td>
-                                <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
-                              </Td>
+                            <Tr
+                              key={msg._id}
+                              className={
+                                (user?.fullName === msg.readStatus[0].userID && msg.readStatus[0].read === true) ||
+                                user?.fullName === msg.from
+                                  ? styles.clickableRowIsRead
+                                  : styles.clickableRowNotRead
+                              }
+                            >
                               <Td
                                 className={`${msg.selected ? styles.fadedText : ""}`}
                                 onClick={() => setSelectedMessage(msg)}
                               >
                                 <Flex className={styles.avatarContainer}>
-                                  <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
-                                  {msg.from}
+                                  <Avatar name={msg.to[0]} size="sm" bg="#596334" color="white" />
+                                  {msg.to[0]}
                                 </Flex>
                               </Td>
                               <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
                               <Td className={msg.selected ? styles.fadedText : ""}>
-                                {new Date(msg.time).toLocaleDateString()}
+                                {new Date(msg.time).toLocaleDateString()}{" "}
                               </Td>
                               <Td>
                                 <Trash2
@@ -217,6 +246,7 @@ function Messages() {
                                       messageTitle: msg.subject,
                                       id: msg._id,
                                     });
+                                    updateReadStatus(msg._id, msg.readStatus[0].userID);
                                   }}
                                 />
                               </Td>
