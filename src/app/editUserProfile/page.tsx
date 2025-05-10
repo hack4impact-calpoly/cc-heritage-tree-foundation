@@ -6,7 +6,6 @@ import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { useUser } from "@clerk/nextjs";
 import { EmailAddress } from "@clerk/nextjs/server";
-// import User from "@/database/userSchema";
 
 function EditUserProfile() {
   const [name, setName] = useState("");
@@ -18,7 +17,6 @@ function EditUserProfile() {
   const [userId, setUserId] = useState<string | null>(null);
   const [existingEmailId, setExistingEmailId] = useState<string | null>(null);
   const [mongoUserId, setMongoUserId] = useState<object | null>(null);
-  const [prevEmail, setPrevEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -26,18 +24,12 @@ function EditUserProfile() {
 
       try {
         const email = user.primaryEmailAddress.emailAddress;
-        setEmail(email);
+        setEmail(email.toLowerCase());
         setUserId(user.id); // clerk id
         setExistingEmailId(user.primaryEmailAddressId);
-        // const res = await fetch(`/api/user/${email}`);
-        // const data = await res.json();
-        // setUserData(data);
         const res = await fetch(`/api/user/${email}`);
         const data = await res.json();
         setMongoUserId(data._id);
-        // setName(data.name);
-        // setEmail(data.email);
-        // setPhoneNumber(data.phoneNumber);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       } finally {
@@ -50,9 +42,28 @@ function EditUserProfile() {
 
   const saveUserInfo = async () => {
     try {
-      // const userId = userId
-      // "REPLACE_WITH_USER_ID"; // <-- Replace or retrieve from session/auth
+      // Optionally, redirect or show a success message here
 
+      // update clerk
+      const response = await fetch("/api/clerk", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId, // The Clerk user ID
+          newEmail: email,
+        }),
+      });
+
+      const clerk_data = await response.json();
+      if (!response.ok) {
+        throw new Error(clerk_data.error || "Failed to update user.");
+      }
+
+      console.log("User updated on clerk:", clerk_data.user);
+
+      // updating mongodb
       const res = await fetch(`/api/user/${mongoUserId}`, {
         method: "PUT",
         headers: {
@@ -68,86 +79,14 @@ function EditUserProfile() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to update user.");
+        throw new Error(data.error || "Failed to update user on mongodb.");
       }
 
-      console.log("User updated:", data.user);
-      // Optionally, redirect or show a success message here
-
-      // const response = await fetch("/api/clerk", {
-      //   method: "PATCH",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     userId: userId,  // The Clerk user ID
-      //     existingEmailId: existingEmailId,  // The existing email ID
-      //     newEmail: email,
-      //   }),
-      // });
-
-      // const clerk_data =  await response.json();
-      // if (!response.ok) {
-      //   throw new Error(clerk_data.error || "Failed to update user.");
-      // }
-
-      // console.log("User updated on clerk:", clerk_data.user);
+      console.log("User updated on mongodb:", data.user);
     } catch (error) {
       console.log("Error updating information on clerk: ", error);
     }
   };
-
-  // const saveUserInfo = async () => {
-  //   console.log("Saving user info...");
-  //   console.log(name, email, phoneNumber);
-
-  //   try {
-  //     // Update Clerk
-  //     // const clerkResponse = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
-  //     //   method: "PATCH",
-  //     //   headers: {
-  //     //     "Content-Type": "application/json",
-  //     //     Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-  //     //   },
-  //     //   body: JSON.stringify({
-  //     //     email_address: [
-  //     //       {
-  //     //         id: existingEmailId,
-  //     //         email: email,
-  //     //       },
-  //     //     ],
-  //     //   }),
-  //     // });
-
-  //     // if (!clerkResponse.ok) {
-  //     //   throw new Error("Failed to update Clerk");
-  //     // }
-
-  //     // Update MongoDB
-  //     // const mongo_user_id = await User.findOne({ email: email });
-
-  //     const mongoResponse = await fetch(`/api/user/${email}`, {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         name,
-  //         email,
-  //         phoneNumber,
-  //       }),
-  //     });
-
-  //     if (!mongoResponse.ok) {
-  //       throw new Error("Failed to update MongoDB");
-  //     }
-
-  //     const result = await mongoResponse.json();
-  //     console.log("Update successful:", result);
-  //   } catch (err) {
-  //     console.error("Error saving user info:", err);
-  //   }
-  // };
 
   return (
     <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
