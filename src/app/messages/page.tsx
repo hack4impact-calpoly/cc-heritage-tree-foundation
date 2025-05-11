@@ -176,6 +176,12 @@ function Messages() {
                             </Td>
                           </Tr>
                         ))}
+                        {/* Used to create whitespace on the last  */}
+                        {Array.from({ length: 7 - currentMessages.length }).map((_, i) => (
+                          <tr key={`empty-${i}`} style={{ height: "55px" }}>
+                            <td colSpan={5} />
+                          </tr>
+                        ))}
                       </Tbody>
 
                       {/* Page Controls */}
