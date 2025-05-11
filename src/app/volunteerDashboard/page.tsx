@@ -15,6 +15,7 @@ import {
   TextWeightStyle,
 } from "@/styles/VolunteerDashStyle";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
+import { trackSynchronousRequestDataAccessInDev } from "next/dist/server/app-render/dynamic-rendering";
 export default function VolunteerDashboard() {
   const router = useRouter();
   const user = useUser();
@@ -42,6 +43,7 @@ export default function VolunteerDashboard() {
     fetchTrees();
   }, []);
 
+  console.log(user.user?.username);
   return (
     <div>
       {isClient ? (
@@ -123,10 +125,13 @@ export default function VolunteerDashboard() {
                           <Flex flexGrow={1} {...CenterStyle}>
                             <HStack>
                               <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                                25
+                                {treeData.filter((tree) => tree.collectorName == user.user?.fullName).length}
                               </Text>
                               <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                                trees
+                                tree
+                                {treeData.filter((tree) => tree.collectorName == user.user?.fullName).length > 1
+                                  ? ""
+                                  : "s"}
                               </Text>
                             </HStack>
                           </Flex>
@@ -147,7 +152,7 @@ export default function VolunteerDashboard() {
                           <Flex flexGrow={1} alignItems="center" justifyContent="center">
                             <HStack>
                               <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                                175
+                                {treeData ? treeData.length : "0"}
                               </Text>
                               <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
                                 trees
