@@ -42,8 +42,6 @@ function EditUserProfile() {
 
   const saveUserInfo = async () => {
     try {
-      // Optionally, redirect or show a success message here
-
       // update clerk
       const response = await fetch("/api/clerk", {
         method: "POST",
@@ -53,6 +51,7 @@ function EditUserProfile() {
         body: JSON.stringify({
           userId: userId, // The Clerk user ID
           newEmail: email,
+          existingEmailId: existingEmailId,
         }),
       });
 

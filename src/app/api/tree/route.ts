@@ -1,13 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/database/db";
-import Tree from "@/database/treeSchema";
+import Tree, { ITree } from "@/database/treeSchema";
 import { revalidateTag } from "next/cache";
 
 export async function GET(request: Request) {
   await connectDB();
 
+  const { searchParams } = new URL(request.url);
+  const collectorName = searchParams.get("collectorName");
+
   try {
-    const trees = await Tree.find().lean();
+    let trees;
+
+    if (collectorName) {
+      const decodedName = decodeURIComponent(collectorName);
+      trees = await Tree.find({
+        collectorName: { $regex: `^${decodedName}$`, $options: "i" },
+      }).lean();
+    } else {
+      // Fetch all trees if no collectorName is provided
+      trees = await Tree.find().lean();
+    }
+
     const serializedTrees = trees.map((tree) => ({
       ...tree,
       gpsCoordinates: tree.gpsCoordinates.map((coord: any) => coord.toString()),

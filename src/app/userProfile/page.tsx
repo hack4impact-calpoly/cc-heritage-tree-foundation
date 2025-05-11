@@ -25,11 +25,13 @@ import { ArrowUpRight } from "lucide-react";
 import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { BoxItem, IconStyle, VO } from "@/styles/AdminDashStyle";
+import { ITree } from "@/database/treeSchema";
 
 function UserProfile() {
   const { user, isLoaded } = useUser();
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [userTrees, setUserTrees] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -49,6 +51,30 @@ function UserProfile() {
 
     fetchUserData();
   }, [isLoaded, user]);
+
+  useEffect(() => {
+    const fetchUserTrees = async () => {
+      if (!userData?.name) return;
+
+      try {
+        const encodedName = encodeURIComponent(userData.name);
+        console.log("name sent: ", encodedName, userData.name);
+        const res = await fetch(`/api/tree?collectorName=${encodedName}`);
+        const treeData = await res.json();
+        console.log("Fetched trees:", treeData);
+        setUserTrees(treeData);
+      } catch (error) {
+        console.error("Failed to fetch user trees:", error);
+      }
+    };
+
+    fetchUserTrees();
+  }, [userData]);
+
+  // const fetchTrees = async () => {
+  //   {userData.name}
+
+  // };
 
   if (loading || !userData) {
     return (
@@ -171,7 +197,15 @@ function UserProfile() {
                     <ArrowUpRight></ArrowUpRight>
                   </Link>
                 </HStack>
-                <Box borderRadius="20px" overflow="hidden" border="1px solid" borderColor={"#596334"} mt={10}>
+                <Box
+                  borderRadius="20px"
+                  overflow="hidden"
+                  border="1px solid"
+                  borderColor={"#596334"}
+                  mt={10}
+                  maxH="330px"
+                  overflowY="auto"
+                >
                   <Table size="sm" variant="simple" bg="#FAF9F6">
                     <Thead bg="#DFED98">
                       <Tr>
@@ -181,51 +215,42 @@ function UserProfile() {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      <Tr>
-                        <Td>1</Td>
-                        <Td>
-                          <Box {...VO} {...IconStyle}>
-                            VO
-                          </Box>
-                        </Td>
-                        <Td>00/00/0000</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>1</Td>
-                        <Td>
-                          <Box {...VO} {...IconStyle}>
-                            VO
-                          </Box>
-                        </Td>
-                        <Td>00/00/0000</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>1</Td>
-                        <Td>
-                          <Box {...VO} {...IconStyle}>
-                            VO
-                          </Box>
-                        </Td>
-                        <Td>00/00/0000</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>1</Td>
-                        <Td>
-                          <Box {...VO} {...IconStyle}>
-                            VO
-                          </Box>
-                        </Td>
-                        <Td>00/00/0000</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>1</Td>
-                        <Td>
-                          <Box {...VO} {...IconStyle}>
-                            VO
-                          </Box>
-                        </Td>
-                        <Td>00/00/0000</Td>
-                      </Tr>
+                      {userTrees.map((tree: ITree, index) => (
+                        <Tr key={tree._id}>
+                          <Td>{index + 1}</Td>
+                          <Td>
+                            <Box
+                              {...IconStyle}
+                              style={{
+                                backgroundColor: tree.species?.startsWith("C")
+                                  ? "#78C1DE" // blue for VO
+                                  : tree.species?.startsWith("V")
+                                    ? "#CFEFF9" // different blue for WO
+                                    : tree.species?.startsWith("B")
+                                      ? "#426B87" // different blue for WO
+                                      : "#579FD4", // default grey for other species
+                                color: tree.species?.startsWith("C")
+                                  ? "#333333" // blue for VO
+                                  : tree.species?.startsWith("V")
+                                    ? "#426B87" // different blue for WO
+                                    : tree.species?.startsWith("B")
+                                      ? "white" // different blue for WO
+                                      : "white", // default grey for other species
+                              }}
+                              fontSize="sm"
+                              fontWeight="normal"
+                            >
+                              {tree.species
+                                ?.split(" ")
+                                .filter((word) => word.length > 0)
+                                .map((word, idx, arr) => (idx === 0 || idx === arr.length - 1 ? word[0] : ""))
+                                .join("")
+                                .toUpperCase()}
+                            </Box>
+                          </Td>
+                          <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
+                        </Tr>
+                      ))}
                     </Tbody>
                   </Table>
                 </Box>
