@@ -25,6 +25,8 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { useUser } from "@clerk/nextjs";
 import mongoose from "mongoose";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
+import { useRouter } from "next/navigation";
+
 const TreeFormSection = chakra(FormControl, {
   baseStyle: {
     borderWidth: "1px",
@@ -69,6 +71,7 @@ export default function TreeEntryForm() {
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const router = useRouter();
 
   const [formData, setFormData] = useState<FormValues>({
     treeLocation: "",
@@ -196,7 +199,6 @@ export default function TreeEntryForm() {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Tree data submitted successfully!");
         // Reset form
         setFormData({
           treeLocation: "",
@@ -211,6 +213,7 @@ export default function TreeEntryForm() {
           fieldNotes: "",
         });
         setSelectedImage(null);
+        router.push("/success");
       } else {
         alert("Failed to submit tree: " + result);
       }
