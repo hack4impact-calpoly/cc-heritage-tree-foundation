@@ -1,7 +1,7 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Box,
   Button,
@@ -17,13 +17,13 @@ import {
 } from "@chakra-ui/react";
 import { AlignJustify } from "lucide-react";
 import { BrowserView, MobileView } from "react-device-detect";
-import { AttachmentIcon } from "@chakra-ui/icons";
+import { AttachmentIcon, CloseIcon } from "@chakra-ui/icons";
 import { InputStyleAnnouncement } from "@/styles/CreateAnnouncementStyle";
 
 const CreateAnnouncement = () => {
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -56,6 +56,12 @@ const CreateAnnouncement = () => {
         ...prev,
         attachment: e.target.files![0],
       }));
+    }
+  };
+  const handleRemoveAttachment = () => {
+    setFormData((prev) => ({ ...prev, attachment: null }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -97,13 +103,11 @@ const CreateAnnouncement = () => {
           <BrowserView>
             <Box
               position="absolute"
-              width="100vw"
-              minHeight="100vh"
+              width="100%"
+              minHeight="100%"
               bg="#F4F1E8"
               transform="translateX(-15rem)"
               pl="15rem"
-              display="flex"
-              alignItems="center"
             >
               <VStack spacing={7} align="start" p="50px" py="50px" width="100%" maxW="900px" mx="auto">
                 <Box fontSize="3xl" fontWeight="bold">
@@ -159,8 +163,17 @@ const CreateAnnouncement = () => {
                         {formData.attachment ? formData.attachment.name : "Add attachment"}
                       </Text>
                     </label>
+                    {formData.attachment && (
+                      <IconButton
+                        icon={<CloseIcon />}
+                        size="xs"
+                        aria-label="Remove attachment"
+                        variant="ghost"
+                        onClick={handleRemoveAttachment}
+                      />
+                    )}
                   </Box>
-                  <Input type="file" id="file-upload" display="none" onChange={handleFileChange} />
+                  <Input type="file" id="file-upload" display="none" onChange={handleFileChange} ref={fileInputRef} />
                 </FormControl>
                 <HStack spacing={5}>
                   <Button
