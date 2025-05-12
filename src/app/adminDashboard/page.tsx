@@ -97,7 +97,7 @@ function AdminDashboard() {
                         <ArrowUpRight />
                       </Link>
                     </HStack>
-                    <Box borderRadius="20px" overflow="hidden" border="1px solid" borderColor="#596334" mt={10}>
+                    <Box borderRadius="20px" overflow="scroll" border="1px solid" borderColor="#596334" mt={10}>
                       <Table size="sm" variant="simple">
                         <Thead bg="#DFED98">
                           <Tr h="40px">
