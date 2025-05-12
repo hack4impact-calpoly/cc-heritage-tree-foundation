@@ -5,6 +5,8 @@ import { AlignJustify, ChevronRight, Trash2 } from "lucide-react";
 import styles from "./messages.module.css";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { Icon, useToast } from "@chakra-ui/react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Table,
   Thead,
@@ -34,6 +36,7 @@ import MessagePopUp from "@/components/MessagePopUp";
 import DeleteMessagePopUp from "@/components/DeleteMessagePopUp";
 
 function Messages() {
+  const toast = useToast();
   const { isLoaded, isSignedIn, user } = useUser();
   const messagesPerPage = 7;
   const [currentPage, setCurrentPage] = useState(1);
@@ -152,6 +155,20 @@ function Messages() {
                     deleteMessageFromTable();
                     setOpenDeletePopUp(false);
                     setBlurAmount("0px");
+                    // add toast
+                    toast({
+                      render: () => (
+                        <Box color="#596334" bg="white" p={5} borderRadius={20} boxShadow="md">
+                          <Flex align="center">
+                            <Icon as={CheckCircleIcon} color="#596334" boxSize={5} mr={4} />
+                            <Flex direction={"column"}>
+                              <Text fontWeight={"bold"}>Deleted!</Text>
+                              <Text> Message has been successfully removed.</Text>
+                            </Flex>
+                          </Flex>
+                        </Box>
+                      ),
+                    });
                   }}
                 />
               </Flex>
