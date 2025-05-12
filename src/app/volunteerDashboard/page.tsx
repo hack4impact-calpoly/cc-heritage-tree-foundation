@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Box, Grid, GridItem, Text, Button, HStack, VStack, Link, IconButton, Flex, Image } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Text, Button, HStack, VStack, Link, IconButton, Image } from "@chakra-ui/react";
 import { Plus, ArrowUpRight, EllipsisVertical, Menu } from "lucide-react";
 import { ITree } from "@/database/treeSchema";
 import Map from "@/components/Map";
@@ -13,6 +13,7 @@ import {
   IconButtonStyle,
   TextAnnStyle,
   TextWeightStyle,
+  BoxItem,
 } from "@/styles/VolunteerDashStyle";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
 import { IAnnouncement } from "@/database/announcementSchema";
@@ -63,149 +64,118 @@ export default function VolunteerDashboard() {
 
   console.log(announcements);
   return (
-    <div>
+    <Box>
       {isClient ? (
-        <div>
+        <Box>
           <BrowserView>
-            <Box
-              position="absolute"
-              transform="translateX(-15rem)"
-              height="100%"
-              width="100vw"
-              maxWidth="100%"
-              bg="#F4F1E8"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Box ml="15rem" width="100%" height="100%" p={{ base: "20px", md: "50px" }} overflow="scroll">
-                <Grid
-                  h="100%"
-                  w="100%"
-                  templateRows={{ base: "auto auto auto auto", md: "repeat(8, 1fr)" }}
-                  templateColumns={{ base: "1fr", md: "repeat(7, 1fr)" }}
-                  gap={4}
-                >
-                  {/* Hello Message */}
-                  <GridItem rowSpan={1} colSpan={{ base: 1, md: 7 }}>
+            <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center">
+              <Grid
+                maxH="85vh"
+                templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
+                templateColumns={{ base: "1fr", md: "repeat(8, 1fr)" }}
+                gap={4}
+                maxW="90%"
+              >
+                {/* Hello Message */}
+                <GridItem rowSpan={1} colSpan={{ base: 1, md: 8 }}>
+                  <VStack display="flex" alignItems="flex-start">
                     <Text fontSize="3xl" color="#596334" fontWeight="bold">
                       Hello {user.user?.firstName} 👋
                     </Text>
                     <Text fontSize="16px" color="#333" fontWeight={"400"}>
                       Thank you so much for your effort, let&#39;s do this!
                     </Text>
-                  </GridItem>
+                  </VStack>
+                </GridItem>
 
-                  {/* Tree Logs */}
-                  <GridItem
-                    rowSpan={{ base: 1, md: 3 }}
-                    colSpan={{ base: 1, md: 3 }}
-                    minWidth="300px"
-                    overflow="scroll"
-                  >
-                    <Flex w="100%" h="100%" borderRadius="16px" bg="white" p="20px" flexDir="column" gap="15px">
-                      <HStack position="relative">
-                        <Button
-                          bg="#596334"
-                          px="14px"
-                          py="3px"
-                          borderRadius="12px"
-                          onClick={() => router.push("/newTreeForm")}
-                        >
-                          <Box w="24px" h="24px" borderRadius="100px" bg="#F4F1E8" {...CenterStyle}>
-                            <Plus color="#596334" />
-                          </Box>
-                          <Text ml="10px" color="#F4F1E8" fontSize="16px">
-                            Add Tree
-                          </Text>
-                        </Button>
-                        <Link href="/treeTable" position="absolute" top="0px" right="0px">
-                          <ArrowUpRight color="#333333" />
-                        </Link>
-                      </HStack>
-                      <Text fontSize="20px" fontWeight="600" color="#333333">
-                        Trees Logged
-                      </Text>
-                      <Flex flexDir="row" gap="10px" flexGrow={1} minHeight="0">
-                        <Box
-                          bg="#DFED98"
-                          borderRadius="12px"
-                          padding="10px"
-                          w="50%"
-                          flexGrow={1}
-                          display="flex"
-                          flexDir="column"
-                          minHeight="100px"
-                        >
-                          <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
-                            You&#39;ve logged
-                          </Text>
-                          <Flex flexGrow={1} {...CenterStyle}>
-                            <HStack>
-                              <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                                {treeData.filter((tree) => tree.collectorName == user.user?.fullName).length}
-                              </Text>
-                              <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                                tree
-                                {treeData.filter((tree) => tree.collectorName == user.user?.fullName).length > 1
-                                  ? ""
-                                  : "s"}
-                              </Text>
-                            </HStack>
-                          </Flex>
+                {/* Tree Logs */}
+                <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 4 }}>
+                  <Box {...BoxItem} p={{ base: 5, md: 7 }} h="100%">
+                    <HStack justifyContent="space-between">
+                      <Button
+                        bg="#596334"
+                        px="14px"
+                        py="3px"
+                        borderRadius="12px"
+                        onClick={() => router.push("/newTreeForm")}
+                      >
+                        <Box w="24px" h="24px" borderRadius="100px" bg="#F4F1E8" {...CenterStyle}>
+                          <Plus color="#596334" />
                         </Box>
-                        <Box
-                          borderRadius="12px"
-                          border="3px solid #647038"
-                          padding="10px"
-                          w="50%"
-                          flexGrow={1}
-                          display="flex"
-                          flexDir="column"
-                          minHeight="100px"
-                        >
-                          <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
-                            Total logged
+                        <Text ml="10px" color="#F4F1E8" fontSize="16px">
+                          Add Tree
+                        </Text>
+                      </Button>
+                      <Link href="/treeTable">
+                        <ArrowUpRight color="#333333" />
+                      </Link>
+                    </HStack>
+                    <Text fontSize="3xl" fontWeight="semibold" color="#333333" pt="0.5rem" pb="0.5rem">
+                      Trees Logged
+                    </Text>
+                    <HStack gap="6">
+                      <Box
+                        bg="#DFED98"
+                        borderRadius="12px"
+                        padding="1rem"
+                        w="50%"
+                        display="flex"
+                        flexDir="column"
+                        alignItems="center"
+                      >
+                        <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
+                          You&#39;ve logged
+                        </Text>
+                        <HStack gap={2}>
+                          <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
+                            {treeData.filter((tree) => tree.collectorName == user.user?.fullName).length}
                           </Text>
-                          <Flex flexGrow={1} alignItems="center" justifyContent="center">
-                            <HStack>
-                              <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                                {treeData ? treeData.length : "0"}
-                              </Text>
-                              <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                                trees
-                              </Text>
-                            </HStack>
-                          </Flex>
-                        </Box>
-                      </Flex>
-                    </Flex>
-                  </GridItem>
+                          <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
+                            tree
+                            {treeData.filter((tree) => tree.collectorName == user.user?.fullName).length == 1
+                              ? ""
+                              : "s"}
+                          </Text>
+                        </HStack>
+                      </Box>
+                      <Box
+                        borderRadius="12px"
+                        border="3px solid #647038"
+                        padding="10px"
+                        w="50%"
+                        flexGrow={1}
+                        display="flex"
+                        flexDir="column"
+                        alignItems="center"
+                      >
+                        <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
+                          Total logged
+                        </Text>
+                        <HStack gap={2}>
+                          <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
+                            {treeData ? treeData.length : "0"}
+                          </Text>
+                          <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
+                            tree
+                            {treeData?.length == 1 ? "" : "s"}
+                          </Text>
+                        </HStack>
+                      </Box>
+                    </HStack>
+                  </Box>
+                </GridItem>
 
-                  {/* Map */}
+                {/* Map */}
+                <GridItem rowSpan={{ base: 2, md: 8 }} colSpan={{ base: 1, md: 4 }} data-testid="map_id">
+                  <Map trees={treeData} />
+                </GridItem>
 
-                  <GridItem
-                    rowSpan={{ base: 2, md: 7 }}
-                    colSpan={{ base: 1, md: 4 }}
-                    bg="white"
-                    borderRadius="16px"
-                    {...CenterStyle}
-                    minHeight="300px"
-                  >
-                    <Map trees={treeData} />
-                  </GridItem>
-
-                  {/* Announcements */}
-                  <GridItem
-                    rowSpan={{ base: 1, md: 4 }}
-                    colSpan={{ base: 1, md: 3 }}
-                    borderRadius="16px"
-                    bg="#596334"
-                    p="24px"
-                  >
-                    <VStack spacing={15} maxHeight="100%">
+                {/* Announcements */}
+                <GridItem rowSpan={{ base: 1, md: 5 }} colSpan={{ base: 1, md: 4 }}>
+                  <Box {...BoxItem} bg="#596334" h="100%" p={{ base: 5, md: 10 }}>
+                    <VStack spacing={15} maxH="24rem">
                       <HStack position={"relative"} w="100%">
-                        <Text color="#F4F1E8" fontSize="24px" fontWeight="600">
+                        <Text color="#F4F1E8" fontSize="3xl" fontWeight="600">
                           Announcements
                         </Text>
                         <Link href="/messages" position="absolute" top="0px" right="0px">
@@ -240,9 +210,9 @@ export default function VolunteerDashboard() {
                         </Text>
                       </VStack>
                     </VStack>
-                  </GridItem>
-                </Grid>
-              </Box>
+                  </Box>
+                </GridItem>
+              </Grid>
             </Box>
           </BrowserView>
 
@@ -281,7 +251,7 @@ export default function VolunteerDashboard() {
                   gap={25}
                 >
                   <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 3 }} minHeight="265px">
-                    <Flex w="100%" h="100%" borderRadius="16px" bg="white" p="20px" flexDir="column" gap="15px">
+                    <VStack w="100%" h="100%" borderRadius="16px" bg="white" p="20px" flexDir="column" gap="15px">
                       <HStack position="relative">
                         <Button
                           bg="#AE5700"
@@ -300,7 +270,7 @@ export default function VolunteerDashboard() {
                           </Text>
                         </Button>
                       </HStack>
-                      <Flex flexDir="row" gap="10px" flexGrow={1} minHeight="0">
+                      <HStack gap="10px" minHeight="0">
                         <Box
                           bg="#DFED98"
                           borderRadius="12px"
@@ -313,16 +283,14 @@ export default function VolunteerDashboard() {
                           <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                             You&#39;ve logged
                           </Text>
-                          <Flex flexGrow={1} {...CenterStyle}>
-                            <HStack>
-                              <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                                25
-                              </Text>
-                              <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                                trees
-                              </Text>
-                            </HStack>
-                          </Flex>
+                          <HStack flexGrow={1} {...CenterStyle}>
+                            <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
+                              25
+                            </Text>
+                            <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
+                              trees
+                            </Text>
+                          </HStack>
                         </Box>
                         <Box
                           borderRadius="12px"
@@ -336,19 +304,17 @@ export default function VolunteerDashboard() {
                           <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                             Total logged
                           </Text>
-                          <Flex flexGrow={1} alignItems="center" justifyContent="center">
-                            <HStack>
-                              <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                                175
-                              </Text>
-                              <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                                trees
-                              </Text>
-                            </HStack>
-                          </Flex>
+                          <HStack flexGrow={1} alignItems="center" justifyContent="center">
+                            <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
+                              175
+                            </Text>
+                            <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
+                              trees
+                            </Text>
+                          </HStack>
                         </Box>
-                      </Flex>
-                    </Flex>
+                      </HStack>
+                    </VStack>
                   </GridItem>
                   <GridItem
                     rowSpan={{ base: 1, md: 4 }}
@@ -386,10 +352,10 @@ export default function VolunteerDashboard() {
               </VStack>
             </Box>
           </MobileView>
-        </div>
+        </Box>
       ) : (
-        <div></div>
+        <Box></Box>
       )}
-    </div>
+    </Box>
   );
 }
