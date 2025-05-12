@@ -15,12 +15,13 @@ import {
   TextWeightStyle,
 } from "@/styles/VolunteerDashStyle";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
-import { trackSynchronousRequestDataAccessInDev } from "next/dist/server/app-render/dynamic-rendering";
+import { IAnnouncement } from "@/database/announcementSchema";
 export default function VolunteerDashboard() {
   const router = useRouter();
   const user = useUser();
   const [isClient, setIsClient] = useState(false);
   const [treeData, setTreeData] = useState<ITree[]>([]);
+  const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
 
   useEffect(() => {
     setIsClient(true);
@@ -43,7 +44,24 @@ export default function VolunteerDashboard() {
     fetchTrees();
   }, []);
 
-  console.log(user.user?.username);
+  useEffect(() => {
+    setIsClient(true);
+
+    const fetchAnnouncements = async () => {
+      try {
+        const response = await fetch("/api/messages");
+        if (!response.ok) throw new Error("Faield to fetch announcements for dashboard");
+        const data: IAnnouncement[] = await response.json();
+        setAnnouncements(data.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()));
+      } catch (error) {
+        console.error("Error fetching announcement data:", error);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
+
+  console.log(announcements);
   return (
     <div>
       {isClient ? (
@@ -185,7 +203,7 @@ export default function VolunteerDashboard() {
                     bg="#596334"
                     p="24px"
                   >
-                    <VStack spacing={15} maxHeight="100%" overflowY="scroll">
+                    <VStack spacing={15} maxHeight="100%">
                       <HStack position={"relative"} w="100%">
                         <Text color="#F4F1E8" fontSize="24px" fontWeight="600">
                           Announcements
@@ -194,40 +212,33 @@ export default function VolunteerDashboard() {
                           <ArrowUpRight color="#F4F1E8" />
                         </Link>
                       </HStack>
-                      <Box {...Box1AnnStyle}>
-                        <HStack position={"relative"} w="100%">
-                          <Box {...Box2AnnStyle}></Box>
-                          <Text {...TextAnnStyle}>
-                            Hello Volunteers! Please check your emails for updates from CCHTF
-                          </Text>
-                          <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
-                            <EllipsisVertical color="#333333" />
-                          </IconButton>
-                        </HStack>
-                      </Box>
-                      <Box {...Box1AnnStyle}>
-                        <HStack position={"relative"}>
-                          <Box {...Box2AnnStyle}></Box>
-                          <Text {...TextAnnStyle}>
-                            You&#39;ve logged 25 trees 🎉🎉 Thank you so much for your hard work!
-                          </Text>
-                          <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
-                            <EllipsisVertical color="#333333" />
-                          </IconButton>
-                        </HStack>
-                      </Box>
-                      <Box {...Box1AnnStyle}>
-                        <HStack position={"relative"}>
-                          <Box {...Box2AnnStyle}></Box>
-                          <Text {...TextAnnStyle}>Message here!</Text>
-                          <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
-                            <EllipsisVertical color="#333333" />
-                          </IconButton>
-                        </HStack>
-                      </Box>
-                      <Text color="#DFED98" fontSize="16px" fontWeight="400">
-                        No other messages
-                      </Text>
+                      <VStack
+                        maxH="2px%"
+                        overflowY="scroll"
+                        sx={{
+                          "&::-webkit-scrollbar": {
+                            width: "4px",
+                          },
+                          "&::-webkit-scrollbar-thumb": {
+                            backgroundColor: "rgba(0, 0, 0, 0.2)",
+                          },
+                        }}
+                      >
+                        {announcements.map((announcement) => (
+                          <Box {...Box1AnnStyle} key={announcement._id} marginBottom="1rem" width="95%">
+                            <HStack position={"relative"} w="100%">
+                              <Box {...Box2AnnStyle}></Box>
+                              <Text {...TextAnnStyle}> {announcement.message} </Text>
+                              <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
+                                <EllipsisVertical color="#333333" />
+                              </IconButton>
+                            </HStack>
+                          </Box>
+                        ))}
+                        <Text color="#DFED98" fontSize="16px" fontWeight="400">
+                          No other messages
+                        </Text>
+                      </VStack>
                     </VStack>
                   </GridItem>
                 </Grid>
@@ -353,36 +364,18 @@ export default function VolunteerDashboard() {
                           Announcements
                         </Text>
                       </HStack>
-                      <Box {...Box1AnnStyle}>
-                        <HStack position={"relative"} w="100%">
-                          <Box {...Box2AnnStyle}></Box>
-                          <Text {...TextAnnStyle}>
-                            Hello Volunteers! Please check your emails for updates from CCHTF
-                          </Text>
-                          <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
-                            <EllipsisVertical color="#333333" />
-                          </IconButton>
-                        </HStack>
-                      </Box>
-                      <Box {...Box1AnnStyle}>
-                        <HStack position={"relative"}>
-                          <Box {...Box2AnnStyle}></Box>
-                          <Text {...TextAnnStyle}>
-                            You&#39;ve logged 25 trees 🎉🎉 Thank you so much for your hard work!
-                          </Text>
-                          <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
-                            <EllipsisVertical color="#333333" />
-                          </IconButton>
-                        </HStack>
-                      </Box>
-                      <Box {...Box1AnnStyle}>
-                        <HStack position={"relative"}>
-                          <Box {...Box2AnnStyle}></Box>
-                          <Text {...TextAnnStyle}>Message here!</Text>
-                          <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
-                            <EllipsisVertical color="#333333" />
-                          </IconButton>
-                        </HStack>
+                      <Box scrollBehavior="smooth">
+                        {announcements.map((announcement) => (
+                          <Box {...Box1AnnStyle} key={announcement._id}>
+                            <HStack position={"relative"} w="100%">
+                              <Box {...Box2AnnStyle}></Box>
+                              <Text {...TextAnnStyle}> {announcement.message} </Text>
+                              <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
+                                <EllipsisVertical color="#333333" />
+                              </IconButton>
+                            </HStack>
+                          </Box>
+                        ))}
                       </Box>
                       <Text color="#DFED98" fontSize="16px" fontWeight="400">
                         No other messages
