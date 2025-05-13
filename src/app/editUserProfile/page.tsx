@@ -78,6 +78,7 @@ function EditUserProfile() {
       }
 
       console.log("User updated on mongodb:", data.user);
+      window.location.reload();
     } catch (error) {
       console.log("Error updating information on clerk: ", error);
     }
