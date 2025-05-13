@@ -68,7 +68,7 @@ export default function VolunteerDashboard() {
       {isClient ? (
         <Box>
           <BrowserView>
-            <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center">
+            <Box bg="#F4F1E8" display="flex" justifyContent="center">
               <Grid
                 maxH="85vh"
                 templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
@@ -90,14 +90,15 @@ export default function VolunteerDashboard() {
 
                 {/* Tree Logs */}
                 <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 4 }}>
-                  <Box {...BoxItem} p={{ base: 5, md: 7 }} h="100%">
-                    <HStack justifyContent="space-between">
+                  <VStack {...BoxItem} p="5" h="100%" w="100%" overflow="auto" paddingBottom="0px">
+                    <HStack justifyContent="space-between" h="10%" w="100%">
                       <Button
                         bg="#596334"
                         px="14px"
                         py="3px"
                         borderRadius="12px"
                         onClick={() => router.push("/newTreeForm")}
+                        h="2.3rem"
                       >
                         <Box w="24px" h="24px" borderRadius="100px" bg="#F4F1E8" {...CenterStyle}>
                           <Plus color="#596334" />
@@ -110,18 +111,27 @@ export default function VolunteerDashboard() {
                         <ArrowUpRight color="#333333" />
                       </Link>
                     </HStack>
-                    <Text fontSize="3xl" fontWeight="semibold" color="#333333" pt="0.5rem" pb="0.5rem">
+                    <Text
+                      fontSize="3xl"
+                      fontWeight="semibold"
+                      color="#333333"
+                      alignSelf="flex-start"
+                      m="0.25em"
+                      marginLeft="0"
+                    >
                       Trees Logged
                     </Text>
-                    <HStack gap="6">
+                    <HStack gap="6" w="100%" h="50%">
                       <Box
                         bg="#DFED98"
                         borderRadius="12px"
-                        padding="1rem"
+                        border="3px solid #DFED98"
+                        padding="0.6em"
                         w="50%"
                         display="flex"
                         flexDir="column"
                         alignItems="center"
+                        h="100%"
                       >
                         <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                           You&#39;ve logged
@@ -141,12 +151,12 @@ export default function VolunteerDashboard() {
                       <Box
                         borderRadius="12px"
                         border="3px solid #647038"
-                        padding="10px"
+                        padding="0.6em"
                         w="50%"
-                        flexGrow={1}
                         display="flex"
                         flexDir="column"
                         alignItems="center"
+                        h="100%"
                       >
                         <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                           Total logged
@@ -162,7 +172,7 @@ export default function VolunteerDashboard() {
                         </HStack>
                       </Box>
                     </HStack>
-                  </Box>
+                  </VStack>
                 </GridItem>
 
                 {/* Map */}
@@ -172,18 +182,28 @@ export default function VolunteerDashboard() {
 
                 {/* Announcements */}
                 <GridItem rowSpan={{ base: 1, md: 5 }} colSpan={{ base: 1, md: 4 }}>
-                  <Box {...BoxItem} bg="#596334" h="100%" p={{ base: 5, md: 10 }}>
-                    <VStack spacing={15} maxH="24rem">
-                      <HStack position={"relative"} w="100%">
+                  <Box
+                    {...BoxItem}
+                    bg="#596334"
+                    h="100%"
+                    p={{ base: 5, md: 10 }}
+                    overflow="auto"
+                    sx={{
+                      "&::-webkit-scrollbar": {
+                        backgroundColor: "rgba(0, 0, 0, 0)",
+                      },
+                    }}
+                  >
+                    <VStack h="100%">
+                      <HStack w="100%" justifyContent="space-between" position="sticky">
                         <Text color="#F4F1E8" fontSize="3xl" fontWeight="600">
                           Announcements
                         </Text>
-                        <Link href="/messages" position="absolute" top="0px" right="0px">
+                        <Link href="/messages">
                           <ArrowUpRight color="#F4F1E8" />
                         </Link>
                       </HStack>
                       <VStack
-                        maxH="2px%"
                         overflowY="scroll"
                         sx={{
                           "&::-webkit-scrollbar": {
