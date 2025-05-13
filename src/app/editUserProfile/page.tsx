@@ -27,6 +27,8 @@ function EditUserProfile() {
     setIsMobileDevice(isMobile);
   }, []);
 
+  /* This is put in for testing only, please delete this code  */
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
@@ -83,6 +85,8 @@ function EditUserProfile() {
       console.log("Error updating information on clerk: ", error);
     }
   };
+
+  /* Remove from comment to here */
 
   if (!isClient) {
     return null;
