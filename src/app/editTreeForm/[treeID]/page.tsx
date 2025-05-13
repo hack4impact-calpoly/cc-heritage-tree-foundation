@@ -128,7 +128,7 @@ export default function EditTreeEntryForm() {
     };
     console.log("load data into the formData");
     getTreeData();
-  }, []);
+  }, [params.treeId]);
 
   const handleTreeType = (e: React.MouseEvent<HTMLButtonElement>) => {
     const treeType = e.currentTarget.getAttribute("name") as TreeType;

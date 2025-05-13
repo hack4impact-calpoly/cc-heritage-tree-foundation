@@ -119,7 +119,7 @@ function AdminDashboard() {
       });
     };
     fetchTreeCount().catch(console.error);
-  }, []);
+  }, [currentMonth, currentYear]);
 
   useEffect(() => {
     const fetchWorstTrees = async () => {
