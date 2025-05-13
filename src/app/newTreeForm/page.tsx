@@ -25,6 +25,8 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { useUser } from "@clerk/nextjs";
 import mongoose from "mongoose";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
+import { useRouter } from "next/navigation";
+
 const TreeFormSection = chakra(FormControl, {
   baseStyle: {
     borderWidth: "1px",
@@ -69,6 +71,7 @@ export default function TreeEntryForm() {
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const router = useRouter();
 
   const [formData, setFormData] = useState<FormValues>({
     treeLocation: "",
@@ -196,7 +199,6 @@ export default function TreeEntryForm() {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Tree data submitted successfully!");
         // Reset form
         setFormData({
           treeLocation: "",
@@ -211,6 +213,7 @@ export default function TreeEntryForm() {
           fieldNotes: "",
         });
         setSelectedImage(null);
+        router.push("/success");
       } else {
         alert("Failed to submit tree: " + result);
       }
@@ -350,6 +353,46 @@ export default function TreeEntryForm() {
               <Text fontSize="sm" color="gray.500" mt={2}>
                 Example format: (35.555386, -120.713429)
               </Text>
+              <Button
+                mt={2}
+                size="sm"
+                backgroundColor={COLORS.Olive}
+                color={COLORS.PureWhite}
+                borderRadius="md"
+                onClick={() => {
+                  try {
+                    if (typeof navigator === "undefined" || !navigator.geolocation) {
+                      alert("Geolocation is not supported by your browser.");
+                      return;
+                    }
+
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lon = position.coords.longitude.toFixed(6);
+                        const coords = `(${lat}, ${lon})`;
+
+                        setFormData((prev) => ({
+                          ...prev,
+                          treeLocation: coords,
+                        }));
+                      },
+                      (error) => {
+                        alert(`Error getting location: ${error.message}`);
+                      },
+                      {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0,
+                      },
+                    );
+                  } catch (e) {
+                    alert("Unexpected error");
+                  }
+                }}
+              >
+                Use Current Location
+              </Button>
             </TreeFormSection>
             <TreeFormSection isRequired>
               <TreeFormHeading id="treeSpecies" style={{ fontSize: "24px" }} marginBottom="20px">

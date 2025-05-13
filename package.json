@@ -34,7 +34,7 @@
     "react-icons": "^5.4.0",
     "swr": "^2.3.2",
     "util": "^0.12.5",
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
