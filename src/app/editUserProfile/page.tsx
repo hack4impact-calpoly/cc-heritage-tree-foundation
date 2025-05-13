@@ -18,13 +18,26 @@ function EditUserProfile() {
   const [existingEmailId, setExistingEmailId] = useState<string | null>(null);
   const [mongoUserId, setMongoUserId] = useState<object | null>(null);
 
+  // for toast
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastStatus, setToastStatus] = useState<"success" | "error" | null>(null);
+
+  const showToast = (message: string, status: "success" | "error") => {
+    setToastMsg(message);
+    setToastStatus(status);
+
+    setTimeout(() => {
+      setToastMsg(null);
+      setToastStatus(null);
+    }, 3000);
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
 
       try {
-        const email = user.primaryEmailAddress.emailAddress;
-        setEmail(email.toLowerCase());
+        const email = user.primaryEmailAddress.emailAddress.toLowerCase();
         setUserId(user.id); // clerk id
         setExistingEmailId(user.primaryEmailAddressId);
         const res = await fetch(`/api/user/${email}`);
@@ -82,8 +95,15 @@ function EditUserProfile() {
       }
 
       console.log("User updated on mongodb:", data.user);
+
+      setName("");
+      setEmail("");
+      setPhoneNumber("");
+
+      showToast("You have successfully made changes.", "success");
     } catch (error) {
       console.log("Error updating information on clerk: ", error);
+      showToast("Unable to make changes.", "error");
     }
   };
 
@@ -115,9 +135,70 @@ function EditUserProfile() {
 
         <Center>
           <Flex mt={25} direction="column">
-            <Text fontSize="3xl" fontWeight="bold" textStyle="4xl">
-              Edit User Profile
-            </Text>
+            <Flex align="center" justify="space-between">
+              <Text fontSize="3xl" fontWeight="bold" textStyle="4xl">
+                Edit User Profile
+              </Text>
+              {toastMsg && (
+                <Box
+                  borderRadius="md"
+                  px={4}
+                  py={2}
+                  bg="white"
+                  // {toastStatus === "success" ? "green.400" : "red.400"}
+                  color="black"
+                  fontWeight="medium"
+                  boxShadow="md"
+                >
+                  <Flex align="center" gap={4}>
+                    {toastStatus === "success" ? (
+                      // Success Icon (e.g., checkmark)
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#596334"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="m9 12 2 2 4-4" />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="red"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-circle-x-icon lucide-circle-x"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="m15 9-6 6" />
+                        <path d="m9 9 6 6" />
+                      </svg>
+                    )}
+                    <Flex direction={"column"}>
+                      {toastStatus === "success" ? (
+                        <Text size="med" fontWeight={"bold"}>
+                          Saved
+                        </Text>
+                      ) : (
+                        <Text size="med">Error</Text>
+                      )}
+                      <Text>{toastMsg}</Text>
+                    </Flex>
+                  </Flex>
+                </Box>
+              )}
+            </Flex>
             <Box
               borderRadius={"15px"}
               mt={30}
@@ -167,7 +248,7 @@ function EditUserProfile() {
                         mt={10}
                         placeholder="Email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
                         type="email"
                       ></Input>
                     </Center>
