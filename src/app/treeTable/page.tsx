@@ -666,7 +666,7 @@ export default function TreeTable() {
                             <Text fontSize="med" color="#596334" mb={2}>
                               Photo
                             </Text>
-                            <Image src={selectedTree.photo} borderRadius="10px"></Image>
+                            <Image src={selectedTree.photo} borderRadius="10px" alt="Tree"></Image>
                           </Box>
                         </VStack>
                       </Box>
