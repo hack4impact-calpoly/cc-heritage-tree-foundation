@@ -26,7 +26,8 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
     setCustomUserData(null);
 
     if (isLoaded && user) {
-      fetch(`/api/user/${user.primaryEmailAddress}`)
+      const email = user.primaryEmailAddress?.emailAddress;
+      fetch(`/api/user/${email}`)
         .then((res) => {
           if (!res.ok) {
             console.error("Failed to fetch user data from custom DB:", res.statusText);
