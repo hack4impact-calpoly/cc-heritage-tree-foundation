@@ -85,10 +85,26 @@ export default function TreeEntryForm() {
     treeIssues: [],
     fieldNotes: "",
   });
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setSelectedImage(file); // Save the file directly
+
+    // image type validation
+    const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      alert("Only image files (JPEG, PNG, WEBP) are allowed.");
+      return;
+    }
+
+    // file size limit
+    const maxSize = 5;
+    if (file.size > maxSize * 1024 * 1024) {
+      alert(`File size exceeds ${maxSize}MB limit.`);
+      return;
+    }
+
+    setSelectedImage(file);
   };
 
   const handleTreeType = (e: React.MouseEvent<HTMLButtonElement>) => {
