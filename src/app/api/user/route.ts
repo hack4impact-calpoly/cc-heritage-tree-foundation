@@ -3,7 +3,7 @@ import connectDB from "@/database/db";
 import User, { IUser } from "@/database/userSchema";
 
 // get all users
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   await connectDB();
 
   try {
