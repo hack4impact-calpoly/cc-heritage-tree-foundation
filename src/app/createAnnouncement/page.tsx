@@ -132,8 +132,10 @@ const CreateAnnouncement = () => {
         <Box fontSize="3xl" fontWeight="bold">
           New Message
         </Box>
-        <FormControl className={styles.recipientSection}>
-          <FormLabel fontWeight="bold">Send to</FormLabel>
+        <FormControl as="fieldset" className={styles.recipientSection}>
+          <FormLabel as="legend" fontWeight="bold">
+            Send to
+          </FormLabel>
 
           <div className={styles.buttonRow}>
             <Button
@@ -225,7 +227,7 @@ const CreateAnnouncement = () => {
               </Text>
             </label>
           </Box>
-          <Input type="file" id="file-upload" display="none" onChange={handleFileChange} />
+          <Input type="file" id="file-upload" display="none" onChange={handleFileChange} data-testid="file-upload" />
         </FormControl>
         <HStack spacing={5}>
           <Button px="30px" fontWeight="normal" rounded="full" bg="#596435" color="white" onClick={handleSubmit}>
