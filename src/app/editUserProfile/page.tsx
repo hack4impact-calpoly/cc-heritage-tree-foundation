@@ -6,25 +6,87 @@ import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
 import EditUserProfileMobile from "@/components/EditUserProfileMobile";
+import { useUser } from "@clerk/nextjs";
 
 function EditUserProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  const saveUserInfo = () => {
-    console.log("Saving user info...");
-    console.log(name, email, phoneNumber);
-  };
+  const { user, isLoaded } = useUser();
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [existingEmailId, setExistingEmailId] = useState<string | null>(null);
+  const [mongoUserId, setMongoUserId] = useState<object | null>(null);
 
   const [isClient, setIsClient] = useState(false);
-
   const [isMobileDevice, setIsMobileDevice] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
     setIsMobileDevice(isMobile);
   }, []);
+
+  /* This is put in for testing only, please delete this code  */
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const email = user.primaryEmailAddress.emailAddress;
+        setEmail(email.toLowerCase());
+        setUserId(user.id); // clerk id
+        setExistingEmailId(user.primaryEmailAddressId);
+        const res = await fetch(`/api/user/${email}`);
+        const data = await res.json();
+        setMongoUserId(data._id);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [isLoaded, user]);
+
+  const saveUserInfo = async () => {
+    try {
+      // update clerk
+
+      if (!phoneNumber.trim()) {
+        alert("Phone number is required.");
+        return; // Stop submission
+      }
+
+      // updating mongodb
+      const res = await fetch(`/api/user/${mongoUserId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phoneNumber,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to update user on mongodb.");
+      }
+
+      console.log("User updated on mongodb:", data.user);
+      window.location.reload();
+    } catch (error) {
+      console.log("Error updating information on clerk: ", error);
+    }
+  };
+
+  /* Remove from comment to here */
 
   if (!isClient) {
     return null;
@@ -36,29 +98,6 @@ function EditUserProfile() {
     return (
       <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
         <Box maxH="90vh">
-          <Flex direction="row" justify="right">
-            <Box mt={5} mr={5} borderRadius={"15px"} borderColor="black" bg="white" w="250px" h="100px" p={5}>
-              <Image
-                mt={1}
-                boxSize="50px"
-                borderRadius="full"
-                fit="cover"
-                alt="Small Profile Picture Not Appearing"
-                src="/pfp.png"
-                ml={1}
-              ></Image>
-              <Flex direction="row">
-                <Flex mt={-49} ml={20} direction="column">
-                  <Text>User Name</Text>
-                  <Text color="#868686">Volunteer</Text>
-                </Flex>
-                <Box ml={5} mt={-9}>
-                  <ChevronDown></ChevronDown>
-                </Box>
-              </Flex>
-            </Box>
-          </Flex>
-
           <Center>
             <Flex mt={25} direction="column">
               <Text fontSize="3xl" fontWeight="bold" textStyle="4xl">
