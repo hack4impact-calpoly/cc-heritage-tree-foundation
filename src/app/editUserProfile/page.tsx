@@ -55,54 +55,67 @@ function EditUserProfile() {
 
   const saveUserInfo = async () => {
     try {
-      // update clerk
-      const response = await fetch("/api/clerk", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: userId, // The Clerk user ID
-          newEmail: email,
-          existingEmailId: existingEmailId,
-        }),
-      });
+      let clerkUpdated = false;
+      let mongoUpdated = false;
 
-      const clerk_data = await response.json();
-      if (!response.ok) {
-        throw new Error(clerk_data.error || "Failed to update user.");
+      // === Clerk update ===
+      console.log("email for clerk update: ", email.trim());
+      if (email.trim() !== "") {
+        const response = await fetch("/api/clerk", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+            newEmail: email.toLowerCase(),
+            existingEmailId: existingEmailId,
+          }),
+        });
+
+        const clerk_data = await response.json();
+        if (!response.ok) {
+          throw new Error(clerk_data.error || "Failed to update Clerk.");
+        }
+
+        console.log("User updated on Clerk:", clerk_data.user);
+        clerkUpdated = true;
       }
 
-      console.log("User updated on clerk:", clerk_data.user);
+      // === MongoDB update ===
+      if (name.trim() !== "" || email.trim() !== "" || phoneNumber.trim() !== "") {
+        const res = await fetch(`/api/user/${mongoUserId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...(name && { name }),
+            ...(email && { email }),
+            ...(phoneNumber && { phoneNumber }),
+          }),
+        });
 
-      // updating mongodb
-      const res = await fetch(`/api/user/${mongoUserId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          phoneNumber,
-        }),
-      });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to update MongoDB.");
+        }
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to update user on mongodb.");
+        console.log("User updated on MongoDB:", data.user);
+        mongoUpdated = true;
       }
 
-      console.log("User updated on mongodb:", data.user);
+      if (!clerkUpdated && !mongoUpdated) {
+        showToast("No changes made.", "error");
+        return;
+      }
 
       setName("");
       setEmail("");
       setPhoneNumber("");
-
       showToast("You have successfully made changes.", "success");
     } catch (error) {
-      console.log("Error updating information on clerk: ", error);
+      console.log("Error updating information:", error);
       showToast("Unable to make changes.", "error");
     }
   };
@@ -140,19 +153,10 @@ function EditUserProfile() {
                 Edit User Profile
               </Text>
               {toastMsg && (
-                <Box
-                  borderRadius="md"
-                  px={4}
-                  py={2}
-                  bg="white"
-                  // {toastStatus === "success" ? "green.400" : "red.400"}
-                  color="black"
-                  fontWeight="medium"
-                  boxShadow="md"
-                >
+                <Box borderRadius="lg" px={4} py={2} bg="white" color="black" fontWeight="medium">
                   <Flex align="center" gap={4}>
                     {toastStatus === "success" ? (
-                      // Success Icon (e.g., checkmark)
+                      // Success Icon
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="30"
