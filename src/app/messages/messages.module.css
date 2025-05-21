@@ -66,6 +66,7 @@
   margin-top: 10px;
   background: white;
   overflow: hidden;
+  min-height: 550px;
 }
 
 .tableHeader {

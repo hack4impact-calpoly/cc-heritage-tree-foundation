@@ -30,7 +30,7 @@ export default function SignupRedirect() {
 
           if (!response.ok) throw new Error("Failed to add user");
 
-          router.push("/");
+          router.push("/editUserProfile");
         } catch (err: any) {
           setError(err.message);
         }

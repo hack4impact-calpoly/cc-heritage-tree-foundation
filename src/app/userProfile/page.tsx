@@ -24,14 +24,30 @@ import {
 import { ArrowUpRight } from "lucide-react";
 import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
-import { BoxItem, IconStyle, VO } from "@/styles/AdminDashStyle";
+import { BoxItem, IconStyle } from "@/styles/AdminDashStyle";
 import { ITree } from "@/database/treeSchema";
+import { isMobile } from "react-device-detect";
+import UserProfileMobile from "@/components/UserProfileMobile";
+
+interface UserData {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  role: string;
+}
 
 function UserProfile() {
   const { user, isLoaded } = useUser();
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userTrees, setUserTrees] = useState<any[]>([]);
+  const [userTrees, setUserTrees] = useState<ITree[]>([]);
+  const [isClient, setIsClient] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    setIsMobileDevice(isMobile);
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -58,10 +74,8 @@ function UserProfile() {
 
       try {
         const encodedName = encodeURIComponent(userData.name);
-        console.log("name sent: ", encodedName, userData.name);
         const res = await fetch(`/api/tree?collectorName=${encodedName}`);
         const treeData = await res.json();
-        console.log("Fetched trees:", treeData);
         setUserTrees(treeData);
       } catch (error) {
         console.error("Failed to fetch user trees:", error);
@@ -71,10 +85,9 @@ function UserProfile() {
     fetchUserTrees();
   }, [userData]);
 
-  // const fetchTrees = async () => {
-  //   {userData.name}
-
-  // };
+  if (!isClient) {
+    return null;
+  }
 
   if (loading || !userData) {
     return (
@@ -82,6 +95,10 @@ function UserProfile() {
         <Spinner size="xl" />
       </Center>
     );
+  }
+
+  if (isMobileDevice) {
+    return <UserProfileMobile />;
   }
 
   return (
@@ -112,9 +129,9 @@ function UserProfile() {
                         boxSize="250px"
                         borderRadius="full"
                         fit="cover"
-                        alt="Profile Picture Not Appearing"
+                        alt="Profile Picture"
                         src="/pfp.png"
-                      ></Image>
+                      />
                     </Center>
                   </GridItem>
                   <GridItem colSpan={2} mt={10}>
@@ -194,7 +211,7 @@ function UserProfile() {
                 <HStack>
                   <Text color="#333333">Trees Logged</Text>
                   <Link href="" ml="auto">
-                    <ArrowUpRight></ArrowUpRight>
+                    <ArrowUpRight />
                   </Link>
                 </HStack>
                 <Box
@@ -223,19 +240,19 @@ function UserProfile() {
                               {...IconStyle}
                               style={{
                                 backgroundColor: tree.species?.startsWith("C")
-                                  ? "#78C1DE" // blue for VO
+                                  ? "#78C1DE"
                                   : tree.species?.startsWith("V")
-                                    ? "#CFEFF9" // different blue for WO
+                                    ? "#CFEFF9"
                                     : tree.species?.startsWith("B")
-                                      ? "#426B87" // different blue for WO
-                                      : "#579FD4", // default grey for other species
+                                      ? "#426B87"
+                                      : "#579FD4",
                                 color: tree.species?.startsWith("C")
-                                  ? "#333333" // blue for VO
+                                  ? "#333333"
                                   : tree.species?.startsWith("V")
-                                    ? "#426B87" // different blue for WO
+                                    ? "#426B87"
                                     : tree.species?.startsWith("B")
-                                      ? "white" // different blue for WO
-                                      : "white", // default grey for other species
+                                      ? "white"
+                                      : "white",
                               }}
                               fontSize="sm"
                               fontWeight="normal"
