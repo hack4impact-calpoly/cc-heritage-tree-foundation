@@ -106,7 +106,7 @@ function EditUserProfile() {
       }
 
       if (!clerkUpdated && !mongoUpdated) {
-        showToast("No changes made.", "error");
+        showToast("No changes made. Email potentially already in use.", "error");
         return;
       }
 
@@ -116,7 +116,7 @@ function EditUserProfile() {
       showToast("You have successfully made changes.", "success");
     } catch (error) {
       console.log("Error updating information:", error);
-      showToast("Unable to make changes.", "error");
+      showToast("Unable to make changes. Email potentially already in use.", "error");
     }
   };
 
