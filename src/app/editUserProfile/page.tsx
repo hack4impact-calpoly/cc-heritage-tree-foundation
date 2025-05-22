@@ -14,6 +14,13 @@ export default function EditUserProfile() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  // to compare changes
+  const [originalUserData, setOriginalUserData] = useState({
+    name: "",
+    email: "",
+    phoneNumber: "",
+  });
+
   const { user, isLoaded } = useUser();
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -54,6 +61,15 @@ export default function EditUserProfile() {
         const res = await fetch(`/api/user/${email}`);
         const data = await res.json();
         setMongoUserId(data._id);
+
+        setName(data.name || "");
+        setEmail(data.email || "");
+        setPhoneNumber(data.phoneNumber || "");
+        setOriginalUserData({
+          name: data.name || "",
+          email: data.email || "",
+          phoneNumber: data.phoneNumber || "",
+        });
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       } finally {
@@ -69,64 +85,55 @@ export default function EditUserProfile() {
       let clerkUpdated = false;
       let mongoUpdated = false;
 
-      // === Clerk update ===
-      console.log("email for clerk update: ", email.trim());
-      if (email.trim() !== "") {
+      const updatedFields: any = {};
+
+      if (name !== originalUserData.name) updatedFields.name = name;
+      if (email !== originalUserData.email) updatedFields.email = email;
+      if (phoneNumber !== originalUserData.phoneNumber) updatedFields.phoneNumber = phoneNumber;
+
+      // === Clerk update (only if email changed) ===
+      if (updatedFields.email) {
         const response = await fetch("/api/clerk", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            userId: userId,
-            newEmail: email.toLowerCase(),
-            existingEmailId: existingEmailId,
+            userId,
+            newEmail: updatedFields.email.toLowerCase(),
+            existingEmailId,
           }),
         });
 
         const clerk_data = await response.json();
-        if (!response.ok) {
-          throw new Error(clerk_data.error || "Failed to update Clerk.");
-        }
-
+        if (!response.ok) throw new Error(clerk_data.error || "Failed to update Clerk.");
         console.log("User updated on Clerk:", clerk_data.user);
         clerkUpdated = true;
       }
 
       // === MongoDB update ===
-      if (name.trim() !== "" || email.trim() !== "" || phoneNumber.trim() !== "") {
+      if (Object.keys(updatedFields).length > 0) {
         const res = await fetch(`/api/user/${mongoUserId}`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...(name && { name }),
-            ...(email && { email }),
-            ...(phoneNumber && { phoneNumber }),
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedFields),
         });
 
         const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || "Failed to update MongoDB.");
-        }
-
+        if (!res.ok) throw new Error(data.error || "Failed to update MongoDB.");
         console.log("User updated on MongoDB:", data.user);
         mongoUpdated = true;
       }
 
       if (!clerkUpdated && !mongoUpdated) {
-        showToast("No changes made. Email potentially already in use.", "error");
+        showToast("No changes made.", "error");
         return;
       }
 
-      setName("");
-      setEmail("");
-      setPhoneNumber("");
       showToast("You have successfully made changes.", "success");
+
+      // update local original state
+      setOriginalUserData({ name, email, phoneNumber });
     } catch (error) {
-      console.log("Error updating information:", error);
+      console.error("Error updating information:", error);
       showToast("Unable to make changes. Email potentially already in use.", "error");
     }
   };
