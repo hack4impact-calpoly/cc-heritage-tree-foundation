@@ -7,6 +7,8 @@ import Navbar from "@/components/Navbar";
 import { ChakraProvider } from "@chakra-ui/react";
 import { isMobile } from "react-device-detect";
 import "@testing-library/jest-dom";
+import { ClerkProvider } from "@clerk/nextjs";
+import React, { ReactNode } from "react";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -15,6 +17,19 @@ jest.mock("next/navigation", () => ({
 // mock `isMobile` import to simulate mobile view
 jest.mock("react-device-detect", () => ({
   isMobile: true,
+}));
+
+jest.mock("@clerk/nextjs", () => ({
+  ClerkProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  useUser: () => ({
+    user: {
+      id: "test-user-id",
+      primaryEmailAddress: "test@example.com",
+      fullName: "Test User",
+    },
+    isLoaded: true,
+    isSignedIn: true,
+  }),
 }));
 
 describe("Navbar component", () => {
@@ -48,7 +63,9 @@ describe("Navbar component", () => {
   test("navigates correctly when a nav item is clicked", async () => {
     render(
       <ChakraProvider>
-        <Navbar />
+        <ClerkProvider>
+          <Navbar />
+        </ClerkProvider>
       </ChakraProvider>,
     );
 
