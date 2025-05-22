@@ -23,7 +23,9 @@ import {
   Button,
   Box,
   Tfoot,
+  Spinner,
 } from "@chakra-ui/react";
+import { CenterStyle } from "@/styles/AllStyle";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { BrowserView, MobileView } from "react-device-detect";
 import MessagePopUp from "@/components/MessagePopUp";
@@ -54,6 +56,7 @@ function Messages() {
   });
   const router = useRouter();
   const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<(typeof messages)[0] | null>(null);
   const totalPages = Math.ceil(messages.length / messagesPerPage);
   const indexOfLastMessage = currentPage * messagesPerPage;
@@ -69,6 +72,8 @@ function Messages() {
       setMessages(data);
     } catch (error) {
       console.error("Failed to fetch messages:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -224,55 +229,66 @@ function Messages() {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {currentMessages.map((msg) => (
-                            <Tr
-                              key={msg._id}
-                              className={
-                                (user?.fullName === msg.readStatus[0].userID && msg.readStatus[0].read === true) ||
-                                user?.fullName === msg.from
-                                  ? styles.clickableRowIsRead
-                                  : styles.clickableRowNotRead
-                              }
-                            >
-                              <Td
-                                className={`${msg.selected ? styles.fadedText : ""}`}
-                                onClick={() => setSelectedMessage(msg)}
-                              >
-                                <Flex className={styles.avatarContainer}>
-                                  <Avatar name={msg.to[0]} size="sm" bg="#596334" color="white" />
-                                  {msg.to[0]}
-                                </Flex>
-                              </Td>
-                              <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
-                              <Td className={msg.selected ? styles.fadedText : ""}>
-                                {new Date(msg.time).toLocaleDateString()}{" "}
-                              </Td>
-                              <Td>
-                                <Trash2
-                                  onClick={() => {
-                                    setOpenDeletePopUp(true);
-                                    setBlurAmount("3px");
-                                    setMessageID(msg._id);
-                                  }}
-                                />
-                              </Td>
-                              <Td>
-                                <ChevronRight
-                                  onClick={() => {
-                                    setOpenMessagePopUp(!openMessagePopUp);
-                                    setMessageProps({
-                                      date: new Date(msg.time).toLocaleDateString(),
-                                      adminName: msg.from,
-                                      messageContent: msg.message,
-                                      messageTitle: msg.subject,
-                                      id: msg._id,
-                                    });
-                                    updateReadStatus(msg._id, msg.readStatus[0].userID);
-                                  }}
-                                />
+                          {loading ? (
+                            <Tr>
+                              <Td colSpan={5}>
+                                <Box {...CenterStyle} height="100%">
+                                  <Spinner size="xl" thickness="4px" speed="0.65s" color="#596334" />
+                                </Box>
                               </Td>
                             </Tr>
-                          ))}
+                          ) : (
+                            currentMessages.map((msg) => (
+                              <Tr
+                                key={msg._id}
+                                className={
+                                  (user?.fullName === msg.readStatus[0].userID && msg.readStatus[0].read === true) ||
+                                  user?.fullName === msg.from
+                                    ? styles.clickableRowIsRead
+                                    : styles.clickableRowNotRead
+                                }
+                              >
+                                <Td
+                                  className={`${msg.selected ? styles.fadedText : ""}`}
+                                  onClick={() => setSelectedMessage(msg)}
+                                >
+                                  <Flex className={styles.avatarContainer}>
+                                    <Avatar name={msg.to[0]} size="sm" bg="#596334" color="white" />
+                                    {msg.to[0]}
+                                  </Flex>
+                                </Td>
+                                <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
+                                <Td className={msg.selected ? styles.fadedText : ""}>
+                                  {new Date(msg.time).toLocaleDateString()}
+                                </Td>
+                                <Td>
+                                  <Trash2
+                                    onClick={() => {
+                                      setOpenDeletePopUp(true);
+                                      setBlurAmount("3px");
+                                      setMessageID(msg._id);
+                                    }}
+                                  />
+                                </Td>
+                                <Td>
+                                  <ChevronRight
+                                    onClick={() => {
+                                      setOpenMessagePopUp(!openMessagePopUp);
+                                      setMessageProps({
+                                        date: new Date(msg.time).toLocaleDateString(),
+                                        adminName: msg.from,
+                                        messageContent: msg.message,
+                                        messageTitle: msg.subject,
+                                        id: msg._id,
+                                      });
+                                      updateReadStatus(msg._id, msg.readStatus[0].userID);
+                                    }}
+                                  />
+                                </Td>
+                              </Tr>
+                            ))
+                          )}
+
                           {/* Used to create whitespace on the last  */}
                           {Array.from({ length: 7 - currentMessages.length }).map((_, i) => (
                             <tr key={`empty-${i}`} style={{ height: "55px" }}>
