@@ -42,6 +42,11 @@ function Messages() {
   const [currentPage, setCurrentPage] = useState(1);
   const [messageID, setMessageID] = useState(-1);
   const [activeTab, setActiveTab] = useState("inbox");
+
+  let role = null;
+  if (isLoaded && user) {
+    role = user.organizationMemberships?.[0]?.role;
+  }
   const [isClient, setIsClient] = useState(false);
   const [openMessagePopUp, setOpenMessagePopUp] = useState(false);
   const [openDeletePopUp, setOpenDeletePopUp] = useState(false);
@@ -60,6 +65,7 @@ function Messages() {
   const indexOfLastMessage = currentPage * messagesPerPage;
   const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
   const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
+  const isAdmin = role === "org:admin";
   const unreadCount = messages.length;
 
   const fetchMessages = async () => {
@@ -191,19 +197,23 @@ function Messages() {
                     >
                       Inbox
                     </button>
-                    <button
-                      className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
-                      onClick={() => {
-                        setActiveTab("sent");
-                        setCurrentPage(1);
-                      }}
-                    >
-                      Sent
-                    </button>
+                    {isAdmin && (
+                      <button
+                        className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
+                        onClick={() => {
+                          setActiveTab("sent");
+                          setCurrentPage(1);
+                        }}
+                      >
+                        Sent
+                      </button>
+                    )}
                   </div>
-                  <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
-                    New Message +
-                  </button>{" "}
+                  {isAdmin && (
+                    <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
+                      New Message +
+                    </button>
+                  )}
                 </div>
 
                 {activeTab === "inbox" ? (
@@ -268,6 +278,12 @@ function Messages() {
                                 />
                               </Td>
                             </Tr>
+                          ))}
+                          {/* Used to create whitespace on the last  */}
+                          {Array.from({ length: 7 - currentMessages.length }).map((_, i) => (
+                            <tr key={`empty-${i}`} style={{ height: "55px" }}>
+                              <td colSpan={5} />
+                            </tr>
                           ))}
                         </Tbody>
 
@@ -362,31 +378,24 @@ function Messages() {
                     >
                       Inbox
                     </button>
-                    <button
-                      className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
-                      style={{ marginLeft: "10px" }}
-                      onClick={() => {
-                        setActiveTab("sent");
-                        setCurrentPage(1);
-                      }}
-                    >
-                      Sent
-                    </button>
+                    {isAdmin && (
+                      <button
+                        className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
+                        style={{ marginLeft: "10px" }}
+                        onClick={() => {
+                          setActiveTab("sent");
+                          setCurrentPage(1);
+                        }}
+                      >
+                        Sent
+                      </button>
+                    )}
                   </div>
-                  <button
-                    className={styles.newMessageButton}
-                    style={{
-                      position: "fixed",
-                      bottom: "20px",
-                      right: "20px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      zIndex: "9",
-                    }}
-                  >
-                    New Message +
-                  </button>
+                  {isAdmin && (
+                    <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
+                      New Message +
+                    </button>
+                  )}
                 </div>
 
                 {activeTab === "inbox" ? (
