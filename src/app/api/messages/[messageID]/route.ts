@@ -9,11 +9,11 @@ async function connectDB() {
 }
 
 // update read status
-export async function PATCH(req: NextRequest, { params }: { params: { messageID: string } }) {
+export async function PATCH(req: NextRequest, params: { params: Promise<{ messageID: string }> }) {
   await connectDB();
 
   try {
-    const messageID = params.messageID; // get message ID
+    const messageID = await params; // get message ID
     const { userID, read } = await req.json();
 
     if (!messageID || !userID) {
@@ -48,11 +48,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { messageID:
 }
 
 // delete message from database
-export async function DELETE(req: NextRequest, { params }: { params: { messageID: string } }) {
+export async function DELETE(req: NextRequest, params: { params: Promise<{ messageID: string }> }) {
   await connectDB();
 
   try {
-    const messageID = params.messageID; // get message ID
+    const messageID = await params; // get message ID
 
     if (!messageID) {
       return new Response(JSON.stringify({ error: "Message ID is required" }), {

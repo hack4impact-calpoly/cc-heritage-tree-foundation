@@ -1,7 +1,7 @@
 "use client";
 import { ChevronDown } from "lucide-react";
 import { Grid, GridItem, Image, Text, Button, Flex, Link, Box, Center, Input, FormControl } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { useUser } from "@clerk/nextjs";
