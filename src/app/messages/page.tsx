@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { AlignJustify, ChevronRight, Trash2 } from "lucide-react";
 import styles from "./messages.module.css";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { Icon, useToast } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
@@ -30,7 +31,6 @@ import {
   Tfoot,
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useUser } from "@clerk/nextjs";
 import { BrowserView, MobileView } from "react-device-detect";
 import MessagePopUp from "@/components/MessagePopUp";
 import DeleteMessagePopUp from "@/components/DeleteMessagePopUp";
@@ -42,12 +42,6 @@ function Messages() {
   const [currentPage, setCurrentPage] = useState(1);
   const [messageID, setMessageID] = useState(-1);
   const [activeTab, setActiveTab] = useState("inbox");
-
-  let role = null;
-  if (isLoaded && user) {
-    role = user.organizationMemberships?.[0]?.role;
-  }
-
   const [isClient, setIsClient] = useState(false);
   const [openMessagePopUp, setOpenMessagePopUp] = useState(false);
   const [openDeletePopUp, setOpenDeletePopUp] = useState(false);
@@ -66,7 +60,6 @@ function Messages() {
   const indexOfLastMessage = currentPage * messagesPerPage;
   const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
   const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
-  const isAdmin = role === "org:admin";
   const unreadCount = messages.length;
 
   const fetchMessages = async () => {
@@ -208,11 +201,9 @@ function Messages() {
                       Sent
                     </button>
                   </div>
-                  {isAdmin && (
-                    <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
-                      New Message +
-                    </button>
-                  )}
+                  <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
+                    New Message +
+                  </button>{" "}
                 </div>
 
                 {activeTab === "inbox" ? (
@@ -221,11 +212,11 @@ function Messages() {
                       <Table className={styles.table}>
                         <Thead className={styles.tableHeader}>
                           <Tr className={styles.tableHeader}>
-                            <Th>Select</Th>
-                            <Th>Sender</Th>
+                            <Th>Recipient</Th>
                             <Th>Subject Line</Th>
                             <Th>Date</Th>
-                            <Th>Actions</Th>
+                            <Th></Th>
+                            <Th></Th>
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -239,22 +230,18 @@ function Messages() {
                                   : styles.clickableRowNotRead
                               }
                             >
-                              {" "}
-                              <Td>
-                                <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
-                              </Td>
                               <Td
                                 className={`${msg.selected ? styles.fadedText : ""}`}
                                 onClick={() => setSelectedMessage(msg)}
                               >
                                 <Flex className={styles.avatarContainer}>
-                                  <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
-                                  {msg.from}
+                                  <Avatar name={msg.to[0]} size="sm" bg="#596334" color="white" />
+                                  {msg.to[0]}
                                 </Flex>
                               </Td>
                               <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
                               <Td className={msg.selected ? styles.fadedText : ""}>
-                                {new Date(msg.time).toLocaleDateString()}
+                                {new Date(msg.time).toLocaleDateString()}{" "}
                               </Td>
                               <Td>
                                 <Trash2
@@ -281,12 +268,6 @@ function Messages() {
                                 />
                               </Td>
                             </Tr>
-                          ))}
-                          {/* Used to create whitespace on the last  */}
-                          {Array.from({ length: 7 - currentMessages.length }).map((_, i) => (
-                            <tr key={`empty-${i}`} style={{ height: "55px" }}>
-                              <td colSpan={5} />
-                            </tr>
                           ))}
                         </Tbody>
 
@@ -392,23 +373,22 @@ function Messages() {
                       Sent
                     </button>
                   </div>
-                  {isAdmin && ( // Only show button if admin
-                    <button
-                      className={styles.newMessageButton}
-                      style={{
-                        position: "fixed",
-                        bottom: "20px",
-                        right: "20px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        zIndex: "9",
-                      }}
-                    >
-                      New Message +
-                    </button>
-                  )}
+                  <button
+                    className={styles.newMessageButton}
+                    style={{
+                      position: "fixed",
+                      bottom: "20px",
+                      right: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      zIndex: "9",
+                    }}
+                  >
+                    New Message +
+                  </button>
                 </div>
+
                 {activeTab === "inbox" ? (
                   <>
                     <Stack backgroundColor={"white"} marginTop={7} borderRadius={10} padding={5} margin={3}>

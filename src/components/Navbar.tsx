@@ -21,8 +21,6 @@ import { FiBell, FiMenu } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter from Next.js
-
-import { useUser } from "@clerk/nextjs";
 import { isMobile } from "react-device-detect";
 
 const COLORS = {
@@ -74,58 +72,57 @@ const NAV_ITEMS: Array<NavItem> = [
 export default function Navbar() {
   const [activeButton, setActiveButton] = useState("Dashboard");
   const router = useRouter(); // Initialize the router
-  const { user, isLoaded } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [hasMounted, setHasMounted] = useState(false);
-  const [showMobileNav, setShowMobileNav] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (hasMounted) {
-      setShowMobileNav(isMobile);
-    }
-  }, [hasMounted]);
-
-  let role = null;
-  if (isLoaded && user) {
-    role = user.organizationMemberships?.[0]?.role;
-  }
-
-  const isAdmin = role === "org:admin";
   const handleNavigation = (path: string, text: string) => {
     setActiveButton(text);
     router.push(path);
-    if (showMobileNav) {
-      onClose();
+    if (isMobile) {
+      onClose(); // Close the drawer when navigating on mobile
     }
   };
 
   // mobile navbar
-  if (showMobileNav) {
+  if (isMobile) {
     return (
       <>
-        {/* Mobile Toggle Button */}
-        <IconButton
-          aria-label="Open Navigation"
-          icon={<FiMenu />}
-          onClick={onOpen}
-          position="fixed"
-          top="10px"
-          left="10px"
-          zIndex="100"
-          size="lg"
-          colorScheme="green"
-          backgroundColor={COLORS.primary}
-          color={COLORS.white}
-          borderRadius="50%"
-        />
+        {/* Mobile Header Bar */}
+        <Box position="fixed" top="0" left="0" width="100%" height="120px" zIndex="90" backgroundColor="#F4F1E8">
+          {/* Menu Button */}
+          <IconButton
+            aria-label="Open Navigation"
+            icon={<FiMenu />}
+            onClick={onOpen}
+            position="absolute"
+            left="10px"
+            top="50%"
+            transform="translateY(-50%)"
+            zIndex="100"
+            size="lg"
+            backgroundColor="transparent"
+          />
+
+          <Box
+            position="absolute"
+            left="50%"
+            top="50%"
+            transform="translate(-50%, -50%)"
+            width="50px"
+            height="50px"
+            borderRadius="full"
+            backgroundColor="transparent"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            borderWidth="1px"
+            borderColor={COLORS.primary}
+          >
+            <Image src="/logo1.png" alt="Tree Logo" width="36px" height="36px" objectFit="contain" />
+          </Box>
+        </Box>
 
         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
-          <DrawerOverlay />
+          <DrawerOverlay style={{ backgroundColor: "transparent" }} />
           <DrawerContent
             backgroundColor={COLORS.primary}
             borderTopRightRadius="30px"
@@ -180,13 +177,10 @@ export default function Navbar() {
                       backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "transparent",
                       color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
                       borderRadius: "20px",
-                      width: "190px",
+                      width: "187px",
                       height: "2.5rem",
                       justifyContent: "flex-start",
                       marginLeft: "20px",
-                    }}
-                    _hover={{
-                      backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "rgba(255,255,255,0.1)",
                     }}
                   >
                     <NavItem.icon
@@ -255,32 +249,29 @@ export default function Navbar() {
         </Box>
         {/*VStack for Items*/}
         <VStack>
-          {NAV_ITEMS.map((NavItem) => {
-            if (NavItem.path === "/volunteers" && !isAdmin) return null;
-            return (
-              <Button
-                key={NavItem.text}
-                onClick={() => handleNavigation(NavItem.path, NavItem.text)}
+          {NAV_ITEMS.map((NavItem) => (
+            <Button
+              key={NavItem.text}
+              onClick={() => handleNavigation(NavItem.path, NavItem.text)}
+              style={{
+                backgroundColor: activeButton === NavItem.text ? COLORS.secondary : COLORS.primary,
+                color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
+                borderRadius: "20px",
+                width: "100%",
+                height: "2rem",
+                justifyContent: "left",
+                marginTop: "1rem",
+              }}
+            >
+              <NavItem.icon
+                size="25"
                 style={{
-                  backgroundColor: activeButton === NavItem.text ? COLORS.secondary : COLORS.primary,
-                  color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
-                  borderRadius: "20px",
-                  width: "100%",
-                  height: "2rem",
-                  justifyContent: "left",
-                  marginTop: "1rem",
+                  marginRight: "0.5rem",
                 }}
-              >
-                <NavItem.icon
-                  size="25"
-                  style={{
-                    marginRight: "0.5rem",
-                  }}
-                />
-                {NavItem.text}
-              </Button>
-            );
-          })}
+              />
+              {NavItem.text}
+            </Button>
+          ))}
         </VStack>
       </VStack>
     </div>

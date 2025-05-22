@@ -1,8 +1,0 @@
-/* This styling is for Clerk Components to ensure they fit the mobile screens */
-.cl-cardBox {
-  width: 90vw;
-  max-width: 400px;
-  height: auto;
-  margin-left: auto;
-  margin-right: auto;
-}

@@ -8,13 +8,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { isMobile } from "react-device-detect";
 import "@testing-library/jest-dom";
 
-jest.mock("@clerk/nextjs", () => ({
-  useUser: () => ({
-    user: { id: "123", organizationMemberships: [{ role: "org:admin" }] },
-    isLoaded: true,
-  }),
-}));
-
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
