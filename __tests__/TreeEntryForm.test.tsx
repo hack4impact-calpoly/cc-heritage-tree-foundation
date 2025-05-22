@@ -8,19 +8,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { treeIssues } from "@/app/newTreeForm/tree-form-data";
 import TreeEntryForm from "@/app/newTreeForm/page";
-import { useRouter } from "next/navigation";
-
-jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    prefetch: jest.fn(),
-  })),
-  usePathname: jest.fn(() => "/"),
-  useSearchParams: jest.fn(() => ({
-    get: jest.fn(),
-  })),
-}));
 
 jest.mock("@clerk/nextjs", () => ({
   ClerkProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
