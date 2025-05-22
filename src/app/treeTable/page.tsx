@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Table,
   Thead,
@@ -24,15 +25,14 @@ import {
   Select,
 } from "@chakra-ui/react";
 import * as XLSX from "xlsx";
-import Navbar from "@/components/Navbar";
 import { CenterStyle } from "@/styles/AllStyle";
 import "./treetable.css";
 import { useState, useEffect } from "react";
 import { ITree } from "@/database/treeSchema";
 import { FileDown, Menu, SearchIcon, ChevronLeft, ChevronRight, TreePine, Edit } from "lucide-react";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
-import { Decimal128 } from "mongodb"; // or "bson"
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function TreeTable() {
   const [loading, setLoading] = useState(true);
@@ -472,17 +472,16 @@ export default function TreeTable() {
                           {/* Top row */}
                           <Flex justifyContent="flex-end">
                             {/* Notes icon on the right */}
-                            <Edit size={20} />
+                            <Link href={`/editTreeForm/${selectedTree._id}`}>
+                              <Edit size={20} cursor="pointer" />
+                            </Link>
                           </Flex>
-
-                          {/* <Flex justifyContent="space-between" alignItems="center"> */}
                           <Flex justifyContent="space-between" alignItems="center">
                             <Flex alignItems="center" gap={3}>
                               <TreePine size={25} color="white" />
                               <Text fontWeight="medium" maxW="200px" whiteSpace="normal" wordBreak="break-word">
                                 Tree #{selectedTree._id}
                               </Text>
-                              {/* <Text fontWeight="medium" isTruncated maxWidth="60%">Tree #{selectedTree._id}</Text> */}
                             </Flex>
 
                             <Tag
