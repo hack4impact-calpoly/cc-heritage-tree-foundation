@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/database/db";
-import Tree from "@/database/treeSchema";
+import Tree, { ITree } from "@/database/treeSchema";
 import s3 from "@/app/api/tree/aws";
 import { revalidateTag } from "next/cache";
 import { Buffer } from "buffer";
@@ -63,21 +63,22 @@ export async function POST(req: NextRequest) {
 export async function GET(request: Request) {
   await connectDB();
 
-  try {
-    // Get query parameters from the request URL
-    const { searchParams } = new URL(request.url);
-    const collectorName = searchParams.get("collectorName");
+  const { searchParams } = new URL(request.url);
+  const collectorName = searchParams.get("collectorName");
 
-    // Build the query object
-    const query: any = {};
+  try {
+    let trees;
+
     if (collectorName) {
-      query.collectorName = collectorName;
+      const decodedName = decodeURIComponent(collectorName);
+      trees = await Tree.find({
+        collectorName: { $regex: `^${decodedName}$`, $options: "i" },
+      }).lean();
+    } else {
+      // Fetch all trees if no collectorName is provided
+      trees = await Tree.find().lean();
     }
 
-    // Find trees based on the query (filtered if collectorName exists)
-    const trees = await Tree.find(query).lean();
-
-    // Serialize the tree data
     const serializedTrees = trees.map((tree) => ({
       ...tree,
       gpsCoordinates: tree.gpsCoordinates.map((coord: any) => coord.toString()),
