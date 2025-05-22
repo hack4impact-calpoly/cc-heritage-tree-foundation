@@ -1,12 +1,10 @@
 "use client";
-import { ChevronDown } from "lucide-react";
 import { Grid, GridItem, Image, Text, Button, Flex, Link, Box, Center, Input, FormControl } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { useUser } from "@clerk/nextjs";
-import { EmailAddress } from "@clerk/nextjs/server";
-import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
+import { isMobile } from "react-device-detect";
 import EditUserProfileMobile from "@/components/EditUserProfileMobile";
 
 export default function EditUserProfile() {

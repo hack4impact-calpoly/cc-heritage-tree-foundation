@@ -12,19 +12,11 @@ import {
   Link,
   Box,
   Center,
-  Table,
-  Td,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
   FormControl,
   Spinner,
 } from "@chakra-ui/react";
-import { ArrowUpRight } from "lucide-react";
 import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
-import { BoxItem, IconStyle } from "@/styles/AdminDashStyle";
 import { ITree } from "@/database/treeSchema";
 import { isMobile } from "react-device-detect";
 import UserProfileMobile from "@/components/UserProfileMobile";
@@ -184,7 +176,7 @@ function UserProfile() {
                             </Text>
                           </Button>
                         </Link>
-                        <Link href="/">
+                        <Link href="/changePassword">
                           <Button borderColor="#596334" borderWidth={1} borderRadius={20} backgroundColor="white">
                             <Text fontSize="xs" color="#596334">
                               Change Password

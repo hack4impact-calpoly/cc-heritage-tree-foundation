@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import { SignedIn, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, useUser } from "@clerk/nextjs";
 import { Flex, Box, Image } from "@chakra-ui/react";
-import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./profileCard.module.css";
 
 export default function ProfileCard() {
   const { user } = useUser();

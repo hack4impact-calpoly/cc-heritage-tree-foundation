@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ClerkProvider, useUser } from "@clerk/nextjs";
 import ProfileCard from "@/components/ProfileCard";

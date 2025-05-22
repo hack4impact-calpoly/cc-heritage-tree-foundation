@@ -1,7 +1,7 @@
 "use client";
-import { Center, VStack, Image, Text, Link, Box, Button, Input, FormControl, Circle } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { Center } from "@chakra-ui/react";
+import React from "react";
+import { SignIn, SignedOut } from "@clerk/nextjs";
 
 export default function Login() {
   return (
