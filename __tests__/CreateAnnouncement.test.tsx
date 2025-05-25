@@ -9,6 +9,18 @@ import userEvent from "@testing-library/user-event";
 import CreateAnnouncement from "@/app/createAnnouncement/page";
 import { act } from "react";
 
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+  })),
+  usePathname: jest.fn(() => "/"),
+  useSearchParams: jest.fn(() => ({
+    get: jest.fn(),
+  })),
+}));
+
 jest.mock("@clerk/nextjs", () => ({
   ClerkProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 

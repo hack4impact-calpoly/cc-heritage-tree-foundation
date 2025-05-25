@@ -55,6 +55,7 @@ function Messages() {
   });
   const router = useRouter();
   const [messages, setMessages] = useState<any[]>([]);
+  const [sentMessages, setSentMessages] = useState<any[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<(typeof messages)[0] | null>(null);
   const totalPages = Math.ceil(messages.length / messagesPerPage);
   const indexOfLastMessage = currentPage * messagesPerPage;
@@ -62,6 +63,12 @@ function Messages() {
   const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
   const isAdmin = role === "org:admin";
   const unreadCount = messages.length;
+
+  const [currentSentPage, setCurrentSentPage] = useState(1);
+  const indexOfLastSentMessage = currentSentPage * messagesPerPage;
+  const indexOfFirstSentMessage = indexOfLastSentMessage - messagesPerPage;
+  const totalSentPages = Math.ceil(sentMessages.length / messagesPerPage);
+  const currentSentMessages = sentMessages.slice(indexOfFirstSentMessage, indexOfLastSentMessage);
 
   useEffect(() => {
     setIsClient(true);
@@ -77,9 +84,21 @@ function Messages() {
     fetchMessages();
   }, []);
 
+  useEffect(() => {
+    console.log(messages);
+    console.log(user?.fullName);
+    setSentMessages(messages.filter((message) => message.from == user?.fullName));
+  }, [messages]);
+
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleSentPageChange = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentSentPage(pageNumber);
     }
   };
 
@@ -233,7 +252,109 @@ function Messages() {
                   </Flex>
                 </div>
               ) : (
-                <p className={styles.sentMessage}>Sent messages here.</p>
+                <div>
+                  <Flex>
+                    <Table className={styles.table}>
+                      <Thead className={styles.tableHeader}>
+                        <Tr className={styles.tableHeader}>
+                          <Th>Select</Th>
+                          <Th>Sender</Th>
+                          <Th>Subject Line</Th>
+                          <Th>Date</Th>
+                          <Th>Actions</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {sentMessages.map((msg) => (
+                          <Tr key={msg._id} className={styles.clickableRow}>
+                            <Td>
+                              <Checkbox isChecked={msg.selected} onChange={() => toggleSelect(msg.id)} />
+                            </Td>
+                            <Td
+                              className={`${msg.selected ? styles.fadedText : ""}`}
+                              onClick={() => setSelectedMessage(msg)}
+                            >
+                              <Flex className={styles.avatarContainer}>
+                                <Avatar name={msg.sender} size="sm" bg="#596334" color="white" />
+                                {msg.from}
+                              </Flex>
+                            </Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
+                            <Td className={msg.selected ? styles.fadedText : ""}>
+                              {new Date(msg.time).toLocaleDateString()}
+                            </Td>
+                            <Td>
+                              <ChevronRight
+                                onClick={() => {
+                                  setOpenMessagePopUp(!openMessagePopUp);
+                                  setMessageProps({
+                                    date: new Date(msg.time).toLocaleDateString(),
+                                    adminName: msg.from,
+                                    messageContent: msg.message,
+                                    messageTitle: msg.subject,
+                                    id: msg._id,
+                                  });
+                                }}
+                              />
+                            </Td>
+                          </Tr>
+                        ))}
+                        {/* Used to create whitespace on the last  */}
+                        {Array.from({ length: 7 - currentSentMessages.length }).map((_, i) => (
+                          <tr key={`empty-${i}`} style={{ height: "55px" }}>
+                            <td colSpan={5} />
+                          </tr>
+                        ))}
+                      </Tbody>
+
+                      {/* Page Controls */}
+                      <Tfoot>
+                        <Tr>
+                          <Td colSpan={5}>
+                            <Box className={styles.pageControls}>
+                              <Button
+                                className={styles.pageButton}
+                                onClick={() => handlePageChange(currentSentPage - 1)}
+                                disabled={currentSentPage === 1}
+                              >
+                                Previous
+                              </Button>
+
+                              {Array.from({ length: totalSentPages }, (_, index) => (
+                                <Button
+                                  key={index + 1}
+                                  className={currentSentPage === index + 1 ? styles.activePage : styles.pageButton}
+                                  onClick={() => handleSentPageChange(index + 1)}
+                                >
+                                  {index + 1}
+                                </Button>
+                              ))}
+
+                              <Button
+                                className={styles.pageButton}
+                                onClick={() => handleSentPageChange(currentSentPage + 1)}
+                                disabled={currentSentPage === totalSentPages}
+                              >
+                                Next
+                              </Button>
+                            </Box>
+                          </Td>
+                        </Tr>
+                      </Tfoot>
+                    </Table>
+                    {openMessagePopUp === true ? (
+                      <MessagePopUp
+                        date={messageProps.date}
+                        messageTitle={messageProps.messageTitle}
+                        adminName={messageProps.adminName}
+                        messageContent={messageProps.messageContent}
+                        id={messageProps.id}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </Flex>
+                </div>
               )}
             </div>
           </BrowserView>

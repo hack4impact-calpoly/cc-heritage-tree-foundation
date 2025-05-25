@@ -17,8 +17,10 @@ import {
 import { AttachmentIcon } from "@chakra-ui/icons";
 import { InputStyleAnnouncement } from "@/styles/CreateAnnouncementStyle";
 import styles from "./announcement.module.css";
+import { useRouter } from "next/navigation";
 
 const CreateAnnouncement = () => {
+  const router = useRouter();
   const { user } = useUser();
   type AnnouncementData = {
     recipients: string;
@@ -112,6 +114,7 @@ const CreateAnnouncement = () => {
 
       const data = await res.json();
       console.log("Announcement sent:", data);
+      router.push("/messageSuccess");
     } catch (err) {
       console.error("Error submitting:", err);
     }
