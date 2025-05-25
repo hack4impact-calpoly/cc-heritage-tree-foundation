@@ -21,6 +21,7 @@ import {
   IconButton,
   Flex,
   Grid,
+  GridItem,
   Tag,
   Select,
 } from "@chakra-ui/react";
@@ -142,6 +143,8 @@ export default function TreeTable() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  console.log(filteredTrees);
 
   const downloadData = () => {
     // retreive ALL volunteers data
@@ -665,7 +668,23 @@ export default function TreeTable() {
                             <Text fontSize="med" color="#596334" mb={2}>
                               Photo
                             </Text>
-                            <Image src={selectedTree.photo} borderRadius="10px" alt="tree"></Image>
+                            <Grid gridTemplateColumns="repeat(2, 1fr)" gridGap="5px">
+                              {Array.isArray(selectedTree.photo) ? (
+                                selectedTree.photo.map((photo, id) => (
+                                  <GridItem
+                                    key={id}
+                                    gridColumn="span 1"
+                                    borderRadius="10px"
+                                    aspectRatio="1 / 1"
+                                    overflow="hidden"
+                                  >
+                                    <Image src={photo} alt="tree" objectFit="cover"></Image>
+                                  </GridItem>
+                                ))
+                              ) : (
+                                <Image src={selectedTree.photo} alt="tree" objectFit="cover"></Image>
+                              )}
+                            </Grid>
                           </Box>
                         </VStack>
                       </Box>
