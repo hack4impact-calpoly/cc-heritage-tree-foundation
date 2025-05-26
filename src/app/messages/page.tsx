@@ -36,6 +36,7 @@ function Messages() {
   const { isLoaded, isSignedIn, user } = useUser();
   const messagesPerPage = 7;
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentAdminPage, setCurrentAdminPage] = useState(1);
   const [messageID, setMessageID] = useState(-1);
   const [activeTab, setActiveTab] = useState("inbox");
 
@@ -56,20 +57,27 @@ function Messages() {
   });
   const router = useRouter();
   const [messages, setMessages] = useState<any[]>([]);
+  const [filteredMessages, setFilteredMessages] = useState<any[]>([]);
+  const [adminMessages, setAdminMessages] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<(typeof messages)[0] | null>(null);
-  const totalPages = Math.ceil(messages.length / messagesPerPage);
+  const totalPages = Math.ceil(filteredMessages.length / messagesPerPage);
+  const totalAdminPages = Math.ceil(adminMessages.length / messagesPerPage);
   const indexOfLastMessage = currentPage * messagesPerPage;
   const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
-  const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
+  const indexOfAdminLastMessage = currentAdminPage * messagesPerPage;
+  const indexOfAdminFirstMessage = indexOfAdminLastMessage - messagesPerPage;
+  const currentMessages = filteredMessages.slice(indexOfFirstMessage, indexOfLastMessage);
+  const currentAdminMessages = adminMessages.slice(indexOfAdminFirstMessage, indexOfAdminLastMessage);
   const isAdmin = role === "org:admin";
-  const unreadCount = messages.length;
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchMessages = async () => {
     try {
       const response = await fetch("/api/messages");
       const data = await response.json();
-      setMessages(data);
+      setMessages(data.reverse());
     } catch (error) {
       console.error("Failed to fetch messages:", error);
     } finally {
@@ -77,14 +85,53 @@ function Messages() {
     }
   };
 
+  const checkIfRead = (message: { readStatus: Array<{ userID: string; read: boolean }> }): boolean => {
+    if (!user?.primaryEmailAddress?.emailAddress) {
+      return false; // Default to unread if no user email
+    }
+
+    const userStatus = message.readStatus.find((u) => u.userID === user?.primaryEmailAddress?.emailAddress);
+    return userStatus?.read ?? false; // Return false if user status not found
+  };
+
+  useEffect(() => {
+    if (messages.length > 0 && user) {
+      const count = messages.filter((msg) => {
+        const status = msg.readStatus?.find((u: any) => u.userID === user.primaryEmailAddress?.emailAddress);
+        return !status?.read && checkIfRecipient(msg) && msg.from !== user?.fullName;
+      }).length;
+      setUnreadCount(count);
+    }
+  }, [messages, user]);
+
+  const checkIfRecipient = (message: { to: Array<string> }) => {
+    for (const recipient of message.to) {
+      if (user?.primaryEmailAddress?.emailAddress == recipient) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   useEffect(() => {
     setIsClient(true);
     fetchMessages();
   }, []);
 
+  useEffect(() => {
+    setFilteredMessages(messages.filter((message) => checkIfRecipient(message)));
+    setAdminMessages(messages.filter((message) => message.from == user?.fullName));
+  }, [messages]);
+
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleAdminPageChange = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentAdminPage(pageNumber);
     }
   };
 
@@ -94,44 +141,109 @@ function Messages() {
     );
   };
 
-  const updateReadStatus = async (messageID: string, name: string) => {
-    // check if user is logged in as sender or receiver
-    // if it's a sender who looked at their own mail, then do nothing
-    // only impact the read status if the person logged in viewing it has the same name as the receiever
-    if (user?.fullName == name) {
-      // update read status to true for receiver
-      try {
-        const response = await fetch(`/api/messages/${messageID}`, {
-          method: "PATCH",
-          body: JSON.stringify({ userID: name, read: true }),
-        });
-        const res = await response.json();
-        console.log(res);
-
-        // refresh table
-        fetchMessages();
-        console.log("refreshed table");
-      } catch (error) {
-        console.error("Failed to update read status:", error);
+  const updateReadStatus = async (messageID: string) => {
+    try {
+      const email = user?.primaryEmailAddress?.emailAddress;
+      if (!email) {
+        console.error("No email address found for user");
+        return;
       }
+
+      const response = await fetch(`/api/messages/${messageID}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "edit_read",
+          userID: email,
+          read: true,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to update read status:", errorData);
+        return;
+      }
+
+      const res = await response.json();
+      console.log("Update successful:", res);
+
+      // Wait a moment before refreshing to ensure update is complete
+      setTimeout(() => {
+        fetchMessages();
+        console.log("Refreshed messages");
+      }, 300);
+    } catch (error) {
+      console.error("Network error:", error);
     }
   };
 
   const deleteMessageFromTable = async () => {
-    // delete message ID
-    console.log("deleting message id:", messageID);
-    try {
-      const response = await fetch(`/api/messages/${messageID}`, {
-        method: "DELETE",
-      });
-      const res = await response.json();
-      console.log(res);
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    if (!userEmail) {
+      console.error("No user email found");
+      return;
+    }
 
-      // refresh table
-      fetchMessages();
-      console.log("refreshed table");
-    } catch (error) {
-      console.error("Failed to delete message:", error);
+    if (activeTab === "inbox") {
+      console.log("removing user from message:", messageID);
+      try {
+        const response = await fetch(`/api/messages/${messageID}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "remove_user",
+            userEmail: userEmail,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Failed to update message:", errorData);
+          return;
+        }
+
+        const res = await response.json();
+        console.log("Update successful:", res);
+
+        // Refresh the table after a short delay
+        setTimeout(() => {
+          fetchMessages();
+          console.log("refreshed table");
+        }, 300);
+      } catch (error) {
+        console.error("Failed to update message:", error);
+      }
+    } else {
+      try {
+        const response = await fetch(`/api/messages/${messageID}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Failed to delete message:", errorData);
+          return;
+        }
+
+        const res = await response.json();
+        console.log("Update successful:", res);
+
+        // Refresh the table after a short delay
+        setTimeout(() => {
+          fetchMessages();
+          console.log("refreshed table");
+        }, 300);
+      } catch (error) {
+        console.error("Failed to update message:", error);
+      }
     }
   };
 
@@ -221,7 +333,7 @@ function Messages() {
                       <Table className={styles.table}>
                         <Thead className={styles.tableHeader}>
                           <Tr className={styles.tableHeader}>
-                            <Th>Recipient</Th>
+                            <Th>From</Th>
                             <Th>Subject Line</Th>
                             <Th>Date</Th>
                             <Th></Th>
@@ -238,12 +350,11 @@ function Messages() {
                               </Td>
                             </Tr>
                           ) : (
-                            currentMessages.map((msg) => (
+                            filteredMessages.map((msg) => (
                               <Tr
                                 key={msg._id}
                                 className={
-                                  (user?.fullName === msg.readStatus[0].userID && msg.readStatus[0].read === true) ||
-                                  user?.fullName === msg.from
+                                  checkIfRead(msg) || user?.fullName === msg.from
                                     ? styles.clickableRowIsRead
                                     : styles.clickableRowNotRead
                                 }
@@ -253,8 +364,8 @@ function Messages() {
                                   onClick={() => setSelectedMessage(msg)}
                                 >
                                   <Flex className={styles.avatarContainer}>
-                                    <Avatar name={msg.to[0]} size="sm" bg="#596334" color="white" />
-                                    {msg.to[0]}
+                                    <Avatar name={msg.from} size="sm" bg="#596334" color="white" />
+                                    {msg.from}
                                   </Flex>
                                 </Td>
                                 <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
@@ -281,7 +392,7 @@ function Messages() {
                                         messageTitle: msg.subject,
                                         id: msg._id,
                                       });
-                                      updateReadStatus(msg._id, msg.readStatus[0].userID);
+                                      updateReadStatus(msg._id);
                                     }}
                                   />
                                 </Td>
@@ -346,7 +457,126 @@ function Messages() {
                     </Flex>
                   </div>
                 ) : (
-                  <p className={styles.sentMessage}>Sent messages here.</p>
+                  <div>
+                    <Flex>
+                      <Table className={styles.table}>
+                        <Thead className={styles.tableHeader}>
+                          <Tr className={styles.tableHeader}>
+                            <Th>From</Th>
+                            <Th>Subject Line</Th>
+                            <Th>Date</Th>
+                            <Th></Th>
+                            <Th></Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {loading ? (
+                            <Tr>
+                              <Td colSpan={5}>
+                                <Box {...CenterStyle} height="100%">
+                                  <Spinner size="xl" thickness="4px" speed="0.65s" color="#596334" />
+                                </Box>
+                              </Td>
+                            </Tr>
+                          ) : (
+                            adminMessages.map((msg) => (
+                              <Tr key={msg._id} className={styles.clickableRowNotRead}>
+                                <Td
+                                  className={`${msg.selected ? styles.fadedText : ""}`}
+                                  onClick={() => setSelectedMessage(msg)}
+                                >
+                                  <Flex className={styles.avatarContainer}>
+                                    <Avatar name={msg.from} size="sm" bg="#596334" color="white" />
+                                    {msg.from}
+                                  </Flex>
+                                </Td>
+                                <Td className={msg.selected ? styles.fadedText : ""}>{msg.subject}</Td>
+                                <Td className={msg.selected ? styles.fadedText : ""}>
+                                  {new Date(msg.time).toLocaleDateString()}
+                                </Td>
+                                <Td>
+                                  <Trash2
+                                    onClick={() => {
+                                      setOpenDeletePopUp(true);
+                                      setBlurAmount("3px");
+                                      setMessageID(msg._id);
+                                    }}
+                                  />
+                                </Td>
+                                <Td>
+                                  <ChevronRight
+                                    onClick={() => {
+                                      setOpenMessagePopUp(!openMessagePopUp);
+                                      setMessageProps({
+                                        date: new Date(msg.time).toLocaleDateString(),
+                                        adminName: msg.from,
+                                        messageContent: msg.message,
+                                        messageTitle: msg.subject,
+                                        id: msg._id,
+                                      });
+                                    }}
+                                  />
+                                </Td>
+                              </Tr>
+                            ))
+                          )}
+
+                          {/* Used to create whitespace on the last  */}
+                          {Array.from({ length: 7 - currentAdminMessages.length }).map((_, i) => (
+                            <tr key={`empty-${i}`} style={{ height: "55px" }}>
+                              <td colSpan={5} />
+                            </tr>
+                          ))}
+                        </Tbody>
+
+                        {/* Page Controls */}
+                        <Tfoot>
+                          <Tr>
+                            <Td colSpan={5}>
+                              <Box className={styles.pageControls}>
+                                <Button
+                                  className={styles.pageButton}
+                                  onClick={() => handleAdminPageChange(currentAdminPage - 1)}
+                                  disabled={currentAdminPage === 1}
+                                >
+                                  Previous
+                                </Button>
+
+                                {Array.from({ length: totalAdminPages }, (_, index) => (
+                                  <Button
+                                    key={index + 1}
+                                    className={currentAdminPage === index + 1 ? styles.activePage : styles.pageButton}
+                                    onClick={() => handleAdminPageChange(index + 1)}
+                                  >
+                                    {index + 1}
+                                  </Button>
+                                ))}
+
+                                <Button
+                                  className={styles.pageButton}
+                                  onClick={() => handleAdminPageChange(currentAdminPage + 1)}
+                                  disabled={currentAdminPage === totalAdminPages}
+                                >
+                                  Next
+                                </Button>
+                              </Box>
+                            </Td>
+                          </Tr>
+                        </Tfoot>
+                      </Table>
+                      {openMessagePopUp === true ? (
+                        <MessagePopUp
+                          date={messageProps.date}
+                          messageTitle={messageProps.messageTitle}
+                          adminName={messageProps.adminName}
+                          messageContent={messageProps.messageContent}
+                          id={messageProps.id}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </Flex>
+                  </div>
                 )}
               </div>
             </Box>
