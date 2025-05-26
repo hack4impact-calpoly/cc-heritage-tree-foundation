@@ -6,7 +6,13 @@ import { Flex, Box, Image } from "@chakra-ui/react";
 import UserCardPopover from "./UserCardPopUp";
 
 export default function ProfileCard() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+  let role = null;
+  if (isLoaded && user) {
+    role = user.organizationMemberships?.[0]?.role;
+  }
+
+  const isAdmin = role === "org:admin";
 
   return (
     <SignedIn>
@@ -29,7 +35,7 @@ export default function ProfileCard() {
               <div>
                 {user?.firstName} {user?.lastName}
               </div>
-              <div style={{ color: "gray" }}>Role</div>
+              <div style={{ color: "gray" }}>{isAdmin ? "Admin" : "Volunteer"}</div>
             </Flex>
             <Flex gap="4">
               <Image src="/downArrow.svg" alt="Down Arrow" boxSize="24px" />
