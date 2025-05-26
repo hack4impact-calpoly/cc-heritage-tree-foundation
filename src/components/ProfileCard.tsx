@@ -3,20 +3,27 @@
 import React from "react";
 import { SignedIn, useUser } from "@clerk/nextjs";
 import { Flex, Box, Image } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import UserCardPopover from "./UserCardPopUp";
 
 export default function ProfileCard() {
   const { user } = useUser();
-  const router = useRouter();
 
   return (
     <SignedIn>
       <Flex justify="flex-end" gap="4" h="100px" w="100vw" transform={"translate(-15rem)"}>
-        {/* <div className={styles.profileCardBox} onClick={() => router.push("/userProfile")}> */}
-        <Box rounded="10" padding="20px" mt="20px" mr="20px" bg="white" onClick={() => router.push("/userProfile")}>
-          <Flex align="center" gap={5}>
-            {/* TODO: Once funcionality is working for profile card drop down then remove user button 
-              and uncomment the image below */}
+        <UserCardPopover>
+          <Box
+            as="div"
+            rounded="10"
+            padding="20px"
+            mt="20px"
+            mr="20px"
+            bg="white"
+            cursor="pointer"
+            display="flex"
+            alignItems="center"
+            gap="5"
+          >
             <Image src={user?.imageUrl} alt="User Profile" boxSize="32px" borderRadius="50%" />
             <Flex direction="column">
               <div>
@@ -27,9 +34,8 @@ export default function ProfileCard() {
             <Flex gap="4">
               <Image src="/downArrow.svg" alt="Down Arrow" boxSize="24px" />
             </Flex>
-          </Flex>
-        </Box>
-        {/* </div> */}
+          </Box>
+        </UserCardPopover>
       </Flex>
     </SignedIn>
   );
