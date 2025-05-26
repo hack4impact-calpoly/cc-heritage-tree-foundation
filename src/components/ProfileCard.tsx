@@ -4,6 +4,7 @@ import React from "react";
 import { SignedIn, useUser } from "@clerk/nextjs";
 import { Flex, Box, Image } from "@chakra-ui/react";
 import UserCardPopover from "./UserCardPopUp";
+import { isMobile } from "react-device-detect";
 
 export default function ProfileCard() {
   const { user, isLoaded } = useUser();
@@ -16,7 +17,7 @@ export default function ProfileCard() {
 
   return (
     <SignedIn>
-      <Flex justify="flex-end" gap="4" h="100px" w="100vw" transform={"translate(-15rem)"}>
+      <Flex justify="flex-end" gap="4" h="100px" w="100vw" transform={isMobile ? "" : "translate(-15rem)"}>
         <UserCardPopover>
           <Box
             as="div"

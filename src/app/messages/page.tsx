@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { AlignJustify, ChevronRight, Trash2 } from "lucide-react";
+import { MdClose } from "react-icons/md";
 import styles from "./messages.module.css";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -589,27 +590,14 @@ function Messages() {
               <div style={{ overflowX: "hidden" }}>
                 <div>
                   <div>
-                    <div
-                      style={{
-                        position: "absolute",
-                        marginLeft: "20px",
-                        marginTop: "15px",
-                      }}
-                    >
-                      <AlignJustify></AlignJustify>
-                    </div>
-                    {/* add tree icon */}
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: "50px",
-                      }}
-                    >
-                      <Image src="./logo1.png" alt="tree icon" height={"50px"}></Image>
-                    </div>
-
+                    <Box margin="10px">
+                      <Text className={styles.header} fontSize={["24px", "30px", "38px"]} color="#333" fontWeight="600">
+                        Messages
+                      </Text>
+                      <p className={styles.unread}>
+                        {unreadCount} unread {unreadCount === 1 ? "announcement" : "announcements"}
+                      </p>
+                    </Box>
                     <button
                       className={`${styles.tab} ${activeTab === "inbox" ? styles.activeTab : ""}`}
                       style={{ marginTop: "20px", marginLeft: "10px" }}
@@ -646,8 +634,22 @@ function Messages() {
                       {currentMessages.map((msg) => (
                         <div
                           key={msg.id}
-                          className={msg.selected ? styles.fadedRow : ""}
-                          onClick={() => toggleSelect(msg.id)}
+                          className={
+                            checkIfRead(msg) || user?.fullName === msg.from
+                              ? styles.clickableRowIsRead
+                              : styles.clickableRowNotRead
+                          }
+                          onClick={() => {
+                            setOpenMessagePopUp(!openMessagePopUp);
+                            setMessageProps({
+                              date: new Date(msg.time).toLocaleDateString(),
+                              adminName: msg.from,
+                              messageContent: msg.message,
+                              messageTitle: msg.subject,
+                              id: msg._id,
+                            });
+                          }}
+                          style={{ overflow: "hidden" }}
                         >
                           <div className={msg.selected ? styles.fadedText : ""}>
                             <Flex alignItems={"center"}>
@@ -666,7 +668,7 @@ function Messages() {
                                   }}
                                   className={msg.selected ? styles.fadedText : ""}
                                 >
-                                  {msg.message}
+                                  {msg.subject}
                                 </Text>
                               </div>
                             </Flex>
@@ -711,6 +713,25 @@ function Messages() {
                   <p className={styles.sentMessage}>Sent messages here.</p>
                 )}
               </div>
+              {openMessagePopUp === true ? (
+                <div style={{ position: "absolute", left: "0", top: "0", width: "100%", height: "100vh" }}>
+                  <MessagePopUp
+                    date={messageProps.date}
+                    messageTitle={messageProps.messageTitle}
+                    adminName={messageProps.adminName}
+                    messageContent={messageProps.messageContent}
+                    id={messageProps.id}
+                  />
+                  <div
+                    style={{ position: "absolute", right: "10px", top: "15px" }}
+                    onClick={() => setOpenMessagePopUp(false)}
+                  >
+                    <MdClose fontSize="30px" color="white" />
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </MobileView>
         </>

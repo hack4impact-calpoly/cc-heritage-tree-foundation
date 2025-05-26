@@ -1,10 +1,17 @@
 "use client";
 import { Box, Text, Flex } from "@chakra-ui/react";
+import { isMobile } from "react-device-detect";
 
 export default function MessagePopUp(props: any) {
   return (
     <>
-      <Box width={500} ml={5} height={600} bg={"white"} borderRadius={10}>
+      <Box
+        width={isMobile ? "100%" : 500}
+        ml={isMobile ? 0 : 5}
+        height={isMobile ? "100%" : 600}
+        bg={"white"}
+        borderRadius={10}
+      >
         <Box width="100%" height="1/3" bg="#596334" borderTopLeftRadius={10} borderTopRightRadius={10}>
           <Flex direction="column" justifyContent={"flex-end"} alignItems={"flex-start"}>
             <Text ml={5} mr={5} fontSize="2xl" color={"white"} mt={10}>

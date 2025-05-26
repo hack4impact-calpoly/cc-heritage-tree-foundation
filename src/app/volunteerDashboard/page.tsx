@@ -152,7 +152,6 @@ export default function VolunteerDashboard() {
                         display="flex"
                         flexDir="column"
                         alignItems="center"
-                        h="100%"
                       >
                         <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                           You&#39;ve logged
@@ -175,7 +174,6 @@ export default function VolunteerDashboard() {
                         display="flex"
                         flexDir="column"
                         alignItems="center"
-                        h="100%"
                       >
                         <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
                           Total logged
@@ -261,30 +259,6 @@ export default function VolunteerDashboard() {
           <MobileView>
             <Box mt={"58px"}>
               <VStack spacing={"32px"}>
-                <HStack
-                  width="100%"
-                  position={"relative"}
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  <IconButton position={"absolute"} left="25px" aria-label="Navbar" key={"ghost"} variant={"ghost"}>
-                    <Menu width="48px" color="#596334" />
-                  </IconButton>
-                  <Box
-                    width="48px"
-                    height="48px"
-                    border={"solid"}
-                    borderWidth={"1px"}
-                    borderRadius="100%"
-                    display="flex"
-                    justifyContent={"center"}
-                    borderColor={"#596334"}
-                    padding={"3px"}
-                  >
-                    <Image src="~/../logo1.png" alt="logo" htmlWidth="36px" htmlHeight="36px" />
-                  </Box>
-                </HStack>
                 <Grid
                   h="100%"
                   w="85%"
@@ -327,10 +301,11 @@ export default function VolunteerDashboard() {
                           </Text>
                           <HStack flexGrow={1} {...CenterStyle}>
                             <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                              25
+                              {treeData.filter((tree) => tree.collectorName == user?.fullName).length}
                             </Text>
                             <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                              trees
+                              tree
+                              {treeData.filter((tree) => tree.collectorName == user?.fullName).length == 1 ? "" : "s"}
                             </Text>
                           </HStack>
                         </Box>
@@ -348,10 +323,11 @@ export default function VolunteerDashboard() {
                           </Text>
                           <HStack flexGrow={1} alignItems="center" justifyContent="center">
                             <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                              175
+                              {treeData ? treeData.length : "0"}
                             </Text>
                             <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                              trees
+                              tree
+                              {treeData?.length == 1 ? "" : "s"}
                             </Text>
                           </HStack>
                         </Box>
@@ -372,8 +348,8 @@ export default function VolunteerDashboard() {
                           Announcements
                         </Text>
                       </HStack>
-                      <Box scrollBehavior="smooth" width="100%">
-                        {announcements.map((announcement) => (
+                      <VStack scrollBehavior="smooth" width="100%" gap="10px">
+                        {filteredAnnouncements.map((announcement) => (
                           <Box {...Box1AnnStyle} key={announcement._id}>
                             <HStack position={"relative"} w="100%">
                               <Box {...Box2AnnStyle}></Box>
@@ -384,7 +360,7 @@ export default function VolunteerDashboard() {
                             </HStack>
                           </Box>
                         ))}
-                      </Box>
+                      </VStack>
                     </VStack>
                   </GridItem>
                 </Grid>

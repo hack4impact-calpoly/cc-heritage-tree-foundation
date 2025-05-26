@@ -698,32 +698,6 @@ export default function TreeTable() {
           <MobileView>
             <Box mt={"58px"}>
               <VStack spacing={"32px"}>
-                {/*Dummy Mobile Navbar*/}
-                <HStack
-                  width="100%"
-                  position={"relative"}
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  <IconButton position={"absolute"} left="25px" aria-label="Navbar" key={"ghost"} variant={"ghost"}>
-                    <Menu width="48px" color="#596334" />
-                  </IconButton>
-                  <Box
-                    width="48px"
-                    height="48px"
-                    border={"solid"}
-                    borderWidth={"1px"}
-                    borderRadius="100%"
-                    display="flex"
-                    justifyContent={"center"}
-                    borderColor={"#596334"}
-                    padding={"3px"}
-                  >
-                    <Image src="~/../logo1.png" alt="logo" htmlWidth="36px" htmlHeight="36px" />
-                  </Box>
-                </HStack>
-                {/*Switch to desktop*/}
                 <Box h="80vh" width="90%" bg="#FFFFFF" borderRadius={"25px"}>
                   <VStack mt="5rem" gap={"2"}>
                     <Image src="~/../SwitchDevice.svg" alt="SwitchDevice" boxSize={""} />
