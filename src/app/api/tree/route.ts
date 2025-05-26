@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/database/db";
-import Tree from "@/database/treeSchema";
+import Tree, { ITree } from "@/database/treeSchema";
 import s3 from "@/app/api/tree/aws";
 import { revalidateTag } from "next/cache";
 import { Buffer } from "buffer";
@@ -10,26 +10,31 @@ export async function POST(req: NextRequest) {
 
   try {
     const formData = await req.formData();
+    console.log(formData);
+    // Handle multiple file uploads
+    const files = formData.getAll("files") as File[];
+    const imageUrls: string[] = [];
+    console.log(files);
+    // Upload all files to S3
+    for (const file of files) {
+      if (file instanceof File && file.size > 0) {
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const filename = file.name;
 
-    const file = formData.get("file") as File | null;
-    let imageUrl = "";
+        // Upload to S3
+        const params = {
+          Bucket: process.env.AWS_S3_BUCKET_NAME!,
+          Key: `${Date.now()}_${filename}`,
+          Body: buffer,
+          ContentType: file.type,
+        };
 
-    if (file) {
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const filename = file.name;
-
-      // Upload to S3
-      const params = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME!,
-        Key: `${Date.now()}_${filename}`,
-        Body: buffer,
-        ContentType: file.type,
-      };
-
-      const result = await s3.upload(params).promise();
-      imageUrl = result.Location;
+        const result = await s3.upload(params).promise();
+        imageUrls.push(result.Location);
+      }
     }
+    console.log(imageUrls);
 
     // Collect the rest of the fields
     const treeData = {
@@ -45,10 +50,11 @@ export async function POST(req: NextRequest) {
       treeCondition: Array.from(formData.entries())
         .filter(([key]) => key.startsWith("treeCondition["))
         .map(([, value]) => value),
-      photo: imageUrl,
+      photo: imageUrls, // Now storing an array of image URLs
     };
 
     const newTree = new Tree(treeData);
+
     const createdTree = await newTree.save();
 
     revalidateTag("trees");
@@ -63,21 +69,22 @@ export async function POST(req: NextRequest) {
 export async function GET(request: Request) {
   await connectDB();
 
-  try {
-    // Get query parameters from the request URL
-    const { searchParams } = new URL(request.url);
-    const collectorName = searchParams.get("collectorName");
+  const { searchParams } = new URL(request.url);
+  const collectorName = searchParams.get("collectorName");
 
-    // Build the query object
-    const query: any = {};
+  try {
+    let trees;
+
     if (collectorName) {
-      query.collectorName = collectorName;
+      const decodedName = decodeURIComponent(collectorName);
+      trees = await Tree.find({
+        collectorName: { $regex: `^${decodedName}$`, $options: "i" },
+      }).lean();
+    } else {
+      // Fetch all trees if no collectorName is provided
+      trees = await Tree.find().lean();
     }
 
-    // Find trees based on the query (filtered if collectorName exists)
-    const trees = await Tree.find(query).lean();
-
-    // Serialize the tree data
     const serializedTrees = trees.map((tree) => ({
       ...tree,
       gpsCoordinates: tree.gpsCoordinates.map((coord: any) => coord.toString()),
@@ -85,30 +92,11 @@ export async function GET(request: Request) {
       treeHeight: tree.treeHeight?.toString(),
       canopyBreadth: tree.canopyBreadth.toString(),
       treeQuality: tree.treeQuality.toString(),
-      photo: tree.photo?.toString(),
+      photos: tree.photos?.map((photo: any) => photo?.toString()), // Updated to handle array of photos
     }));
 
-    console.log(serializedTrees);
     return NextResponse.json(serializedTrees, { status: 200 });
   } catch (err) {
     return NextResponse.json({ message: "Failed to fetch trees: " + err }, { status: 400 });
   }
 }
-// export async function POST(req: NextRequest) {
-//   await connectDB();
-//   console.log("Received data: ", req.body);
-//   try {
-//     const treeData = await req.json();
-//     const newTree = new Tree(treeData);
-//     const createdTree = await newTree.save();
-//     revalidateTag("trees");
-//     return NextResponse.json(createdTree, { status: 200 });
-//   } catch (err: any) {
-//     if (err.name === "ValidationError") {
-//       const errors = Object.values(err.errors).map((error: any) => error.message);
-//       return NextResponse.json("Validation error: " + errors.join(", "), { status: 400 });
-//     } else {
-//       return NextResponse.json("Tree not added: " + err, { status: 400 });
-//     }
-//   }
-// }

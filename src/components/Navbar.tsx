@@ -4,13 +4,11 @@ import {
   VStack,
   Image,
   Button,
-  Flex,
   IconButton,
   useDisclosure,
   Drawer,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
 } from "@chakra-ui/react";

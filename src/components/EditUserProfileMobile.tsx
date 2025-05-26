@@ -1,12 +1,10 @@
 "use client";
-import { ChevronDown } from "lucide-react";
 import {
   Grid,
   GridItem,
   Image,
   Text,
   Button,
-  Flex,
   Link,
   Box,
   Center,

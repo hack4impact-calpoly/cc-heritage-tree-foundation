@@ -15,6 +15,9 @@ import {
   FormControl,
   chakra,
   FormLabel,
+  CloseButton,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import {
   treeIssues,
@@ -73,6 +76,8 @@ const disabledStyle = {
 export default function EditTreeEntryForm() {
   const params = useParams(); // to get params.treeID
   const { user } = useUser();
+  const [selectedImages, setSelectedImages] = useState<Array<File | string>>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [formData, setFormData] = useState<FormValues>({
     treeLocation: "",
     treeType: "",
@@ -119,6 +124,8 @@ export default function EditTreeEntryForm() {
             treeIssues: treeInfo.treeCondition ? treeInfo.treeCondition : [],
             fieldNotes: treeInfo.additionalNotes ? treeInfo.additionalNotes : "",
           });
+          setSelectedImages(treeInfo.photo);
+          setImagePreviews(treeInfo.photo);
         } else {
           console.log("Failed to retreive data.");
         }
@@ -128,7 +135,7 @@ export default function EditTreeEntryForm() {
     };
     console.log("load data into the formData");
     getTreeData();
-  }, [params.treeId]);
+  }, [params.treeID]);
 
   const handleTreeType = (e: React.MouseEvent<HTMLButtonElement>) => {
     const treeType = e.currentTarget.getAttribute("name") as TreeType;
@@ -185,6 +192,39 @@ export default function EditTreeEntryForm() {
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    const maxSize = 5; // MB
+
+    // Filter valid files
+    const validFiles = Array.from(files)
+      .filter((file) => validTypes.includes(file.type))
+      .filter((file) => file.size <= maxSize * 1024 * 1024);
+
+    if (validFiles.length === 0) {
+      alert("Only image files (JPEG, PNG, WEBP) under 5MB are allowed.");
+      return;
+    }
+
+    // Add new files to state
+    setSelectedImages((prev) => [...prev, ...validFiles]);
+
+    // Create previews for new files
+    const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviews((prev) => [...prev, ...newPreviews]);
+  };
+
+  const removeImage = (index: number) => {
+    // Revoke the object URL to prevent memory leaks
+    URL.revokeObjectURL(imagePreviews[index]);
+
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const validateCoordinates = () => {
     if (!formData.treeLocation.trim()) {
       return { valid: false, error: "Location is required" };
@@ -225,72 +265,79 @@ export default function EditTreeEntryForm() {
       return;
     }
 
-    const coordValidation = validateCoordinates();
-    if (!coordValidation.valid) {
-      alert(coordValidation.error);
+    const coordMatch = formData.treeLocation.match(/\(?\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\)?/);
+    if (!coordMatch) {
+      alert("Please use correct formatting for location");
       return;
     }
 
+    const [latitude, longitude] = coordMatch ? [coordMatch[1], coordMatch[2]] : ["", ""];
+
     try {
-      // Fetch user's name from backend using email
-      const userResponse = await fetch(`/api/user/${user.primaryEmailAddress}`);
+      const form = new FormData();
 
-      if (!userResponse.ok) {
-        throw new Error("Failed to fetch user details.");
-      }
+      // Append all selected images
+      selectedImages.forEach((file) => {
+        if (typeof file === "string") form.append("existingPhotos", file);
+        else form.append("files", file); // Note the plural "files" and we're not using array indices
+      });
 
-      const userData = await userResponse.json();
+      form.append("collectorName", user.fullName || "Unknown Collector");
+      form.append("dateCollected", new Date().toISOString());
+      form.append("species", formData.treeType);
+      form.append("dbh", formData.treeSpecs.trunkDBH.toString());
+      form.append("canopyBreadth", formData.treeSpecs.canopySpread.toString());
+      form.append("treeHeight", formData.treeSpecs.treeHeight.toString());
+      form.append("treeQuality", formData.treeHealth.toString());
+      form.append("additionalNotes", formData.fieldNotes);
+      form.append("gpsCoordinates[0]", latitude);
+      form.append("gpsCoordinates[1]", longitude);
 
-      const collectorName = userData.name || "Unknown Collector"; // Fallback if no name is found
+      formData.treeIssues.forEach((issue, idx) => {
+        form.append(`treeCondition[${idx}]`, issue);
+      });
 
-      const currentDate = new Date();
-
-      const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
-      const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
       const treeHeight = mongoose.Types.Decimal128.fromString(formData.treeSpecs.treeHeight.toString());
-
-      const gpsCoordinates = [
-        mongoose.Types.Decimal128.fromString(coordValidation.latitude ? coordValidation.latitude?.toString() : ""),
-        mongoose.Types.Decimal128.fromString(coordValidation.longitude ? coordValidation.longitude.toString() : ""),
-      ];
-
-      // Construct the submission data
-      const dataToSubmit = {
-        collectorName, // Use the fetched name
-        dateCollected: currentDate,
-        gpsCoordinates,
-        dbh: dbhDecimal,
-        canopyBreadth: canopyBreadthDecimal,
-        species: formData.treeType,
-        treeCondition: formData.treeIssues,
-        treeQuality: formData.treeHealth,
-        additionalNotes: formData.fieldNotes,
-        treeHeight: treeHeight,
-      };
-
-      console.log("Submitting the following data:", JSON.stringify(dataToSubmit, null, 2));
+      console.log(form);
 
       const response = await fetch(`/api/tree/${params.treeID}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSubmit),
+        body: form,
       });
 
-      const responseText = await response.text();
-      console.log("Response Text: " + responseText);
+      const result = await response.json();
 
       if (response.ok) {
-        alert("Tree data edited and submitted successfully!");
+        alert("Tree data submitted successfully!");
+        // Reset form
+        setFormData({
+          treeLocation: "",
+          treeType: "",
+          treeSpecs: {
+            treeHeight: 0,
+            canopySpread: 0,
+            trunkDBH: "",
+          },
+          treeHealth: 0,
+          treeIssues: [],
+          fieldNotes: "",
+        });
+        // Clean up image previews
+        imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+        setSelectedImages([]);
+        setImagePreviews([]);
       } else {
-        alert("Failed to edit and submit data.");
+        alert("Failed to submit tree: " + result);
       }
-    } catch (error) {
-      console.error("Error editing and submitting tree data:", error);
-      alert("Error editing and submitting tree data.");
+    } catch (err) {
+      console.error("Submission error:", err);
+      alert("An error occurred while submitting the tree.");
     }
   };
+
+  useEffect(() => {
+    console.log(selectedImages);
+  }, [selectedImages]);
 
   return (
     <Box p={6} maxW="600px" mx="auto" boxShadow="md" borderRadius="md" bg={COLORS.PureWhite}>
@@ -475,6 +522,69 @@ export default function EditTreeEntryForm() {
               onChange={handleFieldNotes}
             ></Textarea>
           </Box>
+        </TreeFormSection>
+        {/* Updated image upload section */}
+        <TreeFormSection>
+          <HStack gap="3">
+            <TreeFormHeading style={{ fontSize: "23px", marginBottom: "10px" }}>Upload Tree Images</TreeFormHeading>
+          </HStack>
+
+          {/* Image previews */}
+          {imagePreviews.length > 0 && (
+            <Wrap spacing={3} mb={4}>
+              {imagePreviews.map((preview, index) => (
+                <WrapItem key={index} position="relative">
+                  <Box
+                    border="1px solid"
+                    borderColor="gray.200"
+                    borderRadius="md"
+                    overflow="hidden"
+                    width="100px"
+                    height="100px"
+                  >
+                    <Image src={preview} alt={`Preview ${index + 1}`} objectFit="cover" width="100%" height="100%" />
+                  </Box>
+                  <CloseButton
+                    size="sm"
+                    color="white"
+                    bg="red.500"
+                    _hover={{ bg: "red.600" }}
+                    position="absolute"
+                    top="0"
+                    right="0"
+                    onClick={() => removeImage(index)}
+                  />
+                </WrapItem>
+              ))}
+            </Wrap>
+          )}
+
+          {/* File input */}
+          <label htmlFor="treeImages">
+            <Box
+              as="span"
+              cursor="pointer"
+              padding="10px"
+              backgroundColor={COLORS.Cream}
+              color={COLORS.Olive}
+              borderRadius="md"
+              display="inline-block"
+            >
+              Choose Images
+            </Box>
+            <Text fontSize="sm" color="gray.500" mt={2}>
+              {selectedImages.length} images selected
+            </Text>
+          </label>
+
+          <input
+            style={{ display: "none" }}
+            type="file"
+            id="treeImages"
+            accept="image/*"
+            onChange={handleImageChange}
+            multiple
+          />
         </TreeFormSection>
         <Button type="submit" backgroundColor={COLORS.Olive} color={COLORS.PureWhite} borderRadius="5rem">
           Submit

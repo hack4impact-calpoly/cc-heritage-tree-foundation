@@ -30,3 +30,10 @@ export const TextWeightStyle = {
   fontWeight: "600",
   color: "#596334",
 };
+
+export const BoxItem = {
+  borderRadius: "20px",
+  alignItems: "center",
+  borderColor: "black",
+  backgroundColor: "white",
+};

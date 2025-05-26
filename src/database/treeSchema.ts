@@ -11,7 +11,7 @@ export type ITree = {
   species: string;
   treeCondition: string[];
   treeQuality: Decimal128;
-  photo: string;
+  photo: string[];
   additionalNotes?: string;
 };
 
@@ -26,7 +26,7 @@ const TreeSchema = new Schema<ITree>({
   treeCondition: { type: [String], required: true },
   treeQuality: { type: mongoose.Types.Decimal128, required: true },
   photo: {
-    type: String,
+    type: [String],
     required: false,
   },
   additionalNotes: {

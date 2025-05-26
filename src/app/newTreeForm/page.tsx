@@ -16,6 +16,9 @@ import {
   FormLabel,
   SimpleGrid,
   IconButton,
+  Wrap,
+  WrapItem,
+  CloseButton,
 } from "@chakra-ui/react";
 import { Menu } from "lucide-react";
 import { treeIssues, treeHealthColors, TreeIssue, TreeType, FormValues, TREE_TYPE_DATA } from "./tree-form-data";
@@ -25,7 +28,6 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { useUser } from "@clerk/nextjs";
 import mongoose from "mongoose";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
-import { useRouter } from "next/navigation";
 
 const TreeFormSection = chakra(FormControl, {
   baseStyle: {
@@ -70,8 +72,8 @@ const disabledStyle = {
 export default function TreeEntryForm() {
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const router = useRouter();
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const [formData, setFormData] = useState<FormValues>({
     treeLocation: "",
@@ -87,24 +89,36 @@ export default function TreeEntryForm() {
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    // image type validation
     const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      alert("Only image files (JPEG, PNG, WEBP) are allowed.");
+    const maxSize = 5; // MB
+
+    // Filter valid files
+    const validFiles = Array.from(files)
+      .filter((file) => validTypes.includes(file.type))
+      .filter((file) => file.size <= maxSize * 1024 * 1024);
+
+    if (validFiles.length === 0) {
+      alert("Only image files (JPEG, PNG, WEBP) under 5MB are allowed.");
       return;
     }
 
-    // file size limit
-    const maxSize = 5;
-    if (file.size > maxSize * 1024 * 1024) {
-      alert(`File size exceeds ${maxSize}MB limit.`);
-      return;
-    }
+    // Add new files to state
+    setSelectedImages((prev) => [...prev, ...validFiles]);
 
-    setSelectedImage(file);
+    // Create previews for new files
+    const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviews((prev) => [...prev, ...newPreviews]);
+  };
+
+  const removeImage = (index: number) => {
+    // Revoke the object URL to prevent memory leaks
+    URL.revokeObjectURL(imagePreviews[index]);
+
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleTreeType = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -118,9 +132,6 @@ export default function TreeEntryForm() {
 
   const handleTreeLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
-    // Always update the input value to allow typing
-    setFormData((prev) => ({ ...prev, treeLocation: value }));
     setFormData((prev) => ({ ...prev, treeLocation: value }));
   };
 
@@ -184,9 +195,10 @@ export default function TreeEntryForm() {
     try {
       const form = new FormData();
 
-      if (selectedImage) {
-        form.append("file", selectedImage); // Append File directly
-      }
+      // Append all selected images
+      selectedImages.forEach((file) => {
+        form.append("files", file); // Note the plural "files" and we're not using array indices
+      });
 
       form.append("collectorName", user.fullName || "Unknown Collector");
       form.append("dateCollected", new Date().toISOString());
@@ -196,17 +208,17 @@ export default function TreeEntryForm() {
       form.append("treeHeight", formData.treeSpecs.treeHeight.toString());
       form.append("treeQuality", formData.treeHealth.toString());
       form.append("additionalNotes", formData.fieldNotes);
-      // GPS Coordinates as individual fields or comma-separated string
       form.append("gpsCoordinates[0]", latitude);
       form.append("gpsCoordinates[1]", longitude);
 
-      // Multiple tree issues as repeated form values
       formData.treeIssues.forEach((issue, idx) => {
         form.append(`treeCondition[${idx}]`, issue);
       });
-      // added tree height
+
       const treeHeight = mongoose.Types.Decimal128.fromString(formData.treeSpecs.treeHeight.toString());
       console.log(form);
+      console.log(form);
+
       const response = await fetch("/api/tree/", {
         method: "POST",
         body: form,
@@ -215,6 +227,7 @@ export default function TreeEntryForm() {
       const result = await response.json();
 
       if (response.ok) {
+        alert("Tree data submitted successfully!");
         // Reset form
         setFormData({
           treeLocation: "",
@@ -228,8 +241,10 @@ export default function TreeEntryForm() {
           treeIssues: [],
           fieldNotes: "",
         });
-        setSelectedImage(null);
-        router.push("/success");
+        // Clean up image previews
+        imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+        setSelectedImages([]);
+        setImagePreviews([]);
       } else {
         alert("Failed to submit tree: " + result);
       }
@@ -239,103 +254,12 @@ export default function TreeEntryForm() {
     }
   };
 
-  // const handleSubmit = async (event: React.FormEvent<HTMLDivElement>) => {
-  //   event.preventDefault();
-
-  //   if (!user) {
-  //     alert("Please log in to submit the form.");
-  //     return;
-  //   }
-  //   if (!selectedImage) return;
-
-  //   try {
-  //     // Step 1: Upload the image first (if selectedImage exists)
-  //     let imageUrl = "";
-  //     if (selectedImage) {
-  //       const imageFormData = new FormData();
-  //       imageFormData.append("file", selectedImage);
-
-  //       const uploadResponse = await fetch("/api/tree/", {
-  //         method: "POST",
-  //         body: imageFormData,
-  //       });
-
-  //       if (!uploadResponse.ok) {
-  //         throw new Error("Failed to upload image.");
-  //       }
-
-  //       const uploadData = await uploadResponse.json();
-  //       imageUrl = uploadData.url; // Get the uploaded S3 URL
-  //     }
-
-  //     // Step 2: Fetch user's name from backend using email
-  //     const userResponse = await fetch(`/api/user/${user.primaryEmailAddress}`);
-
-  //     if (!userResponse.ok) {
-  //       throw new Error("Failed to fetch user details.");
-  //     }
-
-  //     const userData = await userResponse.json();
-  //     const collectorName = userData.name || "Unknown Collector"; // Fallback if no name is found
-
-  //     const currentDate = new Date();
-
-  //     const dbhDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.trunkDBH.toString());
-  //     const canopyBreadthDecimal = mongoose.Types.Decimal128.fromString(formData.treeSpecs.canopySpread.toString());
-
-  //     const gpsCoordinates = formData.treeLocation.map((coord) =>
-  //       mongoose.Types.Decimal128.fromString(coord.toString()),
-  //     );
-
-  //     // Step 3: Construct the submission data
-  //     const dataToSubmit = {
-  //       collectorName,
-  //       dateCollected: currentDate,
-  //       gpsCoordinates,
-  //       dbh: dbhDecimal,
-  //       canopyBreadth: canopyBreadthDecimal,
-  //       species: formData.treeType,
-  //       treeCondition: formData.treeIssues,
-  //       treeQuality: formData.treeHealth,
-  //       additionalNotes: formData.fieldNotes,
-  //       imageUrl,
-  //     };
-
-  //     console.log("Submitting the following data:", JSON.stringify(dataToSubmit, null, 2));
-
-  //     const response = await fetch("/api/tree", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(dataToSubmit),
-  //     });
-
-  //     const responseText = await response.text();
-  //     console.log("Response Text: " + responseText);
-
-  //     if (response.ok) {
-  //       alert("Tree data submitted successfully!");
-  //       setFormData({
-  //         treeLocation: ["", ""],
-  //         treeType: "",
-  //         treeSpecs: {
-  //           treeHeight: 0,
-  //           canopySpread: 0,
-  //           trunkDBH: "",
-  //         },
-  //         treeHealth: 0,
-  //         treeIssues: [],
-  //         fieldNotes: "",
-  //       });
-  //     } else {
-  //       alert("Failed to submit data.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting tree data:", error);
-  //     alert("Error submitting tree data.");
-  //   }
-  // };
+  // Clean up image previews when component unmounts
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+    };
+  }, [imagePreviews]);
 
   useEffect(() => {
     setIsClient(true);
@@ -369,46 +293,6 @@ export default function TreeEntryForm() {
               <Text fontSize="sm" color="gray.500" mt={2}>
                 Example format: (35.555386, -120.713429)
               </Text>
-              <Button
-                mt={2}
-                size="sm"
-                backgroundColor={COLORS.Olive}
-                color={COLORS.PureWhite}
-                borderRadius="md"
-                onClick={() => {
-                  try {
-                    if (typeof navigator === "undefined" || !navigator.geolocation) {
-                      alert("Geolocation is not supported by your browser.");
-                      return;
-                    }
-
-                    navigator.geolocation.getCurrentPosition(
-                      (position) => {
-                        const lat = position.coords.latitude.toFixed(6);
-                        const lon = position.coords.longitude.toFixed(6);
-                        const coords = `(${lat}, ${lon})`;
-
-                        setFormData((prev) => ({
-                          ...prev,
-                          treeLocation: coords,
-                        }));
-                      },
-                      (error) => {
-                        alert(`Error getting location: ${error.message}`);
-                      },
-                      {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0,
-                      },
-                    );
-                  } catch (e) {
-                    alert("Unexpected error");
-                  }
-                }}
-              >
-                Use Current Location
-              </Button>
             </TreeFormSection>
             <TreeFormSection isRequired>
               <TreeFormHeading id="treeSpecies" style={{ fontSize: "24px" }} marginBottom="20px">
@@ -652,13 +536,50 @@ export default function TreeEntryForm() {
                 ></Textarea>
               </Box>
             </TreeFormSection>
+            {/* Updated image upload section */}
             <TreeFormSection>
               <HStack gap="3">
-                <TreeFormHeading style={{ fontSize: "23px", marginBottom: "10px" }}>Upload Tree Image</TreeFormHeading>
+                <TreeFormHeading style={{ fontSize: "23px", marginBottom: "10px" }}>Upload Tree Images</TreeFormHeading>
               </HStack>
 
-              {/* Trigger visible label button */}
-              <label htmlFor="treeImage">
+              {/* Image previews */}
+              {imagePreviews.length > 0 && (
+                <Wrap spacing={3} mb={4}>
+                  {imagePreviews.map((preview, index) => (
+                    <WrapItem key={index} position="relative">
+                      <Box
+                        border="1px solid"
+                        borderColor="gray.200"
+                        borderRadius="md"
+                        overflow="hidden"
+                        width="100px"
+                        height="100px"
+                      >
+                        <Image
+                          src={preview}
+                          alt={`Preview ${index + 1}`}
+                          objectFit="cover"
+                          width="100%"
+                          height="100%"
+                        />
+                      </Box>
+                      <CloseButton
+                        size="sm"
+                        color="white"
+                        bg="red.500"
+                        _hover={{ bg: "red.600" }}
+                        position="absolute"
+                        top="0"
+                        right="0"
+                        onClick={() => removeImage(index)}
+                      />
+                    </WrapItem>
+                  ))}
+                </Wrap>
+              )}
+
+              {/* File input */}
+              <label htmlFor="treeImages">
                 <Box
                   as="span"
                   cursor="pointer"
@@ -668,25 +589,21 @@ export default function TreeEntryForm() {
                   borderRadius="md"
                   display="inline-block"
                 >
-                  Choose Image
+                  Choose Images
                 </Box>
+                <Text fontSize="sm" color="gray.500" mt={2}>
+                  {selectedImages.length} images selected
+                </Text>
               </label>
 
-              {/* Fully hidden native file input */}
               <input
                 style={{ display: "none" }}
                 type="file"
-                id="treeImage"
+                id="treeImages"
                 accept="image/*"
                 onChange={handleImageChange}
+                multiple
               />
-
-              {/* Show filename if image is selected */}
-              {selectedImage && (
-                <Box mt={2}>
-                  <Text className="text-sm text-gray-600">{selectedImage.name}</Text>
-                </Box>
-              )}
             </TreeFormSection>
             <Button type="submit" backgroundColor={COLORS.Olive} color={COLORS.PureWhite} borderRadius="5rem">
               Submit

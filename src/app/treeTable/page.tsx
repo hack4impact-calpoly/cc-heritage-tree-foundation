@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Table,
   Thead,
@@ -20,19 +21,19 @@ import {
   IconButton,
   Flex,
   Grid,
+  GridItem,
   Tag,
   Select,
 } from "@chakra-ui/react";
 import * as XLSX from "xlsx";
-import Navbar from "@/components/Navbar";
 import { CenterStyle } from "@/styles/AllStyle";
 import "./treetable.css";
 import { useState, useEffect } from "react";
 import { ITree } from "@/database/treeSchema";
 import { FileDown, Menu, SearchIcon, ChevronLeft, ChevronRight, TreePine, Edit } from "lucide-react";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
-import { Decimal128 } from "mongodb"; // or "bson"
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function TreeTable() {
   const [loading, setLoading] = useState(true);
@@ -142,6 +143,8 @@ export default function TreeTable() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  console.log(filteredTrees);
 
   const downloadData = () => {
     // retreive ALL volunteers data
@@ -472,17 +475,16 @@ export default function TreeTable() {
                           {/* Top row */}
                           <Flex justifyContent="flex-end">
                             {/* Notes icon on the right */}
-                            <Edit size={20} />
+                            <Link href={`/editTreeForm/${selectedTree._id}`}>
+                              <Edit size={20} cursor="pointer" />
+                            </Link>
                           </Flex>
-
-                          {/* <Flex justifyContent="space-between" alignItems="center"> */}
                           <Flex justifyContent="space-between" alignItems="center">
                             <Flex alignItems="center" gap={3}>
                               <TreePine size={25} color="white" />
                               <Text fontWeight="medium" maxW="200px" whiteSpace="normal" wordBreak="break-word">
                                 Tree #{selectedTree._id}
                               </Text>
-                              {/* <Text fontWeight="medium" isTruncated maxWidth="60%">Tree #{selectedTree._id}</Text> */}
                             </Flex>
 
                             <Tag
@@ -666,7 +668,23 @@ export default function TreeTable() {
                             <Text fontSize="med" color="#596334" mb={2}>
                               Photo
                             </Text>
-                            <Image src={selectedTree.photo} borderRadius="10px" alt="tree"></Image>
+                            <Grid gridTemplateColumns="repeat(2, 1fr)" gridGap="5px">
+                              {Array.isArray(selectedTree.photo) ? (
+                                selectedTree.photo.map((photo, id) => (
+                                  <GridItem
+                                    key={id}
+                                    gridColumn="span 1"
+                                    borderRadius="10px"
+                                    aspectRatio="1 / 1"
+                                    overflow="hidden"
+                                  >
+                                    <Image src={photo} alt="tree" objectFit="cover"></Image>
+                                  </GridItem>
+                                ))
+                              ) : (
+                                <Image src={selectedTree.photo} alt="tree" objectFit="cover"></Image>
+                              )}
+                            </Grid>
                           </Box>
                         </VStack>
                       </Box>

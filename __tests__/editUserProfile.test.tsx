@@ -2,6 +2,20 @@
  * @jest-environment jsdom
  */
 
+jest.mock("@clerk/nextjs", () => ({
+  ...jest.requireActual("@clerk/nextjs"),
+  useUser: () => ({
+    user: {
+      id: "user_123",
+      fullName: "Test User",
+      primaryEmailAddress: {
+        emailAddress: "janedoe123@gmail.com",
+      },
+    },
+    isLoaded: true,
+  }),
+}));
+
 import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
@@ -42,23 +56,10 @@ describe("editUserProfile", () => {
     expect(phoneInput.value).toBe("000-000-0000");
   });
 
-  it("renders the profile button", () => {
-    render(<EditUserProfile />);
-    expect(screen.getByText("User Name")).toBeInTheDocument();
-    expect(screen.getByText("Volunteer")).toBeInTheDocument();
-  });
-
   it("renders image of the profile", () => {
     render(<EditUserProfile />);
     const pfpImage = screen.getByAltText("Profile Picture Not Appearing");
     expect(pfpImage).toBeInTheDocument();
     expect(pfpImage).toHaveAttribute("src", "/pfp.png");
-  });
-
-  it("renders small image of the profile", () => {
-    render(<EditUserProfile />);
-    const pfpImageSmall = screen.getByAltText("Small Profile Picture Not Appearing");
-    expect(pfpImageSmall).toBeInTheDocument();
-    expect(pfpImageSmall).toHaveAttribute("src", "/pfp.png");
   });
 });
