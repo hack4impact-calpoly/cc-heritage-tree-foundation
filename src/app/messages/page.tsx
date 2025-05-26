@@ -648,6 +648,7 @@ function Messages() {
                               messageTitle: msg.subject,
                               id: msg._id,
                             });
+                            updateReadStatus(msg._id);
                           }}
                           style={{ overflow: "hidden" }}
                         >
