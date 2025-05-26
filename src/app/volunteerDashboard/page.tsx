@@ -17,12 +17,27 @@ import {
 } from "@/styles/VolunteerDashStyle";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
 import { IAnnouncement } from "@/database/announcementSchema";
+
 export default function VolunteerDashboard() {
   const router = useRouter();
-  const user = useUser();
+  const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
   const [treeData, setTreeData] = useState<ITree[]>([]);
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
+  const [filteredAnnouncements, setFitleredAnnouncements] = useState<IAnnouncement[]>([]);
+
+  const checkIfRecipient = (message: { to: Array<string> }) => {
+    for (const recipient of message.to) {
+      if (user?.primaryEmailAddress?.emailAddress == recipient) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    setFitleredAnnouncements(announcements.filter((announcement) => checkIfRecipient(announcement)));
+  }, [announcements]);
 
   useEffect(() => {
     setIsClient(true);
@@ -51,9 +66,14 @@ export default function VolunteerDashboard() {
     const fetchAnnouncements = async () => {
       try {
         const response = await fetch("/api/messages");
-        if (!response.ok) throw new Error("Faield to fetch announcements for dashboard");
+        if (!response.ok) throw new Error("Faild to fetch announcements for dashboard");
         const data: IAnnouncement[] = await response.json();
-        setAnnouncements(data.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()));
+        setAnnouncements(
+          data
+            .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
+            .reverse()
+            .slice(0, 10),
+        );
       } catch (error) {
         console.error("Error fetching announcement data:", error);
       }
@@ -75,12 +95,13 @@ export default function VolunteerDashboard() {
                 templateColumns={{ base: "1fr", md: "repeat(8, 1fr)" }}
                 gap={4}
                 maxW="90%"
+                w="90%"
               >
                 {/* Hello Message */}
                 <GridItem rowSpan={1} colSpan={{ base: 1, md: 8 }}>
                   <VStack display="flex" alignItems="flex-start">
                     <Text fontSize="3xl" color="#596334" fontWeight="bold">
-                      Hello {user.user?.firstName} 👋
+                      Hello {user?.firstName} 👋
                     </Text>
                     <Text fontSize="16px" color="#333" fontWeight={"400"}>
                       Thank you so much for your effort, let&#39;s do this!
@@ -90,7 +111,7 @@ export default function VolunteerDashboard() {
 
                 {/* Tree Logs */}
                 <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 4 }}>
-                  <VStack {...BoxItem} p="5" h="100%" w="100%" overflow="auto" paddingBottom="0px">
+                  <VStack {...BoxItem} p="5" h="100%" w="100%" overflow="auto">
                     <HStack justifyContent="space-between" h="10%" w="100%">
                       <Button
                         bg="#596334"
@@ -138,13 +159,11 @@ export default function VolunteerDashboard() {
                         </Text>
                         <HStack gap={2}>
                           <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                            {treeData.filter((tree) => tree.collectorName == user.user?.fullName).length}
+                            {treeData.filter((tree) => tree.collectorName == user?.fullName).length}
                           </Text>
                           <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
                             tree
-                            {treeData.filter((tree) => tree.collectorName == user.user?.fullName).length == 1
-                              ? ""
-                              : "s"}
+                            {treeData.filter((tree) => tree.collectorName == user?.fullName).length == 1 ? "" : "s"}
                           </Text>
                         </HStack>
                       </Box>
@@ -176,7 +195,12 @@ export default function VolunteerDashboard() {
                 </GridItem>
 
                 {/* Map */}
-                <GridItem rowSpan={{ base: 2, md: 8 }} colSpan={{ base: 1, md: 4 }} data-testid="map_id">
+                <GridItem
+                  rowSpan={{ base: 2, md: 8 }}
+                  colSpan={{ base: 1, md: 4 }}
+                  minHeight="500px"
+                  data-testid="map_id"
+                >
                   <Map trees={treeData} />
                 </GridItem>
 
@@ -213,9 +237,10 @@ export default function VolunteerDashboard() {
                             backgroundColor: "rgba(0, 0, 0, 0.2)",
                           },
                         }}
+                        width="100%"
                       >
-                        {announcements.map((announcement) => (
-                          <Box {...Box1AnnStyle} key={announcement._id} marginBottom="1rem" width="95%">
+                        {filteredAnnouncements.map((announcement) => (
+                          <Box {...Box1AnnStyle} key={announcement._id} marginBottom="1rem" width="100%">
                             <HStack position={"relative"} w="100%">
                               <Box {...Box2AnnStyle}></Box>
                               <Text {...TextAnnStyle}> {announcement.message} </Text>
@@ -225,9 +250,6 @@ export default function VolunteerDashboard() {
                             </HStack>
                           </Box>
                         ))}
-                        <Text color="#DFED98" fontSize="16px" fontWeight="400">
-                          No other messages
-                        </Text>
                       </VStack>
                     </VStack>
                   </Box>
@@ -350,12 +372,12 @@ export default function VolunteerDashboard() {
                           Announcements
                         </Text>
                       </HStack>
-                      <Box scrollBehavior="smooth">
+                      <Box scrollBehavior="smooth" width="100%">
                         {announcements.map((announcement) => (
                           <Box {...Box1AnnStyle} key={announcement._id}>
                             <HStack position={"relative"} w="100%">
                               <Box {...Box2AnnStyle}></Box>
-                              <Text {...TextAnnStyle}> {announcement.message} </Text>
+                              <Text {...TextAnnStyle}> {announcement.subject} </Text>
                               <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
                                 <EllipsisVertical color="#333333" />
                               </IconButton>
@@ -363,9 +385,6 @@ export default function VolunteerDashboard() {
                           </Box>
                         ))}
                       </Box>
-                      <Text color="#DFED98" fontSize="16px" fontWeight="400">
-                        No other messages
-                      </Text>
                     </VStack>
                   </GridItem>
                 </Grid>

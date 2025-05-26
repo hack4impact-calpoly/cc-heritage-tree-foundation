@@ -1,7 +1,8 @@
 /* messages.module.css */
 .container {
-  padding: 50px;
   border-radius: 15px;
+  width: 90%;
+  max-width: 1137px;
 }
 
 .header {

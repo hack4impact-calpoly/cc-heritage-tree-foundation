@@ -290,9 +290,11 @@ function Messages() {
                 />
               </Flex>
             )}
-            <Box filter="auto" blur={blurAmount}>
+            <Box filter="auto" blur={blurAmount} display="flex" justifyContent="center">
               <div className={styles.container}>
-                <h2 className={styles.header}>Messages</h2>
+                <Text className={styles.header} fontSize={["24px", "30px", "38px"]} color="#333" fontWeight="600">
+                  Messages
+                </Text>
                 <p className={styles.unread}>
                   {unreadCount} unread {unreadCount === 1 ? "announcement" : "announcements"}
                 </p>
