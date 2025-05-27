@@ -18,7 +18,7 @@ import { MdOutlineDashboard, MdOutlinePeopleAlt, MdArrowOutward } from "react-ic
 import { FiBell, FiMenu } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter from Next.js
+import { useRouter, usePathname } from "next/navigation"; // Added usePathname
 
 import { useUser } from "@clerk/nextjs";
 import { isMobile } from "react-device-detect";
@@ -70,13 +70,15 @@ const NAV_ITEMS: Array<NavItem> = [
 ];
 
 export default function Navbar() {
-  const [activeButton, setActiveButton] = useState("Dashboard");
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
+  const pathname = usePathname(); // Get current path
   const { user, isLoaded } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   const [hasMounted, setHasMounted] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
+
+  // Determine active button based on current path
+  const activeButton = NAV_ITEMS.find((item) => pathname?.startsWith(item.path))?.text || "Dashboard";
 
   useEffect(() => {
     setHasMounted(true);
@@ -94,8 +96,8 @@ export default function Navbar() {
   }
 
   const isAdmin = role === "org:admin";
-  const handleNavigation = (path: string, text: string) => {
-    setActiveButton(text);
+
+  const handleNavigation = (path: string) => {
     router.push(path);
     if (showMobileNav) {
       onClose();
@@ -106,7 +108,6 @@ export default function Navbar() {
   if (showMobileNav) {
     return (
       <>
-        {/* Mobile Toggle Button */}
         <IconButton
           aria-label="Open Navigation"
           icon={<FiMenu />}
@@ -173,7 +174,7 @@ export default function Navbar() {
                 {NAV_ITEMS.map((NavItem) => (
                   <Button
                     key={NavItem.text}
-                    onClick={() => handleNavigation(NavItem.path, NavItem.text)}
+                    onClick={() => handleNavigation(NavItem.path)}
                     style={{
                       backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "transparent",
                       color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
@@ -251,14 +252,13 @@ export default function Navbar() {
           <br />
           Tree Foundation
         </Box>
-        {/*VStack for Items*/}
         <VStack>
           {NAV_ITEMS.map((NavItem) => {
             if (NavItem.path === "/volunteers" && !isAdmin) return null;
             return (
               <Button
                 key={NavItem.text}
-                onClick={() => handleNavigation(NavItem.path, NavItem.text)}
+                onClick={() => handleNavigation(NavItem.path)}
                 style={{
                   backgroundColor: activeButton === NavItem.text ? COLORS.secondary : COLORS.primary,
                   color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,

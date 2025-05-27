@@ -8,6 +8,20 @@ import { render, screen } from "@testing-library/react";
 import Messages from "@/app/messages/page";
 import Navbar from "@/components/Navbar";
 
+jest.mock("@clerk/nextjs", () => ({
+  ...jest.requireActual("@clerk/nextjs"),
+  useUser: () => ({
+    user: {
+      id: "user_123",
+      fullName: "Test User",
+      primaryEmailAddress: {
+        emailAddress: "janedoe123@gmail.com",
+      },
+    },
+    isLoaded: true,
+  }),
+}));
+
 jest.mock("@clerk/nextjs", () => {
   const actual = jest.requireActual("@clerk/nextjs");
   return {

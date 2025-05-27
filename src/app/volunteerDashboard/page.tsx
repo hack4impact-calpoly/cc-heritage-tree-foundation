@@ -7,6 +7,7 @@ import Map from "@/components/Map";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { CenterStyle } from "@/styles/AllStyle";
+import UrlObject from "next/router";
 import {
   Box1AnnStyle,
   Box2AnnStyle,
@@ -238,13 +239,16 @@ export default function VolunteerDashboard() {
                         width="100%"
                       >
                         {filteredAnnouncements.map((announcement) => (
-                          <Box {...Box1AnnStyle} key={announcement._id} marginBottom="1rem" width="100%">
+                          <Box
+                            {...Box1AnnStyle}
+                            key={announcement._id}
+                            marginBottom="1rem"
+                            width="100%"
+                            onClick={() => router.push(`/messages?id=${announcement._id}`)}
+                          >
                             <HStack position={"relative"} w="100%">
                               <Box {...Box2AnnStyle}></Box>
                               <Text {...TextAnnStyle}> {announcement.message} </Text>
-                              <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
-                                <EllipsisVertical color="#333333" />
-                              </IconButton>
                             </HStack>
                           </Box>
                         ))}

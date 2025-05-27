@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { AlignJustify, ChevronRight, Trash2 } from "lucide-react";
 import { MdClose } from "react-icons/md";
 import styles from "./messages.module.css";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { Icon, useToast } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -57,6 +57,8 @@ function Messages() {
     id: -1,
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const message_id = searchParams.get("id");
   const [messages, setMessages] = useState<any[]>([]);
   const [filteredMessages, setFilteredMessages] = useState<any[]>([]);
   const [adminMessages, setAdminMessages] = useState<any[]>([]);
@@ -124,6 +126,22 @@ function Messages() {
     setAdminMessages(messages.filter((message) => message.from == user?.fullName));
   }, [messages]);
 
+  useEffect(() => {
+    if (message_id && messages.length > 0) {
+      const msg = messages.find((message) => message._id === message_id);
+      if (msg) {
+        setOpenMessagePopUp(true);
+        setMessageProps({
+          date: new Date(msg.time).toLocaleDateString(),
+          adminName: msg.from,
+          messageContent: msg.message,
+          messageTitle: msg.subject,
+          id: msg._id,
+        });
+        updateReadStatus(msg._id);
+      }
+    }
+  }, [message_id, messages.length]);
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
