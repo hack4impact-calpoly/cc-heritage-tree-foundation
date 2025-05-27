@@ -1,8 +1,7 @@
 "use client";
-import { Grid, GridItem, Text, Button, Flex, Link, Box, Center, Input, FormControl } from "@chakra-ui/react";
+import { Grid, Text, Button, Flex, Link, Box, Center, Input, FormControl } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
-import { CenterStyle } from "@/styles/AllStyle";
 import { useUser } from "@clerk/nextjs";
 import { isMobile } from "react-device-detect";
 import ChangePasswordMobile from "@/components/ChangePasswordMobile";
@@ -59,16 +58,19 @@ export default function ChangePassword() {
       showToast("Failed to update password. Please check your current password.", "error");
     }
   };
+  if (!isClient) {
+    return null;
+  }
 
   if (isMobileDevice) {
     return <ChangePasswordMobile />;
   } else {
     return (
-      <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
-        <Box maxH="90vh">
+      <Box style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
+        <Box maxH="90vh" p={10}>
           <Center>
-            <Flex mt={25} direction="column">
-              <Flex align="center" justify="space-between">
+            <Flex mt={25} direction="column" w="900px" maxW="100%">
+              <Flex align="center" justify="space-between" mb={6}>
                 <Text fontSize="3xl" fontWeight="bold" textStyle="4xl">
                   Change Password
                 </Text>
@@ -108,99 +110,69 @@ export default function ChangePassword() {
                         </svg>
                       )}
                       <Flex direction={"column"}>
-                        {toastStatus === "success" ? (
-                          <Text size="med" fontWeight={"bold"}>
-                            Saved
-                          </Text>
-                        ) : (
-                          <Text size="med">Error</Text>
-                        )}
+                        <Text size="med" fontWeight={toastStatus === "success" ? "bold" : "normal"}>
+                          {toastStatus === "success" ? "Saved" : "Error"}
+                        </Text>
                         <Text>{toastMsg}</Text>
                       </Flex>
                     </Flex>
                   </Box>
                 )}
               </Flex>
-              <Box
-                borderRadius={"15px"}
-                mt={30}
-                alignItems="center"
-                borderColor="black"
-                bg="white"
-                w="900px"
-                h="475px"
-                p={10}
-                color="black"
-              >
-                <Grid templateRows="repeat(2, 0.5fr)" templateColumns="repeat(5, 1fr)" gap={7}>
-                  <GridItem colSpan={3} mt={10}>
-                    <FormControl>
-                      <Center {...CenterStyle}>
-                        <Text {...TextUser} mt={4} mr={30}>
-                          Current Password
-                        </Text>
-                        <Input
-                          {...InputUser}
-                          mt={4}
-                          placeholder="Current Password"
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          type="password"
-                        />
-                      </Center>
-                      <Center {...CenterStyle}>
-                        <Text {...TextUser} mr={34} mt={10}>
-                          New Password
-                        </Text>
-                        <Input
-                          {...InputUser}
-                          mt={10}
-                          placeholder="New Password"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          type="password"
-                        />
-                      </Center>
-                      <Center>
-                        <Text mr={30} {...TextUser} mt={10}>
-                          Confirm New Password
-                        </Text>
-                        <Input
-                          {...InputUser}
-                          mt={10}
-                          placeholder="Confirm New Password"
-                          value={confirmNewPasssord}
-                          onChange={(e) => setConfirmNewPassword(e.target.value)}
-                          type="password"
-                        />
-                      </Center>
-                      <Center {...CenterStyle}>
-                        <Link>
-                          <Button onClick={changePassword} mt={10} borderRadius={20} backgroundColor="#596334">
-                            <Text color="white">Save</Text>
-                          </Button>
-                        </Link>
-                        <Link href="/userProfile">
-                          <Button
-                            mt={10}
-                            ml={5}
-                            borderRadius={20}
-                            backgroundColor="white"
-                            borderColor="#596334"
-                            borderWidth={1}
-                          >
-                            <Text color="#596334">Cancel</Text>
-                          </Button>
-                        </Link>
-                      </Center>
-                    </FormControl>
-                  </GridItem>
-                </Grid>
+
+              <Box borderRadius="15px" bg="white" p={10} w="100%" color="black">
+                <FormControl>
+                  <Grid templateColumns="220px 1fr" columnGap={20} rowGap={7} alignItems="center">
+                    <Text {...TextUser}>Current Password</Text>
+                    <Input
+                      {...InputUser}
+                      placeholder="Current Password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      type="password"
+                      w="100%"
+                      mt={0}
+                    />
+
+                    <Text {...TextUser}>New Password</Text>
+                    <Input
+                      {...InputUser}
+                      placeholder="New Password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      type="password"
+                      w="100%"
+                      mt={0}
+                    />
+
+                    <Text {...TextUser}>Confirm New Password</Text>
+                    <Input
+                      {...InputUser}
+                      placeholder="Confirm New Password"
+                      value={confirmNewPasssord}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      type="password"
+                      w="100%"
+                      mt={0}
+                    />
+
+                    <Flex gridColumn="1 / span 2" justifyContent="flex-start" mt={6} gap={4}>
+                      <Button onClick={changePassword} borderRadius={20} backgroundColor="#596334">
+                        <Text color="white">Save</Text>
+                      </Button>
+                      <Link href="/userProfile">
+                        <Button borderRadius={20} backgroundColor="white" borderColor="#596334" borderWidth={1}>
+                          <Text color="#596334">Cancel</Text>
+                        </Button>
+                      </Link>
+                    </Flex>
+                  </Grid>
+                </FormControl>
               </Box>
             </Flex>
           </Center>
         </Box>
-      </div>
+      </Box>
     );
   }
 }
