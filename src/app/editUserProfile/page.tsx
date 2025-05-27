@@ -1,11 +1,25 @@
 "use client";
-import { Grid, GridItem, Image, Text, Button, Flex, Link, Box, Center, Input, FormControl } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import {
+  Grid,
+  GridItem,
+  Image,
+  Text,
+  Button,
+  IconButton,
+  Flex,
+  Link,
+  Box,
+  Center,
+  Input,
+  FormControl,
+} from "@chakra-ui/react";
+import React, { useRef, useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { useUser } from "@clerk/nextjs";
 import { isMobile } from "react-device-detect";
 import EditUserProfileMobile from "@/components/EditUserProfileMobile";
+import { FileDown } from "lucide-react";
 
 export default function EditUserProfile() {
   const [name, setName] = useState("");
@@ -24,6 +38,10 @@ export default function EditUserProfile() {
   const [userId, setUserId] = useState<string | null>(null);
   const [existingEmailId, setExistingEmailId] = useState<string | null>(null);
   const [mongoUserId, setMongoUserId] = useState<object | null>(null);
+
+  // create file input ref
+  const fileInputRef = useRef(null);
+  const [srcImg, setSrcImg] = useState("/pfp.png");
 
   // for toast
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -77,6 +95,25 @@ export default function EditUserProfile() {
 
     fetchUserData();
   }, [isLoaded, user]);
+
+  const uploadFile = async (file) => {
+    if (!file) return;
+
+    // create a formData
+    const form = new FormData();
+    form.append("file", file);
+
+    const response = await fetch("/api/profile/", {
+      method: "POST",
+      body: form,
+    });
+
+    if (response.ok) {
+      alert("Upload successful!");
+    } else {
+      alert("Upload failed!");
+    }
+  };
 
   const saveUserInfo = async () => {
     try {
@@ -219,15 +256,58 @@ export default function EditUserProfile() {
                 <Grid templateRows="repeat(2, 0.5fr)" templateColumns="repeat(5, 1fr)" gap={7}>
                   <GridItem rowSpan={2} colSpan={2}>
                     <Center>
-                      <Image
-                        ml={10}
-                        mt={10}
-                        boxSize="300px"
-                        borderRadius="full"
-                        fit="cover"
-                        alt="Profile Picture Not Appearing"
-                        src="/pfp.png"
-                      ></Image>
+                      <Box position="relative" w="300px" h="300px">
+                        {/* profile pic */}
+                        <Image
+                          ml={10}
+                          mt={10}
+                          boxSize="300px"
+                          borderRadius="full"
+                          fit="cover"
+                          alt="Profile Picture Not Appearing"
+                          src={srcImg}
+                        ></Image>
+
+                        {/* icon when hovered */}
+                        <Box
+                          position="absolute"
+                          top={0}
+                          left={0}
+                          w="100%"
+                          h="100%"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          borderRadius="full"
+                          ml={10}
+                          mt={10}
+                          boxSize="300px"
+                          bg="blackAlpha.600"
+                          opacity={0}
+                          _hover={{ opacity: 1 }}
+                          transition="opacity 0.3s ease"
+                        >
+                          <IconButton
+                            w="100%"
+                            h="100%"
+                            aria-label="Upload"
+                            icon={<FileDown size="120px" />}
+                            onClick={() => fileInputRef.current?.click()}
+                            colorScheme="whiteAlpha"
+                            borderRadius="full"
+                            fontSize="6xl"
+                          />
+                        </Box>
+
+                        {/* hidden */}
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          display="none"
+                          ref={fileInputRef}
+                          onChange={(e) => uploadFile(e.target.files[0])}
+                        />
+                      </Box>
                     </Center>
                   </GridItem>
                   <GridItem colSpan={3} mt={10}>
