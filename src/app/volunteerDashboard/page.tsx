@@ -248,7 +248,7 @@ export default function VolunteerDashboard() {
                           >
                             <HStack position={"relative"} w="100%">
                               <Box {...Box2AnnStyle}></Box>
-                              <Text {...TextAnnStyle}> {announcement.message} </Text>
+                              <Text {...TextAnnStyle}> {announcement.subject} </Text>
                             </HStack>
                           </Box>
                         ))}

@@ -26,6 +26,7 @@ import { COLORS } from "@/styles/color-styles-data";
 import { LuNotebookPen } from "react-icons/lu";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import mongoose from "mongoose";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
 
@@ -71,6 +72,7 @@ const disabledStyle = {
 
 export default function TreeEntryForm() {
   const { user } = useUser();
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -227,7 +229,7 @@ export default function TreeEntryForm() {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Tree data submitted successfully!");
+        router.push("/success");
         // Reset form
         setFormData({
           treeLocation: "",
