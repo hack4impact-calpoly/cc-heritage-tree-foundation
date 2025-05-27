@@ -25,12 +25,14 @@ export default function EditUserProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [profileURL, setProfileURL] = useState("/pfp.png");
 
   // to compare changes
   const [originalUserData, setOriginalUserData] = useState({
     name: "",
     email: "",
     phoneNumber: "",
+    profileURL: "/pfp.png",
   });
 
   const { user, isLoaded } = useUser();
@@ -41,7 +43,6 @@ export default function EditUserProfile() {
 
   // create file input ref
   const fileInputRef = useRef(null);
-  const [srcImg, setSrcImg] = useState("/pfp.png");
 
   // for toast
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -81,10 +82,12 @@ export default function EditUserProfile() {
         setName(data.name || "");
         setEmail(data.email || "");
         setPhoneNumber(data.phoneNumber || "");
+        setProfileURL(data.profileURL || "/pfp.png");
         setOriginalUserData({
           name: data.name || "",
           email: data.email || "",
           phoneNumber: data.phoneNumber || "",
+          profileURL: data.profileURL || "/pfp.png",
         });
       } catch (error) {
         console.error("Failed to fetch user data:", error);
@@ -110,6 +113,10 @@ export default function EditUserProfile() {
 
     if (response.ok) {
       alert("Upload successful!");
+
+      // update imgSrc
+      const data = await response.json();
+      setProfileURL(data.url);
     } else {
       alert("Upload failed!");
     }
@@ -125,6 +132,7 @@ export default function EditUserProfile() {
       if (name !== originalUserData.name) updatedFields.name = name;
       if (email !== originalUserData.email) updatedFields.email = email;
       if (phoneNumber !== originalUserData.phoneNumber) updatedFields.phoneNumber = phoneNumber;
+      if (profileURL !== originalUserData.profileURL) updatedFields.profileURL = profileURL;
 
       // === Clerk update (only if email changed) ===
       if (updatedFields.email) {
@@ -166,7 +174,7 @@ export default function EditUserProfile() {
       showToast("You have successfully made changes.", "success");
 
       // update local original state
-      setOriginalUserData({ name, email, phoneNumber });
+      setOriginalUserData({ name, email, phoneNumber, profileURL: profileURL });
     } catch (error) {
       console.error("Error updating information:", error);
       showToast("Unable to make changes. Email potentially already in use.", "error");
@@ -218,9 +226,9 @@ export default function EditUserProfile() {
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="red"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                           className="lucide lucide-circle-x-icon lucide-circle-x"
                         >
                           <circle cx="12" cy="12" r="10" />
@@ -265,7 +273,7 @@ export default function EditUserProfile() {
                           borderRadius="full"
                           fit="cover"
                           alt="Profile Picture Not Appearing"
-                          src={srcImg}
+                          src={profileURL}
                         ></Image>
 
                         {/* icon when hovered */}
