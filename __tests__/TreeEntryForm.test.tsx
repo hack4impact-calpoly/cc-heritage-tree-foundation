@@ -8,6 +8,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { treeIssues } from "@/app/newTreeForm/tree-form-data";
 import TreeEntryForm from "@/app/newTreeForm/page";
+import mockRouter from "next-router-mock";
 
 jest.mock("@clerk/nextjs", () => ({
   ClerkProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -18,6 +19,10 @@ jest.mock("@clerk/nextjs", () => ({
     },
     isSignedIn: true,
   }),
+}));
+
+jest.mock("next/navigation", () => ({
+  useRouter: () => mockRouter,
 }));
 
 jest.mock("mongoose", () => ({

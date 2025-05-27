@@ -1,11 +1,42 @@
 import React from "react";
 
 import { Grid, GridItem, Text, Button, Flex, Link, Box, Center, FormControl, Image } from "@chakra-ui/react";
-
+import { useEffect, useState } from "react";
 import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
+import { useUser } from "@clerk/nextjs";
+
+interface UserData {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  role: string;
+}
 
 export default function UserProfileMobile() {
+  const { user, isLoaded } = useUser();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const email = user.primaryEmailAddress.emailAddress;
+        const res = await fetch(`/api/user/${email}`);
+        const data = await res.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [isLoaded, user]);
+
   return (
     <div style={{ backgroundColor: "#F4F1E8", height: "100%", width: "100%", overflowY: "auto" }}>
       <Center>
@@ -43,7 +74,7 @@ export default function UserProfileMobile() {
               </Center>
               <Center {...LeftUser}>
                 <Text fontSize="xs" color="black" align="left" mt={2} mr={30}>
-                  Jane Doe
+                  {userData?.name}
                 </Text>
               </Center>
               <Center {...LeftUser}>
@@ -53,7 +84,7 @@ export default function UserProfileMobile() {
               </Center>
               <Center {...LeftUser}>
                 <Text fontSize="xs" {...LeftUser} color="black" mt={2} mr={30}>
-                  janedoe123@gmail.com
+                  {userData?.email}
                 </Text>
               </Center>
               <Center {...LeftUser}>
@@ -63,7 +94,7 @@ export default function UserProfileMobile() {
               </Center>
               <Center fontSize="xs" {...LeftUser}>
                 <Text color="black" mt={2}>
-                  000-000-0000
+                  {userData?.phoneNumber}
                 </Text>
               </Center>
               <Center {...LeftUser}>
@@ -73,7 +104,7 @@ export default function UserProfileMobile() {
               </Center>
               <Center {...LeftUser}>
                 <Text fontSize="xs" color="black" mt={2}>
-                  Admin, Volunteer
+                  {userData?.role}
                 </Text>
               </Center>
             </FormControl>
