@@ -26,6 +26,7 @@ interface UserData {
   email: string;
   phoneNumber?: string;
   role: string;
+  profileURL?: string;
 }
 
 function UserProfile() {
@@ -121,7 +122,7 @@ function UserProfile() {
                       borderRadius="full"
                       fit="cover"
                       alt="Profile Picture"
-                      src="/pfp.png"
+                      src={userData.profileURL ? userData.profileURL : "/pfp.png"}
                     />
                   </Center>
                 </GridItem>

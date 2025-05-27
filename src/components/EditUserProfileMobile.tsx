@@ -15,19 +15,47 @@ import {
   Radio,
   RadioGroup,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
+import { useUser } from "@clerk/nextjs";
+
+interface UserData {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  role: string;
+  profileURL?: string;
+}
 
 function EditUserProfileMobile() {
+  const { user, isLoaded } = useUser();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const saveUserInfo = () => {
     console.log("Saving user info...");
     console.log(name, email, phoneNumber);
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const email = user.primaryEmailAddress.emailAddress;
+        const res = await fetch(`/api/user/${email}`);
+        const data = await res.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [isLoaded, user]);
 
   return (
     <Center mt={8}>
@@ -41,7 +69,7 @@ function EditUserProfileMobile() {
             borderRadius="full"
             fit="cover"
             alt="Profile Picture Not Appearing"
-            src="/pfp.png"
+            src={userData?.profileURL ? userData.profileURL : "/pfp.png"}
           ></Image>
         </Center>
 
