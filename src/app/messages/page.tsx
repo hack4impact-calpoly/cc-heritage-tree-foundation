@@ -32,6 +32,14 @@ import { BrowserView, MobileView } from "react-device-detect";
 import MessagePopUp from "@/components/MessagePopUp";
 import DeleteMessagePopUp from "@/components/DeleteMessagePopUp";
 
+interface UserData {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  role: string;
+  profileURL?: string;
+}
+
 function Messages() {
   const toast = useToast();
   const { isLoaded, isSignedIn, user } = useUser();
@@ -75,6 +83,7 @@ function Messages() {
   const currentAdminMessages = adminMessages.slice(indexOfAdminFirstMessage, indexOfAdminLastMessage);
   const isAdmin = role === "org:admin";
   const [unreadCount, setUnreadCount] = useState(0);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const fetchMessages = async () => {
     try {
@@ -117,6 +126,20 @@ function Messages() {
   };
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const email = user.primaryEmailAddress.emailAddress;
+        const res = await fetch(`/api/user/${email}`);
+        const data = await res.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    fetchUserData();
     setIsClient(true);
     fetchMessages();
   }, []);
@@ -385,7 +408,15 @@ function Messages() {
                                   onClick={() => setSelectedMessage(msg)}
                                 >
                                   <Flex className={styles.avatarContainer}>
-                                    <Avatar name={msg.from} size="sm" bg="#596334" color="white" />
+                                    <Avatar
+                                      src={
+                                        userData?.profileURL && msg.from === userData.name
+                                          ? userData?.profileURL
+                                          : "/pfp.png"
+                                      }
+                                      name={msg.from}
+                                      size="sm"
+                                    />
                                     {msg.from}
                                   </Flex>
                                 </Td>
