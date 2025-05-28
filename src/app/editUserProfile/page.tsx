@@ -99,7 +99,7 @@ export default function EditUserProfile() {
     fetchUserData();
   }, [isLoaded, user]);
 
-  const uploadFile = async (file) => {
+  const uploadFile = async (file: any) => {
     if (!file) return;
 
     // create a formData

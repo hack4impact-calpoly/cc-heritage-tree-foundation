@@ -27,7 +27,7 @@ export function decimal128ToNumber(decimal?: Schema.Types.Decimal128): number | 
   if (isNaN(num)) return null;
   return num;
 }
-function PopupContent({ tree, profileURL }: { tree: ITree; profileURL: string }) {
+function PopupContent({ tree, profileURL }: { tree: ITree; profileURL: any }) {
   const getSpeciesBadge = (species?: string) => {
     const abbreviation = species
       ? species
