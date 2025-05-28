@@ -114,7 +114,7 @@ export default function EditUserProfile() {
     if (response.ok) {
       alert("Upload successful!");
 
-      // update imgSrc
+      // update profileURL
       const data = await response.json();
       setProfileURL(data.url);
     } else {
