@@ -42,7 +42,7 @@ export default function EditUserProfile() {
   const [mongoUserId, setMongoUserId] = useState<object | null>(null);
 
   // create file input ref
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // for toast
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -313,7 +313,7 @@ export default function EditUserProfile() {
                           accept="image/*"
                           display="none"
                           ref={fileInputRef}
-                          onChange={(e) => uploadFile(e.target.files[0])}
+                          onChange={(e) => uploadFile(e.target.files?.[0])}
                         />
                       </Box>
                     </Center>
