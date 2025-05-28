@@ -50,6 +50,7 @@ export default function TreeTable() {
   const idxLastTree = currentPage * treesPerPage;
   const idxFirstTree = idxLastTree - treesPerPage;
   const paginatedTrees = filteredTrees.slice(idxFirstTree, idxLastTree);
+  const [profileURL, setProfileURL] = useState("");
 
   // fetch trees
   const [isClient, setIsClient] = useState(false);
@@ -73,6 +74,8 @@ export default function TreeTable() {
         const userRes = await fetch(`/api/user?email=${user.primaryEmailAddress?.emailAddress}`);
         if (!userRes.ok) throw new Error(`User fetch failed: ${userRes.status}`);
         const userData = await userRes.json();
+
+        setProfileURL(userData.profileURL);
 
         // Fetch trees based on role
         let apiString: string;
@@ -367,7 +370,13 @@ export default function TreeTable() {
                                     <Td>{new Date(tree.dateCollected).toLocaleDateString()}</Td>
                                     <Td>
                                       <HStack align="center">
-                                        <Box borderRadius="full" bg="#596334" boxSize={8}></Box>
+                                        <Image
+                                          borderRadius="full"
+                                          fit="cover"
+                                          alt="Profile Picture"
+                                          boxSize={8}
+                                          src={profileURL != "" ? profileURL : "/pfp.png"}
+                                        ></Image>
                                         <Text>{tree.collectorName}</Text>
                                       </HStack>
                                     </Td>

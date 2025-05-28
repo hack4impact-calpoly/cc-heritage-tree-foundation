@@ -19,13 +19,22 @@ import {
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
 import { IAnnouncement } from "@/database/announcementSchema";
 
+interface UserData {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  role: string;
+  profileURL?: string;
+}
+
 export default function VolunteerDashboard() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [isClient, setIsClient] = useState(false);
   const [treeData, setTreeData] = useState<ITree[]>([]);
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
   const [filteredAnnouncements, setFitleredAnnouncements] = useState<IAnnouncement[]>([]);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const checkIfRecipient = (message: { to: Array<string> }) => {
     for (const recipient of message.to) {
@@ -42,6 +51,19 @@ export default function VolunteerDashboard() {
 
   useEffect(() => {
     setIsClient(true);
+    const fetchUserData = async () => {
+      if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const email = user.primaryEmailAddress.emailAddress;
+        const res = await fetch(`/api/user/${email}`);
+        const data = await res.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+    fetchUserData();
   }, []);
 
   useEffect(() => {
@@ -247,7 +269,16 @@ export default function VolunteerDashboard() {
                             onClick={() => router.push(`/messages?id=${announcement._id}`)}
                           >
                             <HStack position={"relative"} w="100%">
-                              <Box {...Box2AnnStyle}></Box>
+                              <Image
+                                {...Box2AnnStyle}
+                                fit="cover"
+                                alt="Profile Picture Not Appearing"
+                                src={
+                                  userData?.profileURL && announcement.from === userData.name
+                                    ? userData.profileURL
+                                    : "/pfp.png"
+                                }
+                              ></Image>
                               <Text {...TextAnnStyle}> {announcement.subject} </Text>
                             </HStack>
                           </Box>

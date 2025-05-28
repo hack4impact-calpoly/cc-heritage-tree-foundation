@@ -1,13 +1,22 @@
 "use client";
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect, useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import { ITree } from "@/database/treeSchema";
 import dynamic from "next/dynamic";
-import { Box, Wrap, Text, HStack, VStack, WrapItem } from "@chakra-ui/react";
+import { Box, Wrap, Text, HStack, VStack, WrapItem, Image } from "@chakra-ui/react";
 import { createRoot } from "react-dom/client";
 import { TreePine, NotebookPen } from "lucide-react";
 import "./Map.css";
 const L = dynamic(() => import("leaflet") as any, { ssr: false });
 import { Schema } from "mongoose";
+
+interface UserData {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  role: string;
+  profileURL?: string;
+}
 
 export function decimal128ToNumber(decimal?: Schema.Types.Decimal128): number | null {
   if (!decimal) return null;
@@ -18,7 +27,7 @@ export function decimal128ToNumber(decimal?: Schema.Types.Decimal128): number | 
   if (isNaN(num)) return null;
   return num;
 }
-function PopupContent({ tree }: { tree: ITree }) {
+function PopupContent({ tree, profileURL }: { tree: ITree; profileURL: any }) {
   const getSpeciesBadge = (species?: string) => {
     const abbreviation = species
       ? species
@@ -86,7 +95,7 @@ function PopupContent({ tree }: { tree: ITree }) {
             padding={"5px"}
             sx={{ "& > p": { p: 0, m: 0 } }}
           >
-            <Box bg={"#596334"} borderRadius={100} w="24px" h="24px"></Box>
+            <Image src={profileURL} borderRadius={100} w="24px" h="24px"></Image>
             <Text textStyle="xs">{tree.collectorName}</Text>
           </HStack>
           <Text> {new Date(tree.dateCollected).toLocaleDateString()} </Text>
@@ -172,6 +181,24 @@ function PopupContent({ tree }: { tree: ITree }) {
 
 export default function Map({ trees }: { trees: ITree[] }) {
   const mapRef = useRef<any>(null);
+  const { user, isLoaded } = useUser();
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const email = user.primaryEmailAddress.emailAddress;
+        const res = await fetch(`/api/user/${email}`);
+        const data = await res.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   useLayoutEffect(() => {
     require("leaflet/dist/leaflet.css");
@@ -197,7 +224,12 @@ export default function Map({ trees }: { trees: ITree[] }) {
         const marker = L.marker([lat, lng]).addTo(markersLayer);
         const popupDiv = document.createElement("div");
         const root = createRoot(popupDiv);
-        root.render(<PopupContent tree={tree} />);
+        root.render(
+          <PopupContent
+            tree={tree}
+            profileURL={userData?.name === tree.collectorName ? userData?.profileURL : "/pfp.png"}
+          />,
+        );
 
         marker.bindPopup(popupDiv, {
           className: "customPopup",

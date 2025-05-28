@@ -11,6 +11,7 @@ interface UserData {
   email: string;
   phoneNumber?: string;
   role: string;
+  profileURL: string;
 }
 
 export default function UserProfileMobile() {
@@ -62,7 +63,7 @@ export default function UserProfileMobile() {
                 borderRadius="full"
                 fit="cover"
                 alt="Profile Picture Not Appearing"
-                src="/pfp.png"
+                src={userData?.profileURL ? userData?.profileURL : "/pfp.png"}
               ></Image>
             </Center>
 

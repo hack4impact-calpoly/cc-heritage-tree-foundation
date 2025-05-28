@@ -57,7 +57,8 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoaded]);
 
-  useEffect(() => {
+  // commented out for now
+  /*useEffect(() => {
     if (
       isLoaded &&
       user &&
@@ -69,7 +70,7 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
     ) {
       router.replace("/editUserProfile");
     }
-  }, [isLoaded, user, isLoadingCustomUserData, hasPhoneNumber, pathName, router]);
+  }, [isLoaded, user, isLoadingCustomUserData, hasPhoneNumber, pathName, router]);*/
 
   const showNavbar =
     user && !isLoadingCustomUserData && hasPhoneNumber && pathName !== "/login" && pathName !== "/signup";
