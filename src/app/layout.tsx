@@ -104,8 +104,9 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
           minHeight: "100vh",
         }}
       >
-        {user && <ProfileCard />}
+        {user && <div style={{ width: "100vw", height: "100px" }} />}
         {children}
+        <div style={{ position: "absolute", top: "0", zIndex: "1000" }}>{user && <ProfileCard />}</div>
       </main>
     </div>
   );

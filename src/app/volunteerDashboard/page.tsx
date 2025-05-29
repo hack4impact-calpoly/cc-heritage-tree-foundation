@@ -105,7 +105,6 @@ export default function VolunteerDashboard() {
     fetchAnnouncements();
   }, []);
 
-  console.log(announcements);
   return (
     <Box>
       {isClient ? (

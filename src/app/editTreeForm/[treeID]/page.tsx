@@ -32,6 +32,7 @@ import { LuNotebookPen } from "react-icons/lu";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { useUser } from "@clerk/nextjs";
 import mongoose from "mongoose";
+import { useRouter } from "next/navigation";
 
 const TreeFormSection = chakra(FormControl, {
   baseStyle: {
@@ -76,6 +77,7 @@ const disabledStyle = {
 export default function EditTreeEntryForm() {
   const params = useParams(); // to get params.treeID
   const { user } = useUser();
+  const router = useRouter();
   const [selectedImages, setSelectedImages] = useState<Array<File | string>>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [formData, setFormData] = useState<FormValues>({
@@ -308,7 +310,7 @@ export default function EditTreeEntryForm() {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Tree data submitted successfully!");
+        router.push("/success");
         // Reset form
         setFormData({
           treeLocation: "",

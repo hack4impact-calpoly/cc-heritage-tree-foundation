@@ -104,6 +104,8 @@ export default function Navbar() {
     }
   };
 
+  useEffect(() => {}, [(window as any).globalUserRole]);
+
   // mobile navbar
   if (showMobileNav) {
     return (
@@ -254,7 +256,8 @@ export default function Navbar() {
         </Box>
         <VStack>
           {NAV_ITEMS.map((NavItem) => {
-            if (NavItem.path === "/volunteers" && !isAdmin) return null;
+            if (NavItem.path === "/volunteers" && (!isAdmin || localStorage.getItem("globalUserRole") == "Volunteer"))
+              return null;
             return (
               <Button
                 key={NavItem.text}

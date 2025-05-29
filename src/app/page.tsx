@@ -16,9 +16,11 @@ export default function SignupRedirect() {
     }
 
     const isAdmin = role === "org:admin";
-    if (!isAdmin) {
+    if (!isAdmin && !localStorage.getItem("globalUserRole")) {
+      localStorage.setItem("globalUserRole", "Volunteer");
       router.push("/volunteerDashboard");
     }
+    localStorage.setItem("globalUserRole", "Admin");
     router.push("/adminDashboard");
   }, [user, isLoaded, router]);
 

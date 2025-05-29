@@ -44,7 +44,14 @@ export default function ProfileCard() {
 
   return (
     <SignedIn>
-      <Flex justify="flex-end" gap="4" h="100px" w="100vw" transform={isMobile ? "" : "translate(-15rem)"}>
+      <Flex
+        justify="flex-end"
+        gap="4"
+        h="100px"
+        w="100vw"
+        transform={isMobile ? "" : "translate(-15rem)"}
+        zIndex={2000}
+      >
         <UserCardPopover>
           <Box
             as="div"
@@ -68,7 +75,7 @@ export default function ProfileCard() {
               <div>
                 {user?.firstName} {user?.lastName}
               </div>
-              <div style={{ color: "gray" }}>{isAdmin ? "Admin" : "Volunteer"}</div>
+              <div style={{ color: "gray" }}>{isAdmin ? localStorage.getItem("globalUserRole") : "Volunteer"}</div>
             </Flex>
             <Flex gap="4">
               <Image src="/downArrow.svg" alt="Down Arrow" boxSize="24px" />
