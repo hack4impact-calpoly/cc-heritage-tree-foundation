@@ -9,6 +9,7 @@ import "./globals.css";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { IUser } from "@/database/userSchema";
+import { OrganizationSwitcher } from "@clerk/nextjs";
 
 function LayoutInnerContent({ children }: { children: React.ReactNode }) {
   const pathName = usePathname();

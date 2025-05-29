@@ -91,6 +91,7 @@ export default function TreeEntryForm() {
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(1);
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -257,7 +258,9 @@ export default function TreeEntryForm() {
   };
 
   // Clean up image previews when component unmounts
+  // Clean up image previews when component unmounts
   useEffect(() => {
+    console.log(3);
     return () => {
       imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
     };
@@ -266,6 +269,8 @@ export default function TreeEntryForm() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  console.log("hello");
 
   return (
     <div>
@@ -296,6 +301,7 @@ export default function TreeEntryForm() {
                 Example format: (35.555386, -120.713429)
               </Text>
               <Button
+                type="button"
                 mt={2}
                 size="sm"
                 backgroundColor={COLORS.Olive}
@@ -343,6 +349,7 @@ export default function TreeEntryForm() {
               <VStack role="group" aria-labelledby="treeSpecies" align="flex-start" spacing={3}>
                 {TREE_TYPE_DATA.map((data) => (
                   <Button
+                    type="button"
                     key={data.species}
                     name={data.species}
                     borderRadius="1rem"
@@ -411,6 +418,7 @@ export default function TreeEntryForm() {
                   <Flex id="treeHealth" gap="3" justify="left">
                     {[...Array.from(Array(10).keys())].reverse().map((n) => (
                       <Button
+                        type="button"
                         key={n}
                         value={n}
                         backgroundColor={treeHealthColors[n][0]}
@@ -436,6 +444,7 @@ export default function TreeEntryForm() {
                       {[...Array.from(Array(10).keys())].reverse().map((n) => {
                         return (
                           <Button
+                            type="button"
                             key={n}
                             value={n}
                             backgroundColor={treeHealthColors[n][0]}
@@ -470,6 +479,7 @@ export default function TreeEntryForm() {
                 <SimpleGrid id="treeIssues" columns={{ base: 2, md: 2 }} spacing="1rem">
                   {treeIssues.map((issue) => (
                     <Button
+                      type="button"
                       key={issue}
                       name={issue}
                       w="100%"
@@ -515,6 +525,7 @@ export default function TreeEntryForm() {
                 <SimpleGrid id="treeIssues" columns={{ base: 2, md: 2 }} spacing="1rem">
                   {treeIssues.map((issue) => (
                     <Button
+                      type="button"
                       key={issue}
                       name={issue}
                       w="100%"
@@ -606,6 +617,7 @@ export default function TreeEntryForm() {
                         />
                       </Box>
                       <CloseButton
+                        type="button"
                         size="sm"
                         color="white"
                         bg="red.500"

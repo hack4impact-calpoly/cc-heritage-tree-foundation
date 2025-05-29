@@ -11,10 +11,16 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     console.log(formData);
+
+    // Get current count of trees to generate the next treeID
+    const treeCount = await Tree.countDocuments();
+    const nextTreeID = treeCount + 1;
+
     // Handle multiple file uploads
     const files = formData.getAll("files") as File[];
     const imageUrls: string[] = [];
     console.log(files);
+
     // Upload all files to S3
     for (const file of files) {
       if (file instanceof File && file.size > 0) {
@@ -38,6 +44,7 @@ export async function POST(req: NextRequest) {
 
     // Collect the rest of the fields
     const treeData = {
+      treeID: nextTreeID, // Add the sequential ID here
       collectorName: formData.get("collectorName"),
       dateCollected: new Date(formData.get("dateCollected") as string),
       species: formData.get("species"),
@@ -50,19 +57,33 @@ export async function POST(req: NextRequest) {
       treeCondition: Array.from(formData.entries())
         .filter(([key]) => key.startsWith("treeCondition["))
         .map(([, value]) => value),
-      photo: imageUrls, // Now storing an array of image URLs
+      photo: imageUrls,
     };
 
     const newTree = new Tree(treeData);
-
     const createdTree = await newTree.save();
 
     revalidateTag("trees");
 
-    return NextResponse.json({ message: "Success", data: createdTree }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: "Success",
+        data: createdTree,
+      },
+      {
+        status: 200,
+      },
+    );
   } catch (error) {
     console.error("Error submitting tree:", error);
-    return NextResponse.json({ error: "Error processing form" }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Error processing form",
+      },
+      {
+        status: 500,
+      },
+    );
   }
 }
 

@@ -2,6 +2,7 @@ import mongoose, { Decimal128, Schema } from "mongoose";
 
 export type ITree = {
   _id: string;
+  treeId: Decimal128;
   collectorName: string;
   dateCollected: Date;
   gpsCoordinates: Decimal128[];
@@ -16,6 +17,7 @@ export type ITree = {
 };
 
 const TreeSchema = new Schema<ITree>({
+  treeId: { type: mongoose.Types.Decimal128, required: true },
   collectorName: { type: String, required: true },
   dateCollected: { type: Date, required: true },
   gpsCoordinates: { type: [mongoose.Types.Decimal128], required: true },

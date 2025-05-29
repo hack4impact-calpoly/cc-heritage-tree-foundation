@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 
 const CreateAnnouncement = () => {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [isClient, setIsClient] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -48,6 +48,16 @@ const CreateAnnouncement = () => {
   const [allUsers, setAllUsers] = useState<{ name: string; email: string; role: string }[]>([]);
   const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
   const [activeGroup, setActiveGroup] = useState<"all" | "admin" | null>(null);
+
+  let role = null;
+  if (isLoaded && user) {
+    role = user.organizationMemberships?.[0]?.role;
+  }
+
+  const isAdmin = role === "org:admin";
+  if (!isAdmin) {
+    router.push("/volunteerDashboard");
+  }
 
   useEffect(() => {
     const fetchUsers = async () => {

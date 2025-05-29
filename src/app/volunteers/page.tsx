@@ -24,6 +24,9 @@ import { SquarePen, SearchIcon, FileDown, ChevronLeft, ChevronRight, Menu } from
 import React, { useState, useEffect } from "react";
 import { CenterStyle } from "@/styles/AllStyle";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation"; // Added usePathname
+
 function Volunteers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -31,6 +34,8 @@ function Volunteers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [isClient, setIsClient] = useState(false);
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
 
   const rowsPerPage = 7;
 
@@ -38,6 +43,17 @@ function Volunteers() {
   const idxLastUser = currentPage * rowsPerPage;
   const idxFirstUser = idxLastUser - rowsPerPage;
   const paginatedUsers = filteredUsers.slice(idxFirstUser, idxLastUser);
+
+  let role = null;
+  if (isLoaded && user) {
+    role = user.organizationMemberships?.[0]?.role;
+  }
+
+  const isAdmin = role === "org:admin";
+  if (!isAdmin) {
+    router.push("/volunteerDashboard");
+  }
+
   //Fetch Users
   useEffect(() => {
     const fetchUsers = async () => {

@@ -86,7 +86,7 @@ const getSpeciesColors = (species: string) => {
 };
 
 function AdminDashboard() {
-  const user = useUser();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const [treeData, setTreeData] = useState<ITree[]>([]);
@@ -97,70 +97,85 @@ function AdminDashboard() {
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
 
+  let role = null;
+  if (isLoaded && user) {
+    role = user.organizationMemberships?.[0]?.role;
+  }
+
+  const isAdmin = role === "org:admin";
+  if (!isAdmin) {
+    router.push("/volunteerDashboard");
+  }
+
   useEffect(() => {
-    const fetchTreeCount = async () => {
-      const response = await fetch("/api/tree");
-      if (!response.ok) {
-        throw new Error(`Status: ${response.status}`);
-      }
-      const trees: Array<ITree> = await response.json();
-      setTreeData(trees);
-      trees.forEach((tree: ITree) => {
-        const treeDateLogged = new Date(tree.dateCollected);
-        if (treeDateLogged.getFullYear() == currentYear) {
-          const treeMonthLogged = treeDateLogged.getMonth();
-          if (treeMonthLogged == currentMonth) {
-            setTreesThisMonth((prevCount) => prevCount + 1);
-          } else if (treeMonthLogged == currentMonth - 1) {
-            setTreesLastMonth((prevCount) => prevCount + 1);
-          }
-          setTreesLoggedYear((prevCount) => prevCount + 1);
+    const fetchAllTreeData = async () => {
+      try {
+        const response = await fetch("/api/tree");
+        if (!response.ok) {
+          throw new Error(`Status: ${response.status}`);
         }
-      });
-    };
-    fetchTreeCount().catch(console.error);
-  }, [currentMonth, currentYear]);
 
-  useEffect(() => {
-    const fetchWorstTrees = async () => {
-      const response = await fetch("/api/tree");
-      if (!response.ok) {
-        throw new Error(`HTTP ERROR Status:${response.status}`);
+        const trees: Array<ITree> = await response.json();
+
+        // Process all data at once
+        let yearCount = 0;
+        let monthCount = 0;
+        let lastMonthCount = 0;
+
+        trees.forEach((tree: ITree) => {
+          const treeDateLogged = new Date(tree.dateCollected);
+          if (treeDateLogged.getFullYear() === currentYear) {
+            const treeMonthLogged = treeDateLogged.getMonth();
+            if (treeMonthLogged === currentMonth) {
+              monthCount++;
+            } else if (treeMonthLogged === currentMonth - 1) {
+              lastMonthCount++;
+            }
+            yearCount++;
+          }
+        });
+
+        // Find worst 3 trees
+        const sortedTrees = [...trees].sort(
+          (a, b) => parseFloat(a.treeQuality.toString()) - parseFloat(b.treeQuality.toString()),
+        );
+
+        // Update all state at once
+        setTreeData(trees);
+        setTreesLoggedYear(yearCount);
+        setTreesThisMonth(monthCount);
+        setTreesLastMonth(lastMonthCount);
+        setWorst3Trees(sortedTrees.slice(0, 3));
+      } catch (error) {
+        console.error("Error fetching tree data:", error);
       }
-      const trees: Array<ITree> = await response.json();
-      trees.forEach((tree) => {
-        // console.log(tree.treeQuality);
-        // console.log(typeof tree.treeQuality);
-      });
-      // console.log(typeof trees[0]);
-      // console.log(trees[0].treeQuality ? parseFloat(trees[0].treeQuality) : 11);
-      trees.sort((a, b) => parseFloat(a.treeQuality.toString()) - parseFloat(b.treeQuality.toString()));
-
-      setWorst3Trees([trees[0], trees[1], trees[2]]);
     };
-    fetchWorstTrees().catch(console.error);
-  }, []);
+
+    fetchAllTreeData();
+  }, [currentMonth, currentYear]);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
   return (
     <Box>
       {isClient ? (
         <Box>
           <BrowserView>
-            <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center">
+            <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center" width="100%">
               <Grid
                 templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
                 templateColumns={{ base: "1fr", md: "repeat(8, 1fr)" }}
                 gap={4}
                 borderWidth={"4"}
                 borderColor={"red"}
+                width="90%"
               >
                 {/* Welcome Message */}
                 <GridItem colSpan={{ base: 1, md: 8 }} rowSpan={1} display="flex" alignItems="center">
                   <Text fontSize="3xl" fontWeight="bold" color="#596334">
-                    Welcome back, {user.user ? user.user.firstName : "User"}!
+                    Welcome back, {user ? user.firstName : "User"}!
                   </Text>
                 </GridItem>
 
@@ -205,11 +220,11 @@ function AdminDashboard() {
                       <Table size="sm" variant="simple">
                         <Thead bg="#DFED98">
                           <Tr h="40px">
-                            <Th width="20%">Tree ID</Th>
+                            <Th width="10%">Tree ID</Th>
                             <Th width="20%">Species</Th>
                             <Th width="20%">Condition</Th>
                             <Th width="20%">Date Recorded</Th>
-                            <Th width="20%" justifyItems="center">
+                            <Th width="30%" justifyItems="center">
                               Volunteer
                             </Th>
                           </Tr>
@@ -218,7 +233,9 @@ function AdminDashboard() {
                           {worst3Trees.map((tree) =>
                             tree ? (
                               <Tr key={tree._id}>
-                                <Td>{tree._id}</Td>
+                                <Td maxWidth="100px" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+                                  {tree._id}
+                                </Td>
                                 <Td>
                                   <Box
                                     {...IconStyle}
@@ -313,7 +330,7 @@ function AdminDashboard() {
                 mt={5}
               >
                 <Text fontSize="3xl" fontWeight="bold" color="#596334">
-                  Welcome back, {user.user ? user.user.firstName : "User"}!
+                  Welcome back, {user ? user.firstName : "User"}!
                 </Text>
 
                 <Flex justifyContent={"space-between"} mt={5}>
