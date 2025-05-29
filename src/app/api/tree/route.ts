@@ -4,6 +4,14 @@ import Tree, { ITree } from "@/database/treeSchema";
 import s3 from "@/app/api/tree/aws";
 import { revalidateTag } from "next/cache";
 import { Buffer } from "buffer";
+import mongoose from "mongoose";
+
+const counterSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  sequenceValue: { type: Number, default: 0 },
+});
+
+const Counter = mongoose.models.Counter || mongoose.model("Counter", counterSchema);
 
 export async function POST(req: NextRequest) {
   await connectDB();
@@ -12,9 +20,16 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     console.log(formData);
 
-    // Get current count of trees to generate the next treeID
-    const treeCount = await Tree.countDocuments();
-    const nextTreeID = treeCount + 1;
+    // Get next sequential ID using findOneAndUpdate (atomic operation)
+    const counter = await Counter.findOneAndUpdate(
+      { _id: "treeId" },
+      { $inc: { sequenceValue: 1 } },
+      { new: true, upsert: true },
+    );
+
+    const nextTreeID = counter.sequenceValue;
+
+    console.log(nextTreeID);
 
     // Handle multiple file uploads
     const files = formData.getAll("files") as File[];
@@ -44,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     // Collect the rest of the fields
     const treeData = {
-      treeID: nextTreeID, // Add the sequential ID here
+      treeId: nextTreeID, // Add the sequential ID here
       collectorName: formData.get("collectorName"),
       dateCollected: new Date(formData.get("dateCollected") as string),
       species: formData.get("species"),

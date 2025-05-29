@@ -38,7 +38,6 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
         .then((data: IUser | null) => {
           const plainData = data ? JSON.parse(JSON.stringify(data)) : null;
           setCustomUserData(plainData);
-
           if (plainData && plainData.phoneNumber && plainData.phoneNumber.trim() !== "") {
             setHasPhoneNumber(true);
           } else {
@@ -56,7 +55,7 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
     } else if (isLoaded && !user) {
       setIsLoadingCustomUserData(false);
     }
-  }, [user, isLoaded]);
+  }, [user?.id, isLoaded]); // Changed from [user, isLoaded] to [user?.id, isLoaded]
 
   // commented out for now
   /*useEffect(() => {

@@ -158,6 +158,10 @@ function AdminDashboard() {
     setIsClient(true);
   }, []);
 
+  useEffect(() => {
+    console.log(worst3Trees);
+  }, [worst3Trees]);
+
   return (
     <Box>
       {isClient ? (
@@ -234,7 +238,7 @@ function AdminDashboard() {
                             tree ? (
                               <Tr key={tree._id}>
                                 <Td maxWidth="100px" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
-                                  {tree._id}
+                                  {tree.treeId ? parseFloat((tree.treeId as any).$numberDecimal) : "N/A"}{" "}
                                 </Td>
                                 <Td>
                                   <Box

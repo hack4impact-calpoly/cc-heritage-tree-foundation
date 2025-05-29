@@ -124,7 +124,7 @@ export default function TreeTable() {
     const results = trees.filter((tree: ITree) => {
       const searchValue = searchTerm.toLowerCase();
       return (
-        tree._id?.toLowerCase().includes(searchValue) ||
+        tree.treeId?.toString().includes(searchValue) ||
         tree.collectorName?.toLowerCase().includes(searchValue) ||
         new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
         tree.dbh?.toString().includes(searchValue) ||
@@ -154,13 +154,13 @@ export default function TreeTable() {
     const dataSheet = XLSX.utils.json_to_sheet(
       trees.map((tree: ITree, index) => ({
         Index: index,
-        "Tree Id": tree._id,
+        "Tree Id": tree.treeId ? parseFloat((tree.treeId as any).$numberDecimal) : "N/A",
         "Collector Name": tree.collectorName,
         "Date Collected": new Date(tree.dateCollected).toLocaleDateString(),
         "GPS Coordinates": Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ") : tree.gpsCoordinates,
         "DBH (inches)": tree.dbh.toString(),
         "Tree Canopy Breadth": tree.canopyBreadth.toString(),
-        "Tree Height": tree.treeHeight.toString(),
+        "Tree Height": tree.treeHeight ? tree.treeHeight.toString() : "N/A",
         Species: tree.species,
         "Tree Quality": tree.treeQuality.toString(),
         "Tree Condition": Array.isArray(tree.treeCondition) ? tree.treeCondition.join(", ") : tree.treeCondition,
@@ -190,7 +190,7 @@ export default function TreeTable() {
       const searchValue = searchTerm.toLowerCase();
       filtered = filtered.filter((tree: ITree) => {
         return (
-          tree._id?.toLowerCase().includes(searchValue) ||
+          tree.treeId.toString().includes(searchValue) ||
           tree.collectorName?.toLowerCase().includes(searchValue) ||
           new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
           tree.dbh?.toString().includes(searchValue) ||
@@ -337,7 +337,7 @@ export default function TreeTable() {
                               {paginatedTrees.length > 0 ? (
                                 paginatedTrees.map((tree: ITree, index) => (
                                   <Tr key={tree._id}>
-                                    <Td>{index + 1}</Td>
+                                    <Td>{tree.treeId ? parseFloat((tree.treeId as any).$numberDecimal) : "N/A"}</Td>
                                     <Td>
                                       <Button
                                         style={{

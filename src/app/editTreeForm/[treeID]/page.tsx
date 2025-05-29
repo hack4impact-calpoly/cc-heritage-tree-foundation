@@ -116,7 +116,7 @@ export default function EditTreeEntryForm() {
                 : "",
             treeType: treeInfo.species ? treeInfo.species : "",
             treeSpecs: {
-              treeHeight: treeInfo.treeHeight["$numberDecimal"] ? treeInfo.treeHeight["$numberDecimal"] : 0, // height info not kept
+              treeHeight: treeInfo.treeHeight ? treeInfo.treeHeight.$numberDecimal : 0, // height info not kept
               canopySpread: treeInfo.canopyBreadth["$numberDecimal"] ? treeInfo.canopyBreadth["$numberDecimal"] : "",
               trunkDBH: treeInfo.dbh["$numberDecimal"] ? treeInfo.dbh["$numberDecimal"] : "",
             },
