@@ -337,7 +337,7 @@ export default function TreeTable() {
                               {paginatedTrees.length > 0 ? (
                                 paginatedTrees.map((tree: ITree, index) => (
                                   <Tr key={tree._id}>
-                                    <Td>{tree.treeId ? parseFloat((tree.treeId as any).$numberDecimal) : "N/A"}</Td>
+                                    <Td>{tree.treeId ? parseFloat((tree.treeId as any).$numberDecimal) : ""}</Td>
                                     <Td>
                                       <Button
                                         style={{
