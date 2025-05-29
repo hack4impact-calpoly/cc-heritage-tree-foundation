@@ -12,6 +12,7 @@ import {
   Center,
   Input,
   FormControl,
+  Spinner,
 } from "@chakra-ui/react";
 import React, { useRef, useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
@@ -40,6 +41,7 @@ export default function EditUserProfile() {
   const [userId, setUserId] = useState<string | null>(null);
   const [existingEmailId, setExistingEmailId] = useState<string | null>(null);
   const [mongoUserId, setMongoUserId] = useState<object | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   // create file input ref
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -102,23 +104,29 @@ export default function EditUserProfile() {
   const uploadFile = async (file: any) => {
     if (!file) return;
 
-    // create a formData
-    const form = new FormData();
-    form.append("file", file);
+    setUploading(true);
 
-    const response = await fetch("/api/profile/", {
-      method: "POST",
-      body: form,
-    });
+    try {
+      // create a formData
+      const form = new FormData();
+      form.append("file", file);
 
-    if (response.ok) {
-      alert("Upload successful!");
+      const response = await fetch("/api/profile/", {
+        method: "POST",
+        body: form,
+      });
 
-      // update profileURL
-      const data = await response.json();
-      setProfileURL(data.url);
-    } else {
-      alert("Upload failed!");
+      if (response.ok) {
+        alert("Upload successful!");
+
+        // update profileURL
+        const data = await response.json();
+        setProfileURL(data.url);
+      } else {
+        alert("Upload failed!");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -266,16 +274,21 @@ export default function EditUserProfile() {
                     <Center>
                       <Box position="relative" w="300px" h="300px">
                         {/* profile pic */}
-                        <Image
-                          ml={10}
-                          mt={10}
-                          boxSize="300px"
-                          borderRadius="full"
-                          fit="cover"
-                          alt="Profile Picture Not Appearing"
-                          src={profileURL}
-                        ></Image>
-
+                        {uploading ? (
+                          <Center w="100%" h="100%">
+                            <Spinner size="xl" color="#596334" />
+                          </Center>
+                        ) : (
+                          <Image
+                            ml={10}
+                            mt={10}
+                            boxSize="300px"
+                            borderRadius="full"
+                            fit="cover"
+                            alt="Profile Picture Not Appearing"
+                            src={profileURL}
+                          ></Image>
+                        )}
                         {/* icon when hovered */}
                         <Box
                           position="absolute"
