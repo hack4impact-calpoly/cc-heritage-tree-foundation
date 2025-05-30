@@ -207,7 +207,7 @@ function Volunteers() {
                             <Th>User</Th>
                             <Th>Role</Th>
                             <Th>Email</Th>
-                            {/*<Th>Phone Number</Th>*/}
+                            <Th>Phone Number</Th>
                             <Th>Activity</Th>
                             <Th></Th>
                           </Tr>
@@ -228,10 +228,11 @@ function Volunteers() {
                                   </Box>
                                 </Td>
                                 <Td>{user.email}</Td>
-                                {/*
-                                    <Td>
-                                      {user.phoneNumber?.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") || "N/A"}
-                                    </Td>*/}
+
+                                <Td>
+                                  {user.phoneNumber?.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") ||
+                                    "N/A"}
+                                </Td>
                                 <Td>
                                   <Box {...CenterStyle} height="100%">
                                     <Box
