@@ -55,6 +55,22 @@ export default function TreeTable() {
   // fetch trees
   const [isClient, setIsClient] = useState(false);
 
+  const getTreeId = (treeId: any): string => {
+    if (!treeId) return "N/A";
+
+    // Handle Decimal128 objects
+    if (typeof treeId === "object" && treeId.$numberDecimal) {
+      return parseFloat(treeId.$numberDecimal).toString();
+    }
+
+    // Handle regular numbers or strings
+    if (typeof treeId === "number" || typeof treeId === "string") {
+      return treeId.toString();
+    }
+
+    return "N/A";
+  };
+
   const getRedOrangeColor = (value: string | number): string => {
     const num = typeof value === "string" ? Number(value) : value;
     if (isNaN(num)) return "#B6E1EF"; // fallback
@@ -124,7 +140,7 @@ export default function TreeTable() {
     const results = trees.filter((tree: ITree) => {
       const searchValue = searchTerm.toLowerCase();
       return (
-        tree.treeId?.toString().includes(searchValue) ||
+        getTreeId(tree.treeId).includes(searchValue) ||
         tree.collectorName?.toLowerCase().includes(searchValue) ||
         new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
         tree.dbh?.toString().includes(searchValue) ||
@@ -154,7 +170,7 @@ export default function TreeTable() {
     const dataSheet = XLSX.utils.json_to_sheet(
       trees.map((tree: ITree, index) => ({
         Index: index,
-        "Tree Id": tree.treeId ? parseFloat((tree.treeId as any).$numberDecimal) : "N/A",
+        "Tree Id": getTreeId(tree.treeId),
         "Collector Name": tree.collectorName,
         "Date Collected": new Date(tree.dateCollected).toLocaleDateString(),
         "GPS Coordinates": Array.isArray(tree.gpsCoordinates) ? tree.gpsCoordinates.join(", ") : tree.gpsCoordinates,
@@ -190,7 +206,7 @@ export default function TreeTable() {
       const searchValue = searchTerm.toLowerCase();
       filtered = filtered.filter((tree: ITree) => {
         return (
-          tree.treeId.toString().includes(searchValue) ||
+          getTreeId(tree.treeId).includes(searchValue) ||
           tree.collectorName?.toLowerCase().includes(searchValue) ||
           new Date(tree.dateCollected)?.toLocaleDateString().includes(searchValue) ||
           tree.dbh?.toString().includes(searchValue) ||
@@ -337,7 +353,7 @@ export default function TreeTable() {
                               {paginatedTrees.length > 0 ? (
                                 paginatedTrees.map((tree: ITree, index) => (
                                   <Tr key={tree._id}>
-                                    <Td>{tree.treeId ? parseFloat((tree.treeId as any).$numberDecimal) : ""}</Td>
+                                    <Td>{getTreeId(tree.treeId)}</Td>
                                     <Td>
                                       <Button
                                         style={{
@@ -375,7 +391,8 @@ export default function TreeTable() {
                                           fit="cover"
                                           alt="Profile Picture"
                                           boxSize={8}
-                                          src={profileURL != "" ? profileURL : "/pfp.png"}
+                                          /*src={profileURL != "" ? profileURL : "/pfp.png"}*/
+                                          src="/pfp.png"
                                         ></Image>
                                         <Text>{tree.collectorName}</Text>
                                       </HStack>
