@@ -37,13 +37,6 @@ const UserCardPopover: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }, []);
 
-  // Redirect non-admin users
-  //   useEffect(() => {
-  //     if (isLoaded && !isAdmin) {
-  //       router.push("/volunteerDashboard");
-  //     }
-  //   }, [isLoaded, isAdmin, router]);
-
   const roleChange = (newRole: string) => {
     setGlobalRole(newRole);
     if (typeof window !== "undefined") {
