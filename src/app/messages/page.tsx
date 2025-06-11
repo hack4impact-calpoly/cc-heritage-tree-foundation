@@ -352,7 +352,7 @@ function Messages() {
                     >
                       Inbox
                     </button>
-                    {isAdmin && (
+                    {isAdmin && localStorage.getItem("globalUserRole") == "Admin" && (
                       <button
                         className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
                         onClick={() => {
@@ -364,7 +364,7 @@ function Messages() {
                       </button>
                     )}
                   </div>
-                  {isAdmin && (
+                  {isAdmin && localStorage.getItem("globalUserRole") == "Admin" && (
                     <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
                       New Message +
                     </button>
@@ -657,7 +657,7 @@ function Messages() {
                     >
                       Inbox
                     </button>
-                    {isAdmin && (
+                    {isAdmin && localStorage.getItem("globalUserRole") == "Admin" && (
                       <button
                         className={`${styles.tab} ${activeTab === "sent" ? styles.activeTab : ""}`}
                         style={{ marginLeft: "10px" }}
@@ -670,7 +670,7 @@ function Messages() {
                       </button>
                     )}
                   </div>
-                  {isAdmin && (
+                  {isAdmin && localStorage.getItem("globalUserRole") == "Admin" && (
                     <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
                       New Message +
                     </button>

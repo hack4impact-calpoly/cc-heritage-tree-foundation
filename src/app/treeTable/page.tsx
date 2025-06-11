@@ -96,7 +96,7 @@ export default function TreeTable() {
         // Fetch trees based on role
         let apiString: string;
 
-        if (userData?.role === "Volunteer") {
+        if (userData?.role === "Volunteer" || localStorage.getItem("globalUserRole") == "Volunteer") {
           apiString = `/api/tree?collectorName=${user.fullName}`;
         } else if (userData?.role === "Admin") {
           apiString = "/api/tree";
