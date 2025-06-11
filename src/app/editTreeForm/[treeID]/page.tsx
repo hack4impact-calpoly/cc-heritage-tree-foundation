@@ -532,7 +532,7 @@ export default function EditTreeEntryForm() {
           </HStack>
 
           {/* Image previews */}
-          {imagePreviews.length > 0 && (
+          {imagePreviews?.length > 0 && (
             <Wrap spacing={3} mb={4}>
               {imagePreviews.map((preview, index) => (
                 <WrapItem key={index} position="relative">
@@ -575,7 +575,7 @@ export default function EditTreeEntryForm() {
               Choose Images
             </Box>
             <Text fontSize="sm" color="gray.500" mt={2}>
-              {selectedImages.length} images selected
+              {selectedImages?.length} images selected
             </Text>
           </label>
 
