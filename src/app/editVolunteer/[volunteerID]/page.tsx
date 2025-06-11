@@ -14,21 +14,31 @@ import {
   Spinner,
   VStack,
   HStack,
+  RadioGroup,
+  Radio,
 } from "@chakra-ui/react";
 import React, { useRef, useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { isMobile } from "react-device-detect";
 import { FileDown } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 export default function EditUserProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [profileURL, setProfileURL] = useState("/pfp.png");
+  const [role, setRole] = useState("Volunteer");
+  const [activity, setActivity] = useState("Active");
+
   const router = useRouter();
+  const params = useParams();
+  const targetUserId = params?.volunteerID;
+
+  // Store target user's Clerk ID for organization role updates
+  const [targetClerkUserId, setTargetClerkUserId] = useState<string | null>(null);
 
   // to compare changes
   const [originalUserData, setOriginalUserData] = useState({
@@ -36,13 +46,13 @@ export default function EditUserProfile() {
     email: "",
     phoneNumber: "",
     profileURL: "/pfp.png",
+    role: "Volunteer",
+    activity: "Active",
   });
 
   const { user, isLoaded } = useUser();
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [existingEmailId, setExistingEmailId] = useState<string | null>(null);
-  const [mongoUserId, setMongoUserId] = useState<object | null>(null);
+  const [targetMongoUserId, setTargetMongoUserId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
   // create file input ref
@@ -61,6 +71,7 @@ export default function EditUserProfile() {
       setToastStatus(null);
     }, 3000);
   };
+
   const [isClient, setIsClient] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
 
@@ -69,39 +80,129 @@ export default function EditUserProfile() {
     setIsMobileDevice(isMobile);
   }, []);
 
-  /* This is put in for testing only, please delete this code  */
+  // Function to update Clerk organization role
+  const updateClerkRole = async (clerkUserId: string, newRole: string) => {
+    try {
+      if (!user?.organizationMemberships?.[0]?.organization?.id) {
+        throw new Error("No organization found");
+      }
+
+      const organizationId = user.organizationMemberships[0].organization.id;
+      const clerkRole = newRole === "Admin" ? "org:admin" : "org:member";
+
+      // Update the organization membership role
+      const response = await fetch("/api/clerk/update-role", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: clerkUserId,
+          organizationId: organizationId,
+          role: clerkRole,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update Clerk role");
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error updating Clerk role:", error);
+      throw error;
+    }
+  };
+
+  const addUserToOrganization = async (clerkUserId: string, newRole: string) => {
+    try {
+      if (!user?.organizationMemberships?.[0]?.organization?.id) {
+        throw new Error("No organization found");
+      }
+
+      const organizationId = user.organizationMemberships[0].organization.id;
+      const clerkRole = newRole === "Admin" ? "org:admin" : "org:member";
+
+      // Try to add user directly to organization
+      const response = await fetch("/api/clerk/add-to-org", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: clerkUserId,
+          organizationId: organizationId,
+          role: clerkRole,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to add user to organization");
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error adding user to organization:", error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) return;
+    const fetchTargetUserData = async () => {
+      if (!targetUserId) {
+        showToast("No user ID provided in URL", "error");
+        setLoading(false);
+        return;
+      }
 
       try {
-        const email = user.primaryEmailAddress.emailAddress.toLowerCase();
-        setUserId(user.id); // clerk id
-        setExistingEmailId(user.primaryEmailAddressId);
-        const res = await fetch(`/api/user/${email}`);
-        const data = await res.json();
-        setMongoUserId(data._id);
+        // Fetch user by MongoDB _id
+        const res = await fetch(`/api/user/${targetUserId}`);
 
+        if (!res.ok) {
+          throw new Error("User not found");
+        }
+
+        const data = await res.json();
+
+        // Fetch Clerk user ID by email
+        const clerkUserId = await fetchClerkUserByEmail(data.email);
+        console.log(clerkUserId);
+        if (clerkUserId) {
+          setTargetClerkUserId(clerkUserId);
+        } else {
+          console.warn("Could not find Clerk user for email:", data.email);
+        }
+
+        setTargetMongoUserId(data._id);
         setName(data.name || "");
         setEmail(data.email || "");
         setPhoneNumber(data.phoneNumber || "");
         setProfileURL(data.profileURL || "/pfp.png");
+        setRole(data.role || "Volunteer");
+        setActivity(data.active ? "Active" : "Inactive");
+
+        // Store original data for comparison
         setOriginalUserData({
           name: data.name || "",
           email: data.email || "",
           phoneNumber: data.phoneNumber || "",
           profileURL: data.profileURL || "/pfp.png",
+          role: data.role || "Volunteer",
+          activity: !data.active ? "Inactive" : "Active",
         });
       } catch (error) {
-        console.error("Failed to fetch user data:", error);
+        console.error("Failed to fetch target user data:", error);
+        showToast("Failed to load user data", "error");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserData();
-  }, [isLoaded, user]);
+    fetchTargetUserData();
+  }, [targetUserId]);
 
   const uploadFile = async (file: any) => {
     if (!file) return;
@@ -119,84 +220,143 @@ export default function EditUserProfile() {
       });
 
       if (response.ok) {
-        alert("Upload successful!");
+        showToast("Upload successful!", "success");
 
         // update profileURL
         const data = await response.json();
         setProfileURL(data.url);
       } else {
-        alert("Upload failed!");
+        showToast("Upload failed!", "error");
       }
     } finally {
       setUploading(false);
     }
   };
 
-  const saveUserInfo = async () => {
+  const fetchClerkUserByEmail = async (email: String) => {
     try {
-      let clerkUpdated = false;
-      let mongoUpdated = false;
+      const response = await fetch("/api/clerk/user-by-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
+      if (!response.ok) {
+        throw new Error("User not found");
+      }
+
+      const userData = await response.json();
+      return userData.userId;
+    } catch (error) {
+      console.error("Error fetching Clerk user:", error);
+      return null;
+    }
+  };
+
+  const saveUserInfo = async () => {
+    if (!targetMongoUserId) {
+      showToast("No user ID found", "error");
+      return;
+    }
+
+    try {
       const updatedFields: any = {};
 
+      // Check for changes
       if (name !== originalUserData.name) updatedFields.name = name;
       if (email !== originalUserData.email) updatedFields.email = email;
       if (phoneNumber !== originalUserData.phoneNumber) updatedFields.phoneNumber = phoneNumber;
       if (profileURL !== originalUserData.profileURL) updatedFields.profileURL = profileURL;
+      if (activity !== originalUserData.activity) updatedFields.active = activity === "Active" ? true : false;
+      if (role !== originalUserData.role) updatedFields.role = role;
 
-      // === Clerk update (only if email changed) ===
-      if (updatedFields.email) {
-        const response = await fetch("/api/clerk", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId,
-            newEmail: updatedFields.email.toLowerCase(),
-            existingEmailId,
-          }),
-        });
-
-        const clerk_data = await response.json();
-        if (!response.ok) throw new Error(clerk_data.error || "Failed to update Clerk.");
-        console.log("User updated on Clerk:", clerk_data.user);
-        clerkUpdated = true;
-      }
-
-      // === MongoDB update ===
-      if (Object.keys(updatedFields).length > 0) {
-        const res = await fetch(`/api/user/${mongoUserId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedFields),
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to update MongoDB.");
-        console.log("User updated on MongoDB:", data.user);
-        mongoUpdated = true;
-      }
-
-      if (!clerkUpdated && !mongoUpdated) {
+      if (Object.keys(updatedFields).length === 0) {
         showToast("No changes made.", "error");
         return;
       }
 
-      showToast("You have successfully made changes.", "success");
+      // Handle Clerk organization membership
+      if (role !== originalUserData.role) {
+        console.log(targetClerkUserId);
+        if (targetClerkUserId) {
+          try {
+            // Try to update existing membership
+            await updateClerkRole(targetClerkUserId, role);
+            console.log("Clerk role updated successfully");
+          } catch (clerkError) {
+            console.log("User not in organization, attempting to add them...");
+            try {
+              // Try to add user directly to organization
+              await addUserToOrganization(targetClerkUserId, role);
+              console.log("User added to organization successfully");
+            } catch (addError) {
+              console.log("Direct add failed, sending invitation...");
+              // If direct add fails, send invitation
+              showToast("Failure to add to organization", "success");
+            }
+          }
+        } else {
+          // No Clerk user found, send invitation
+          console.log("No Clerk user found");
+          showToast("No Clerk user found", "success");
+        }
+      }
 
-      // update local original state
-      setOriginalUserData({ name, email, phoneNumber, profileURL: profileURL });
+      // Update MongoDB
+      const res = await fetch(`/api/user/${targetMongoUserId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedFields),
+      });
 
-      router.push("/userProfile");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update user.");
+
+      console.log("User updated:", data.user);
+      showToast("User successfully updated.", "success");
+
+      // Update original data state
+      setOriginalUserData({
+        name,
+        email,
+        phoneNumber,
+        profileURL,
+        role,
+        activity,
+      });
+
+      // Optional: redirect back to user list or profile
+      setTimeout(() => {
+        router.push("/volunteers");
+      }, 1500);
     } catch (error) {
-      console.error("Error updating information:", error);
-      showToast("Unable to make changes. Email potentially already in use.", "error");
+      console.error("Error updating user:", error);
+      showToast("Unable to update user.", "error");
     }
   };
 
-  /* Remove from comment to here */
-
   if (!isClient) {
     return null;
+  }
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          backgroundColor: "#F4F1E8",
+          minHeight: "100vh",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Spinner size="xl" color="#596334" />
+        <Text ml={4}>Loading user data...</Text>
+      </div>
+    );
   }
 
   return (
@@ -390,13 +550,45 @@ export default function EditUserProfile() {
                         />
                       </Box>
 
+                      <Box>
+                        <Text {...TextUser} mb={2}>
+                          Roles
+                        </Text>
+                        <RadioGroup value={role} onChange={setRole}>
+                          <VStack spacing={3} align="flex-start">
+                            <Radio value="Volunteer" size="lg">
+                              Volunteer
+                            </Radio>
+                            <Radio value="Admin" size="lg">
+                              Admin
+                            </Radio>
+                          </VStack>
+                        </RadioGroup>
+                      </Box>
+
+                      <Box>
+                        <Text {...TextUser} mb={2}>
+                          Activity
+                        </Text>
+                        <RadioGroup value={activity} onChange={setActivity}>
+                          <VStack spacing={3} align="flex-start">
+                            <Radio value="Active" size="lg">
+                              Active
+                            </Radio>
+                            <Radio value="Inactive" size="lg">
+                              Inactive
+                            </Radio>
+                          </VStack>
+                        </RadioGroup>
+                      </Box>
+
                       {/* Buttons */}
                       <VStack spacing={3} pt={4}>
                         <Button onClick={saveUserInfo} borderRadius={20} backgroundColor="#596334" w="100%" size="lg">
                           <Text color="white">Save</Text>
                         </Button>
                         <Button
-                          onClick={() => router.push("/userProfile")}
+                          onClick={() => router.back()}
                           borderRadius={20}
                           backgroundColor="white"
                           borderColor="#596334"
@@ -516,12 +708,43 @@ export default function EditUserProfile() {
                         />
                       </Center>
                       <Center {...CenterStyle}>
+                        <Text mr={30} {...TextUser} mt={10}>
+                          Roles
+                        </Text>
+                        <RadioGroup value={role} onChange={setRole}>
+                          <VStack spacing={3} align="flex-start" mt={10} width="300px">
+                            <Radio value="Volunteer" size="lg">
+                              Volunteer
+                            </Radio>
+                            <Radio value="Admin" size="lg">
+                              Admin
+                            </Radio>
+                          </VStack>
+                        </RadioGroup>
+                      </Center>
+                      <Center {...CenterStyle}>
+                        <Text mr={30} {...TextUser} mt={10}>
+                          Activity
+                        </Text>
+                        <RadioGroup value={activity} onChange={setActivity}>
+                          <VStack spacing={3} align="flex-start" width="300px" mt={10}>
+                            <Radio value="Active" size="lg">
+                              Active
+                            </Radio>
+                            <Radio value="Inactive" size="lg">
+                              Inactive
+                            </Radio>
+                          </VStack>
+                        </RadioGroup>
+                      </Center>
+
+                      <Center {...CenterStyle}>
                         <Box>
                           <Button onClick={saveUserInfo} mt={10} borderRadius={20} backgroundColor="#596334">
                             <Text color="white">Save</Text>
                           </Button>
                         </Box>
-                        <Box onClick={() => router.push("/userProfile")}>
+                        <Box onClick={() => router.back()}>
                           <Button
                             mt={10}
                             ml={5}

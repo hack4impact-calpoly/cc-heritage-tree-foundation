@@ -20,6 +20,7 @@ import { CenterStyle } from "@/styles/AllStyle";
 import { ITree } from "@/database/treeSchema";
 import { isMobile } from "react-device-detect";
 import UserProfileMobile from "@/components/UserProfileMobile";
+import { useRouter } from "next/navigation";
 
 interface UserData {
   name: string;
@@ -36,6 +37,7 @@ function UserProfile() {
   const [userTrees, setUserTrees] = useState<ITree[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
@@ -170,20 +172,20 @@ function UserProfile() {
                     </Center>
                     <Center mt={5} {...LeftUser}>
                       <Flex direction="row" gap={4}>
-                        <Link href="/editUserProfile">
+                        <Box onClick={() => router.push("/editUserProfile")}>
                           <Button borderColor="#596334" borderWidth={1} borderRadius={20} backgroundColor="white">
                             <Text fontSize="xs" color="#596334">
                               Edit Profile
                             </Text>
                           </Button>
-                        </Link>
-                        <Link href="/changePassword">
+                        </Box>
+                        <Box onClick={() => router.push("/changePassword")}>
                           <Button borderColor="#596334" borderWidth={1} borderRadius={20} backgroundColor="white">
                             <Text fontSize="xs" color="#596334">
                               Change Password
                             </Text>
                           </Button>
-                        </Link>
+                        </Box>
                       </Flex>
                     </Center>
                   </FormControl>

@@ -169,22 +169,22 @@ function AdminDashboard() {
           <BrowserView>
             <Box bg="#F4F1E8" display="flex" justifyContent="center" alignItems="center" width="100%">
               <Grid
-                templateRows={{ base: "auto auto auto auto", md: "repeat(9, 1fr)" }}
-                templateColumns={{ base: "1fr", md: "repeat(8, 1fr)" }}
+                templateRows={{ base: "auto auto auto auto", md: "auto auto auto auto", lg: "repeat(9, 1fr)" }}
+                templateColumns={{ base: "1fr", md: "1fr", lg: "repeat(8, 1fr)" }}
                 gap={4}
                 borderWidth={"4"}
                 borderColor={"red"}
                 width="90%"
               >
                 {/* Welcome Message */}
-                <GridItem colSpan={{ base: 1, md: 8 }} rowSpan={1} display="flex" alignItems="center">
+                <GridItem colSpan={{ base: 1, md: 1, lg: 8 }} rowSpan={1} display="flex" alignItems="center">
                   <Text fontSize="3xl" fontWeight="bold" color="#596334">
                     Welcome back, {user ? user.firstName : "User"}!
                   </Text>
                 </GridItem>
 
                 {/* Trees Logged This Year */}
-                <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 2 }}>
+                <GridItem rowSpan={{ base: 1, md: 1, lg: 3 }} colSpan={{ base: 1, md: 1, lg: 2 }}>
                   <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
                     <HStack>
                       <Text color="#333333" fontSize="1.25rem">
@@ -210,7 +210,7 @@ function AdminDashboard() {
                 </GridItem>
 
                 {/* Trees in Poor Condition */}
-                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 6 }}>
+                <GridItem rowSpan={{ base: 2, md: 2, lg: 4 }} colSpan={{ base: 1, md: 1, lg: 6 }}>
                   <Box {...BoxItem} height="100%" p={{ base: 5, md: 10 }}>
                     <HStack>
                       <Text color="#333333" fontSize="1.25rem">
@@ -280,42 +280,33 @@ function AdminDashboard() {
                 </GridItem>
 
                 {/* Create New Announcement Button */}
-                <GridItem rowSpan={1} colSpan={{ base: 1, md: 2 }}>
+                <GridItem rowSpan={1} colSpan={{ base: 1, md: 1, lg: 2 }}>
                   <Box display="flex" justifyContent="center" {...BoxItem} height="100%">
                     <Button
                       display={"flex"}
-                      justifyContent={"space-between"}
-                      paddingLeft="1rem"
-                      paddingRight="5px"
+                      justifyContent={"center"}
+                      alignItems="center"
                       width="85%"
                       maxWidth="300px"
-                      height="50px"
+                      height="auto"
+                      minHeight={{ base: "50px", md: "60px", lg: "50px" }}
                       color="white"
                       bg="#E57300"
-                      borderRadius="20rem"
+                      borderRadius="20px"
                       fontWeight="bold"
-                      fontSize="sm"
+                      fontSize={{ base: "sm", md: "xs", lg: "sm" }}
+                      p={4}
+                      whiteSpace="normal"
+                      wordBreak="break-word"
                       onClick={() => router.push("/createAnnouncement")}
                     >
-                      Create new announcement&nbsp;
-                      <Box
-                        display={"flex"}
-                        width="40px"
-                        height="40px"
-                        borderRadius="20rem"
-                        bg={COLORS.PureWhite}
-                        justifyContent="center"
-                        alignItems="center"
-                        color="#E57300"
-                      >
-                        <SquarePen />
-                      </Box>
+                      Create new announcement
                     </Button>
                   </Box>
                 </GridItem>
 
                 {/* Map */}
-                <GridItem rowSpan={{ base: 2, md: 4 }} colSpan={{ base: 1, md: 8 }} data-testid="map_id">
+                <GridItem rowSpan={{ base: 2, md: 2, lg: 4 }} colSpan={{ base: 1, md: 1, lg: 8 }} data-testid="map_id">
                   <Map trees={treeData} />
                 </GridItem>
               </Grid>

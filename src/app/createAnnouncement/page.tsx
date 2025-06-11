@@ -174,8 +174,13 @@ const CreateAnnouncement = () => {
                       border={activeGroup === "all" ? "2px solid #596435" : "1px solid #ccc"}
                       _hover={{ bg: "#e0efc4" }}
                       onClick={() => {
-                        setSelectedRecipients(allUsers.map((u) => u.email));
-                        setActiveGroup("all");
+                        if (activeGroup === "all") {
+                          setSelectedRecipients([]);
+                          setActiveGroup(null);
+                        } else {
+                          setSelectedRecipients(allUsers.map((u) => u.email));
+                          setActiveGroup("all");
+                        }
                       }}
                     >
                       Send to All
@@ -187,10 +192,15 @@ const CreateAnnouncement = () => {
                       border={activeGroup === "admin" ? "2px solid #596435" : "1px solid #ccc"}
                       _hover={{ bg: "#e0efc4" }}
                       onClick={() => {
-                        const admins = allUsers.filter((u) => u.role?.toLowerCase().trim() === "admin");
-                        console.log("Found admins:", admins);
-                        setSelectedRecipients(admins.map((u) => u.email));
-                        setActiveGroup("admin");
+                        if (activeGroup === "admin") {
+                          setSelectedRecipients([]);
+                          setActiveGroup(null);
+                        } else {
+                          const admins = allUsers.filter((u) => u.role?.toLowerCase().trim() === "admin");
+                          console.log("Found admins:", admins);
+                          setSelectedRecipients(admins.map((u) => u.email));
+                          setActiveGroup("admin");
+                        }
                       }}
                     >
                       Send to Admin
@@ -293,38 +303,93 @@ const CreateAnnouncement = () => {
           </BrowserView>
           <MobileView>
             <Box>
-              <div
-                style={{
-                  position: "absolute",
-                  marginLeft: "20px",
-                  marginTop: "15px",
-                }}
-              >
-                <AlignJustify></AlignJustify>
-              </div>
-              {/* add tree icon */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "50px",
-                }}
-              >
-                <Image src="./logo1.png" alt="tree icon" height={"50px"}></Image>
-              </div>
-              <VStack spacing={7} align="start" p="50px" py="50px" width="100%" maxW="900px" mx="auto">
-                <FormControl>
-                  <FormLabel fontWeight="bold">Send to</FormLabel>
-                  <Input
-                    name="recipients"
-                    placeholder="Find recipients"
-                    _placeholder={{ color: "#596435" }}
-                    value={formData.recipients}
-                    onChange={handleChange}
-                    {...InputStyleAnnouncement}
-                  />
+              <VStack spacing={7} align="start" p="20px" py="30px" width="100%" mx="auto">
+                <Box fontSize="2xl" fontWeight="bold">
+                  New Message
+                </Box>
+
+                <FormControl as="fieldset">
+                  <FormLabel as="legend" fontWeight="bold">
+                    Send to
+                  </FormLabel>
+
+                  <VStack spacing={3} align="stretch">
+                    <Button
+                      bg={activeGroup === "all" ? "#e0efc4" : "white"}
+                      color="#596435"
+                      border={activeGroup === "all" ? "2px solid #596435" : "1px solid #ccc"}
+                      _hover={{ bg: "#e0efc4" }}
+                      onClick={() => {
+                        if (activeGroup === "all") {
+                          setSelectedRecipients([]);
+                          setActiveGroup(null);
+                        } else {
+                          setSelectedRecipients(allUsers.map((u) => u.email));
+                          setActiveGroup("all");
+                        }
+                      }}
+                      size="sm"
+                    >
+                      Send to All
+                    </Button>
+
+                    <Button
+                      bg={activeGroup === "admin" ? "#e0efc4" : "white"}
+                      color="#596435"
+                      border={activeGroup === "admin" ? "2px solid #596435" : "1px solid #ccc"}
+                      _hover={{ bg: "#e0efc4" }}
+                      onClick={() => {
+                        if (activeGroup === "admin") {
+                          setSelectedRecipients([]);
+                          setActiveGroup(null);
+                        } else {
+                          const admins = allUsers.filter((u) => u.role?.toLowerCase().trim() === "admin");
+                          console.log("Found admins:", admins);
+                          setSelectedRecipients(admins.map((u) => u.email));
+                          setActiveGroup("admin");
+                        }
+                      }}
+                      size="sm"
+                    >
+                      Send to Admin
+                    </Button>
+                  </VStack>
+
+                  {allUsers.length > 0 && (
+                    <VStack
+                      align="start"
+                      spacing={2}
+                      mt={4}
+                      maxH="200px"
+                      overflowY="auto"
+                      p={2}
+                      border="1px solid #ccc"
+                      borderRadius="md"
+                      bg="white"
+                    >
+                      {allUsers.map((user) => (
+                        <Checkbox
+                          key={user.email}
+                          isChecked={selectedRecipients.includes(user.email)}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setSelectedRecipients((prev) =>
+                              checked ? [...prev, user.email] : prev.filter((email) => email !== user.email),
+                            );
+                            // Clear active group when manually selecting/deselecting
+                            setActiveGroup(null);
+                          }}
+                          size="sm"
+                        >
+                          <Text fontSize="sm">
+                            {user.name} ({user.email})
+                          </Text>
+                        </Checkbox>
+                      ))}
+                    </VStack>
+                  )}
                 </FormControl>
+
                 <FormControl>
                   <FormLabel fontWeight="bold">Subject</FormLabel>
                   <Input
@@ -349,7 +414,10 @@ const CreateAnnouncement = () => {
                     pr="40px" // Space for icon
                   />
                   <Box position="absolute" bottom="15px" left="10px" display="flex" alignItems="center">
-                    <label htmlFor="file-upload" style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                    <label
+                      htmlFor="file-upload-mobile"
+                      style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+                    >
                       <IconButton
                         icon={<AttachmentIcon />}
                         bg="transparent"
@@ -357,15 +425,16 @@ const CreateAnnouncement = () => {
                         aria-label="Upload file"
                         _hover={{ color: "black" }}
                         as="label"
-                        htmlFor="file-upload"
+                        htmlFor="file-upload-mobile"
                         mr="-6px"
+                        size="sm"
                       />
-                      <Text fontSize="sm" color="black">
+                      <Text fontSize="xs" color="black">
                         {formData.attachment ? formData.attachment.name : "Add attachment"}
                       </Text>
                     </label>
                   </Box>
-                  <Input type="file" id="file-upload" display="none" onChange={handleFileChange} />
+                  <Input type="file" id="file-upload-mobile" display="none" onChange={handleFileChange} />
                 </FormControl>
                 <HStack spacing={5}>
                   <Button
@@ -375,6 +444,7 @@ const CreateAnnouncement = () => {
                     bg="#596435"
                     color="white"
                     onClick={handleSubmit}
+                    size="sm"
                   >
                     Send
                   </Button>
@@ -386,6 +456,7 @@ const CreateAnnouncement = () => {
                     bg="white"
                     borderColor="#596435"
                     color="#596435"
+                    size="sm"
                   >
                     Cancel
                   </Button>

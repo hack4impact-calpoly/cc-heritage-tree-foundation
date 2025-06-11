@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface UserData {
   name: string;
@@ -18,6 +19,7 @@ export default function UserProfileMobile() {
   const { user, isLoaded } = useUser();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -113,24 +115,24 @@ export default function UserProfileMobile() {
             <Grid templateColumns="repeat(2, 1fr)">
               <GridItem colSpan={1}>
                 <Center mt={5} {...LeftUser}>
-                  <Link href="/editUserProfile">
+                  <Box onClick={() => router.push("/editUserProfile")}>
                     <Button borderColor="#596334" borderWidth={1} borderRadius={20} backgroundColor="white">
                       <Text fontSize="xs" color="#596334">
                         Edit Profile
                       </Text>
                     </Button>
-                  </Link>
+                  </Box>
                 </Center>
               </GridItem>
               <GridItem colSpan={1}>
                 <Flex justifyContent="flex-end">
-                  <Link href="/">
+                  <Box onClick={() => router.push("/")}>
                     <Button mt={5} borderRadius={20} backgroundColor="white" borderColor="#596334" borderWidth={1}>
                       <Text fontSize="xs" color="#596334">
                         Change Password
                       </Text>
                     </Button>
-                  </Link>
+                  </Box>
                 </Flex>
               </GridItem>
             </Grid>

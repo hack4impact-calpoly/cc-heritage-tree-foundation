@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { useUser } from "@clerk/nextjs";
 import { isMobile } from "react-device-detect";
+import { Router } from "express";
+import { useRouter } from "next/navigation";
 // import ChangePasswordMobile from "@/components/ChangePasswordMobile";
 
 export default function ChangePassword() {
@@ -15,6 +17,7 @@ export default function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPasssord, setConfirmNewPassword] = useState("");
+  const router = useRouter();
 
   const showToast = (message: string, status: "success" | "error") => {
     setToastMsg(message);
@@ -160,11 +163,11 @@ export default function ChangePassword() {
                     <Button onClick={changePassword} borderRadius={20} backgroundColor="#596334">
                       <Text color="white">Save</Text>
                     </Button>
-                    <Link href="/userProfile">
+                    <Box onClick={() => router.push("/userProfile")}>
                       <Button borderRadius={20} backgroundColor="white" borderColor="#596334" borderWidth={1}>
                         <Text color="#596334">Cancel</Text>
                       </Button>
-                    </Link>
+                    </Box>
                   </Flex>
                 </Grid>
               </FormControl>

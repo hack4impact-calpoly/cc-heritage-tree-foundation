@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs"; // Import Clerk's hook
 import { useRouter } from "next/navigation";
 
-export default function SignupRedirect() {
+export default function Home() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const [error, setError] = useState(null);
