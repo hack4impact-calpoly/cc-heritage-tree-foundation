@@ -294,6 +294,7 @@ const CreateAnnouncement = () => {
                     bg="white"
                     borderColor="#596435"
                     color="#596435"
+                    onClick={() => router.push("/messages")}
                   >
                     Cancel
                   </Button>
@@ -457,6 +458,7 @@ const CreateAnnouncement = () => {
                     borderColor="#596435"
                     color="#596435"
                     size="sm"
+                    onClick={() => router.push("/messages")}
                   >
                     Cancel
                   </Button>
