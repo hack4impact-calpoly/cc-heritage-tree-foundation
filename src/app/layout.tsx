@@ -106,7 +106,7 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
       >
         {user && <div style={{ width: "100vw", height: "100px" }} />}
         {children}
-        <div style={{ position: "absolute", top: "0", zIndex: "1000" }}>{user && <ProfileCard />}</div>
+        <div style={{ position: "absolute", top: "0", zIndex: "1000" }}>{user && !isMobile && <ProfileCard />}</div>
       </main>
     </div>
   );

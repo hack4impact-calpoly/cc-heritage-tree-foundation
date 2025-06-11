@@ -22,6 +22,7 @@ import { useRouter, usePathname } from "next/navigation"; // Added usePathname
 
 import { useUser } from "@clerk/nextjs";
 import { isMobile } from "react-device-detect";
+import UserCardContent from "./UserCardContent";
 
 const COLORS = {
   primary: "#596435",
@@ -200,6 +201,9 @@ export default function Navbar() {
                   </Button>
                 ))}
               </VStack>
+              <Box bg="white" borderRadius="lg" boxShadow="md" p={4} mx={2} my={4}>
+                <UserCardContent />
+              </Box>
             </DrawerBody>
           </DrawerContent>
         </Drawer>
