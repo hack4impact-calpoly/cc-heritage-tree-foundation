@@ -16,6 +16,7 @@ import {
   HStack,
   RadioGroup,
   Radio,
+  Checkbox,
 } from "@chakra-ui/react";
 import React, { useRef, useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
@@ -32,6 +33,10 @@ export default function EditUserProfile() {
   const [profileURL, setProfileURL] = useState("/pfp.png");
   const [role, setRole] = useState("Volunteer");
   const [activity, setActivity] = useState("Active");
+
+  // New state for aesthetic multi-select
+  const [isVolunteerSelected, setIsVolunteerSelected] = useState(true);
+  const [isAdminSelected, setIsAdminSelected] = useState(false);
 
   const router = useRouter();
   const params = useParams();
@@ -79,6 +84,46 @@ export default function EditUserProfile() {
     setIsClient(true);
     setIsMobileDevice(isMobile);
   }, []);
+
+  // Handle aesthetic role selection
+  const handleVolunteerChange = (checked: boolean) => {
+    setIsVolunteerSelected(checked);
+
+    if (!checked && isAdminSelected) {
+      // If unchecking volunteer while admin is selected, uncheck admin too
+      setIsAdminSelected(false);
+      setRole(""); // No role selected
+    } else if (checked && isAdminSelected) {
+      // If both are selected, backend gets "Admin"
+      setRole("Admin");
+    } else if (checked && !isAdminSelected) {
+      // If only volunteer is selected, backend gets "Volunteer"
+      setRole("Volunteer");
+    } else {
+      // Neither selected
+      setRole("");
+    }
+  };
+
+  const handleAdminChange = (checked: boolean) => {
+    setIsAdminSelected(checked);
+
+    if (checked && !isVolunteerSelected) {
+      // If admin is selected but volunteer isn't, select volunteer too
+      setIsVolunteerSelected(true);
+      setRole("Admin");
+    } else if (checked && isVolunteerSelected) {
+      // Both are selected, backend gets "Admin"
+      setRole("Admin");
+    } else {
+      // Admin unchecked, keep only volunteer if it's selected
+      if (isVolunteerSelected) {
+        setRole("Volunteer");
+      } else {
+        setRole("");
+      }
+    }
+  };
 
   // Function to update Clerk organization role
   const updateClerkRole = async (clerkUserId: string, newRole: string) => {
@@ -183,6 +228,19 @@ export default function EditUserProfile() {
         setProfileURL(data.profileURL || "/pfp.png");
         setRole(data.role || "Volunteer");
         setActivity(data.active ? "Active" : "Inactive");
+
+        // Set aesthetic checkboxes based on role
+        if (data.role === "Admin") {
+          setIsAdminSelected(true);
+          setIsVolunteerSelected(true); // Admin also has volunteer privileges
+        } else if (data.role === "Volunteer") {
+          setIsAdminSelected(false);
+          setIsVolunteerSelected(true);
+        } else {
+          // No role or empty role
+          setIsAdminSelected(false);
+          setIsVolunteerSelected(false);
+        }
 
         // Store original data for comparison
         setOriginalUserData({
@@ -554,16 +612,22 @@ export default function EditUserProfile() {
                         <Text {...TextUser} mb={2}>
                           Roles
                         </Text>
-                        <RadioGroup value={role} onChange={setRole}>
-                          <VStack spacing={3} align="flex-start">
-                            <Radio value="Volunteer" size="lg">
-                              Volunteer
-                            </Radio>
-                            <Radio value="Admin" size="lg">
-                              Admin
-                            </Radio>
-                          </VStack>
-                        </RadioGroup>
+                        <VStack spacing={3} align="flex-start">
+                          <Checkbox
+                            isChecked={isVolunteerSelected}
+                            onChange={(e) => handleVolunteerChange(e.target.checked)}
+                            size="lg"
+                          >
+                            Volunteer
+                          </Checkbox>
+                          <Checkbox
+                            isChecked={isAdminSelected}
+                            onChange={(e) => handleAdminChange(e.target.checked)}
+                            size="lg"
+                          >
+                            Admin
+                          </Checkbox>
+                        </VStack>
                       </Box>
 
                       <Box>
@@ -711,16 +775,22 @@ export default function EditUserProfile() {
                         <Text mr={30} {...TextUser} mt={10}>
                           Roles
                         </Text>
-                        <RadioGroup value={role} onChange={setRole}>
-                          <VStack spacing={3} align="flex-start" mt={10} width="300px">
-                            <Radio value="Volunteer" size="lg">
-                              Volunteer
-                            </Radio>
-                            <Radio value="Admin" size="lg">
-                              Admin
-                            </Radio>
-                          </VStack>
-                        </RadioGroup>
+                        <VStack spacing={3} align="flex-start" mt={10} width="300px">
+                          <Checkbox
+                            isChecked={isVolunteerSelected}
+                            onChange={(e) => handleVolunteerChange(e.target.checked)}
+                            size="lg"
+                          >
+                            Volunteer
+                          </Checkbox>
+                          <Checkbox
+                            isChecked={isAdminSelected}
+                            onChange={(e) => handleAdminChange(e.target.checked)}
+                            size="lg"
+                          >
+                            Admin
+                          </Checkbox>
+                        </VStack>
                       </Center>
                       <Center {...CenterStyle}>
                         <Text mr={30} {...TextUser} mt={10}>
