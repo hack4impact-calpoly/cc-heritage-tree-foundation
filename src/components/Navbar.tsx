@@ -174,32 +174,39 @@ export default function Navbar() {
             </DrawerHeader>
             <DrawerBody>
               <VStack spacing={3} align="stretch" mt={4}>
-                {NAV_ITEMS.map((NavItem) => (
-                  <Button
-                    key={NavItem.text}
-                    onClick={() => handleNavigation(NavItem.path)}
-                    style={{
-                      backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "transparent",
-                      color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
-                      borderRadius: "20px",
-                      width: "190px",
-                      height: "2.5rem",
-                      justifyContent: "flex-start",
-                      marginLeft: "20px",
-                    }}
-                    _hover={{
-                      backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "rgba(255,255,255,0.1)",
-                    }}
-                  >
-                    <NavItem.icon
-                      size={20}
+                {NAV_ITEMS.map((NavItem) => {
+                  if (
+                    NavItem.path === "/volunteers" &&
+                    (!isAdmin || localStorage.getItem("globalUserRole") == "Volunteer")
+                  )
+                    return null;
+                  return (
+                    <Button
+                      key={NavItem.text}
+                      onClick={() => handleNavigation(NavItem.path)}
                       style={{
-                        marginRight: "12px",
+                        backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "transparent",
+                        color: activeButton === NavItem.text ? COLORS.primary : COLORS.white,
+                        borderRadius: "20px",
+                        width: "190px",
+                        height: "2.5rem",
+                        justifyContent: "flex-start",
+                        marginLeft: "20px",
                       }}
-                    />
-                    {NavItem.text}
-                  </Button>
-                ))}
+                      _hover={{
+                        backgroundColor: activeButton === NavItem.text ? COLORS.secondary : "rgba(255,255,255,0.1)",
+                      }}
+                    >
+                      <NavItem.icon
+                        size={20}
+                        style={{
+                          marginRight: "12px",
+                        }}
+                      />
+                      {NavItem.text}
+                    </Button>
+                  );
+                })}
               </VStack>
               <Box bg="white" borderRadius="lg" boxShadow="md" p={4} mx={2} my={4}>
                 <UserCardContent />
