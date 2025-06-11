@@ -764,7 +764,7 @@ function Messages() {
                 )}
               </div>
               {openMessagePopUp === true ? (
-                <div style={{ position: "absolute", left: "0", top: "100px", width: "100%", height: "95vh" }}>
+                <div style={{ position: "absolute", left: "0", top: "200px", width: "100%", height: "95vh" }}>
                   <MessagePopUp
                     date={messageProps.date}
                     messageTitle={messageProps.messageTitle}
