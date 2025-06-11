@@ -101,6 +101,7 @@ function Volunteers() {
         "#": index,
         Name: user.name,
         Email: user.email,
+        Phone: user.phoneNumber,
         Role: user.role,
         Active: user.active ? "Yes" : "No",
       })),
