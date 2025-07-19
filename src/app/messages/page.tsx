@@ -62,6 +62,7 @@ function Messages() {
     messageContent: "",
     messageTitle: "",
     id: -1,
+    attachmentUrl: "",
   });
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -199,6 +200,7 @@ function Messages() {
           messageContent: msg.message,
           messageTitle: msg.subject,
           id: msg._id,
+          attachmentUrl: msg.attachmentUrl || "",
         });
         updateReadStatus(msg._id);
       }
@@ -474,6 +476,7 @@ function Messages() {
                                         messageContent: msg.message,
                                         messageTitle: msg.subject,
                                         id: msg._id,
+                                        attachmentUrl: msg.attachmentUrl || "",
                                       });
                                       updateReadStatus(msg._id);
                                     }}
@@ -533,6 +536,7 @@ function Messages() {
                           adminName={messageProps.adminName}
                           messageContent={messageProps.messageContent}
                           id={messageProps.id}
+                          attachmentUrl={messageProps.attachmentUrl}
                         />
                       ) : (
                         <></>
@@ -596,6 +600,7 @@ function Messages() {
                                         messageContent: msg.message,
                                         messageTitle: msg.subject,
                                         id: msg._id,
+                                        attachmentUrl: msg.attachmentUrl || "",
                                       });
                                     }}
                                   />
@@ -727,6 +732,7 @@ function Messages() {
                               messageContent: msg.message,
                               messageTitle: msg.subject,
                               id: msg._id,
+                              attachmentUrl: msg.attachmentUrl || "",
                             });
                             updateReadStatus(msg._id);
                           }}
@@ -802,6 +808,7 @@ function Messages() {
                     adminName={messageProps.adminName}
                     messageContent={messageProps.messageContent}
                     id={messageProps.id}
+                    attachmentUrl={messageProps.attachmentUrl}
                   />
                   <div
                     style={{ position: "absolute", right: "10px", top: "15px" }}

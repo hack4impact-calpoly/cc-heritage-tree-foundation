@@ -118,11 +118,24 @@ const CreateAnnouncement = () => {
       const from = user?.fullName || "Unknown Sender";
       const to = selectedRecipients;
 
+      let attachment = null;
+
+      if (formData.attachment) {
+        const reader = new FileReader();
+        attachment = await new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(formData.attachment!);
+        });
+      }
+
       const payload = {
         from,
         to,
         subject: formData.subject,
         message: formData.message,
+        attachment,
+        attachmentName: formData.attachment?.name || null,
       };
 
       console.log("Submitted Data: ", formData);
@@ -135,13 +148,16 @@ const CreateAnnouncement = () => {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Failed to send announcement");
+      if (!res.ok) {
+        const errorData = await res.text();
+        throw new Error(`Failed to send announcement: ${res.status} - ${errorData}`);
+      }
 
       const data = await res.json();
-      console.log("Announcement sent:", data);
       router.push("/messageSuccess");
     } catch (err) {
       console.error("Error submitting:", err);
+      alert(`Error: ${err instanceof Error ? err.message : "Unknown error occurred"}`);
     }
   };
 
