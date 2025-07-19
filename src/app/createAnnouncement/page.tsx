@@ -138,6 +138,8 @@ const CreateAnnouncement = () => {
         attachmentName: formData.attachment?.name || null,
       };
 
+      console.log("Submitted Data: ", formData);
+
       const res = await fetch("/api/messages", {
         method: "POST",
         headers: {
