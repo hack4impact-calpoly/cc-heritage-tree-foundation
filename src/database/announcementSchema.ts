@@ -11,6 +11,7 @@ export type IAnnouncement = {
     userID: string;
     read: boolean;
   }[];
+  attachmentUrl: string;
 };
 
 const AnnouncementSchema = new Schema<IAnnouncement>({
@@ -25,6 +26,12 @@ const AnnouncementSchema = new Schema<IAnnouncement>({
       read: { type: Boolean, required: true },
     },
   ],
+  attachmentUrl: { type: String, required: false },
 });
 
-export default mongoose.models.Announcement || mongoose.model<IAnnouncement>("Announcement", AnnouncementSchema);
+// Force model recompilation to ensure new fields are recognized
+if (mongoose.models.Announcement) {
+  delete mongoose.models.Announcement;
+}
+
+export default mongoose.model<IAnnouncement>("Announcement", AnnouncementSchema);

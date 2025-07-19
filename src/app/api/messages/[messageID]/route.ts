@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Announcement from "@/database/announcementSchema";
+import s3 from "@/app/api/tree/aws";
 
 async function connectDB() {
   if (mongoose.connection.readyState === 0) {
@@ -117,6 +118,24 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ m
           "Access-Control-Allow-Origin": "*",
         },
       });
+    }
+
+    // Delete attachment from S3 if it exists
+    if (deletedMessage.attachmentUrl) {
+      try {
+        const urlParts = deletedMessage.attachmentUrl.split("/");
+        const key = urlParts.slice(-2).join("/"); // Get the key from the URL
+
+        const deleteParams = {
+          Bucket: process.env.AWS_S3_MESSAGES_ATTACHMENT_BUCKET_NAME!,
+          Key: key,
+        };
+
+        await s3.deleteObject(deleteParams).promise();
+      } catch (s3Error) {
+        console.error("Failed to delete attachment from S3:", s3Error);
+        // Don't fail the request if S3 deletion fails
+      }
     }
 
     return new Response(
