@@ -183,6 +183,7 @@ export default function Map({ trees }: { trees: ITree[] }) {
   const mapRef = useRef<any>(null);
   const { user, isLoaded } = useUser();
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [collectorProfiles, setCollectorProfiles] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -198,7 +199,46 @@ export default function Map({ trees }: { trees: ITree[] }) {
       }
     };
     fetchUserData();
-  }, []);
+  }, [isLoaded, user]);
+
+  useEffect(() => {
+    const fetchCollectorProfiles = async () => {
+      if (trees.length === 0) return;
+
+      try {
+        // fetch profile pics
+        const uniqueCollectors = Array.from(new Set(trees.map((tree: ITree) => tree.collectorName)));
+        const profilePromises = uniqueCollectors.map(async (collectorName) => {
+          try {
+            const encodedName = encodeURIComponent(collectorName);
+            const profileRes = await fetch(`/api/user/by-name/${encodedName}`);
+            if (profileRes.ok) {
+              const profileData = await profileRes.json();
+              return { name: collectorName, profileURL: profileData.profileURL || "/pfp.png" };
+            }
+          } catch (error) {
+            console.error(`Failed to fetch profile for ${collectorName}:`, error);
+          }
+          return { name: collectorName, profileURL: "/pfp.png" };
+        });
+
+        const profileResults = await Promise.all(profilePromises);
+        const profileMap = profileResults.reduce(
+          (acc, result) => {
+            acc[result.name] = result.profileURL;
+            return acc;
+          },
+          {} as { [key: string]: string },
+        );
+
+        setCollectorProfiles(profileMap);
+      } catch (error) {
+        console.error("Failed to fetch collector profiles:", error);
+      }
+    };
+
+    fetchCollectorProfiles();
+  }, [trees]);
 
   useLayoutEffect(() => {
     require("leaflet/dist/leaflet.css");
@@ -224,12 +264,7 @@ export default function Map({ trees }: { trees: ITree[] }) {
         const marker = L.marker([lat, lng]).addTo(markersLayer);
         const popupDiv = document.createElement("div");
         const root = createRoot(popupDiv);
-        root.render(
-          <PopupContent
-            tree={tree}
-            profileURL={userData?.name === tree.collectorName ? userData?.profileURL : "/pfp.png"}
-          />,
-        );
+        root.render(<PopupContent tree={tree} profileURL={collectorProfiles[tree.collectorName] || "/pfp.png"} />);
 
         marker.bindPopup(popupDiv, {
           className: "customPopup",

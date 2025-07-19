@@ -51,6 +51,7 @@ export default function TreeTable() {
   const idxFirstTree = idxLastTree - treesPerPage;
   const paginatedTrees = filteredTrees.slice(idxFirstTree, idxLastTree);
   const [profileURL, setProfileURL] = useState("");
+  const [collectorProfiles, setCollectorProfiles] = useState<{ [key: string]: string }>({});
 
   // fetch trees
   const [isClient, setIsClient] = useState(false);
@@ -111,6 +112,33 @@ export default function TreeTable() {
         if (Array.isArray(treesData)) {
           setTrees(treesData);
           setFilteredTrees(treesData);
+
+          // fetch profile pics
+          const uniqueCollectors = Array.from(new Set(treesData.map((tree: ITree) => tree.collectorName)));
+          const profilePromises = uniqueCollectors.map(async (collectorName) => {
+            try {
+              const encodedName = encodeURIComponent(collectorName);
+              const profileRes = await fetch(`/api/user/by-name/${encodedName}`);
+              if (profileRes.ok) {
+                const profileData = await profileRes.json();
+                return { name: collectorName, profileURL: profileData.profileURL || "/pfp.png" };
+              }
+            } catch (error) {
+              console.error(`Failed to fetch profile for ${collectorName}:`, error);
+            }
+            return { name: collectorName, profileURL: "/pfp.png" };
+          });
+
+          const profileResults = await Promise.all(profilePromises);
+          const profileMap = profileResults.reduce(
+            (acc, result) => {
+              acc[result.name] = result.profileURL;
+              return acc;
+            },
+            {} as { [key: string]: string },
+          );
+
+          setCollectorProfiles(profileMap);
         }
       } catch (err) {
         console.error("Fetch error:", err);
@@ -391,8 +419,7 @@ export default function TreeTable() {
                                           fit="cover"
                                           alt="Profile Picture"
                                           boxSize={8}
-                                          /*src={profileURL != "" ? profileURL : "/pfp.png"}*/
-                                          src="/pfp.png"
+                                          src={collectorProfiles[tree.collectorName] || "/pfp.png"}
                                         ></Image>
                                         <Text>{tree.collectorName}</Text>
                                       </HStack>

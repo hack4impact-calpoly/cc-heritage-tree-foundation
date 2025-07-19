@@ -18,7 +18,6 @@ import {
   Th,
   Td,
   Text,
-  Image,
   Flex,
   Avatar,
   Button,
@@ -84,6 +83,7 @@ function Messages() {
   const isAdmin = role === "org:admin";
   const [unreadCount, setUnreadCount] = useState(0);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [senderProfiles, setSenderProfiles] = useState<{ [key: string]: string }>({});
 
   const fetchMessages = async () => {
     try {
@@ -147,6 +147,45 @@ function Messages() {
   useEffect(() => {
     setFilteredMessages(messages.filter((message) => checkIfRecipient(message)));
     setAdminMessages(messages.filter((message) => message.from == user?.fullName));
+  }, [messages]);
+
+  useEffect(() => {
+    const fetchSenderProfiles = async () => {
+      if (messages.length === 0) return;
+
+      try {
+        // fetch profile pics
+        const uniqueSenders = Array.from(new Set(messages.map((message) => message.from)));
+        const profilePromises = uniqueSenders.map(async (senderName) => {
+          try {
+            const encodedName = encodeURIComponent(senderName);
+            const profileRes = await fetch(`/api/user/by-name/${encodedName}`);
+            if (profileRes.ok) {
+              const profileData = await profileRes.json();
+              return { name: senderName, profileURL: profileData.profileURL || "/pfp.png" };
+            }
+          } catch (error) {
+            console.error(`Failed to fetch profile for ${senderName}:`, error);
+          }
+          return { name: senderName, profileURL: "/pfp.png" };
+        });
+
+        const profileResults = await Promise.all(profilePromises);
+        const profileMap = profileResults.reduce(
+          (acc, result) => {
+            acc[result.name] = result.profileURL;
+            return acc;
+          },
+          {} as { [key: string]: string },
+        );
+
+        setSenderProfiles(profileMap);
+      } catch (error) {
+        console.error("Failed to fetch sender profiles:", error);
+      }
+    };
+
+    fetchSenderProfiles();
   }, [messages]);
 
   useEffect(() => {
@@ -408,15 +447,7 @@ function Messages() {
                                   onClick={() => setSelectedMessage(msg)}
                                 >
                                   <Flex className={styles.avatarContainer}>
-                                    <Avatar
-                                      src={
-                                        userData?.profileURL && msg.from === userData.name
-                                          ? userData?.profileURL
-                                          : "/pfp.png"
-                                      }
-                                      name={msg.from}
-                                      size="sm"
-                                    />
+                                    <Avatar src={senderProfiles[msg.from] || "/pfp.png"} name={msg.from} size="sm" />
                                     {msg.from}
                                   </Flex>
                                 </Td>
@@ -538,7 +569,7 @@ function Messages() {
                                   onClick={() => setSelectedMessage(msg)}
                                 >
                                   <Flex className={styles.avatarContainer}>
-                                    <Avatar name={msg.from} size="sm" bg="#596334" color="white" />
+                                    <Avatar src={senderProfiles[msg.from] || "/pfp.png"} name={msg.from} size="sm" />
                                     {msg.from}
                                   </Flex>
                                 </Td>

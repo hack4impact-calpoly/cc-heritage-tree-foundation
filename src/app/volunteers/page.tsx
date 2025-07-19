@@ -17,6 +17,8 @@ import {
   Text,
   Spinner,
   Image,
+  Avatar,
+  Flex,
 } from "@chakra-ui/react";
 import * as XLSX from "xlsx";
 import { IUser } from "@/database/userSchema";
@@ -33,6 +35,7 @@ function Volunteers() {
   const [usersData, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [volunteerProfiles, setVolunteerProfiles] = useState<{ [key: string]: string }>({});
   const [isClient, setIsClient] = useState(false);
   const { user, isLoaded } = useUser();
   const router = useRouter();
@@ -54,7 +57,7 @@ function Volunteers() {
     router.push("/volunteerDashboard");
   }
 
-  //Fetch Users
+  //fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -63,6 +66,32 @@ function Volunteers() {
         const data = await response.json();
         setUsers(data);
         setFilteredUsers(data);
+
+        // fetch profile pics for all volunteers
+        const profilePromises = data.map(async (volunteer: IUser) => {
+          try {
+            const encodedName = encodeURIComponent(volunteer.name);
+            const profileRes = await fetch(`/api/user/by-name/${encodedName}`);
+            if (profileRes.ok) {
+              const profileData = await profileRes.json();
+              return { name: volunteer.name, profileURL: profileData.profileURL || "/pfp.png" };
+            }
+          } catch (error) {
+            console.error(`Failed to fetch profile for ${volunteer.name}:`, error);
+          }
+          return { name: volunteer.name, profileURL: "/pfp.png" };
+        });
+
+        const profileResults = await Promise.all(profilePromises);
+        const profileMap = profileResults.reduce(
+          (acc, result) => {
+            acc[result.name] = result.profileURL;
+            return acc;
+          },
+          {} as { [key: string]: string },
+        );
+
+        setVolunteerProfiles(profileMap);
       } catch (error) {
         console.error("Error fetching users:", error);
       } finally {
@@ -222,7 +251,16 @@ function Volunteers() {
                                     {index}
                                   </Box>
                                 </Td>
-                                <Td>{user.name}</Td>
+                                <Td>
+                                  <Flex align="center" gap={3}>
+                                    <Avatar
+                                      src={volunteerProfiles[user.name] || "/pfp.png"}
+                                      name={user.name}
+                                      size="sm"
+                                    />
+                                    <Text>{user.name}</Text>
+                                  </Flex>
+                                </Td>
                                 <Td>
                                   <Box {...CenterStyle} height="100%">
                                     {user.role}
