@@ -16,7 +16,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { AlignJustify } from "lucide-react";
-import { BrowserView, MobileView } from "react-device-detect";
+import { BrowserView, MobileView, isMobile } from "react-device-detect";
 import { AttachmentIcon, CloseIcon } from "@chakra-ui/icons";
 import { InputStyleAnnouncement } from "@/styles/CreateAnnouncementStyle";
 import styles from "./announcement.module.css";
@@ -42,12 +42,15 @@ const CreateAnnouncement = () => {
     recipients: "",
     subject: "",
     message: "",
-    attachment: null, // Make sure this is 'attachment'
+    attachment: null,
   });
 
   const [allUsers, setAllUsers] = useState<{ name: string; email: string; role: string }[]>([]);
   const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
   const [activeGroup, setActiveGroup] = useState<"all" | "admin" | null>(null);
+
+  const [showRemove, setShowRemove] = useState(false);
+  const [showRemoveMobile, setShowRemoveMobile] = useState(false);
 
   let role = null;
   if (isLoaded && user) {
@@ -278,9 +281,34 @@ const CreateAnnouncement = () => {
                         htmlFor="file-upload"
                         mr="-6px"
                       />
-                      <Text fontSize="sm" color="black">
-                        {formData.attachment ? formData.attachment.name : "Add attachment"}
-                      </Text>
+                      {formData.attachment ? (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          ml={2}
+                          position="relative"
+                          onMouseEnter={() => setShowRemove(true)}
+                          onMouseLeave={() => setShowRemove(false)}
+                        >
+                          <Text fontSize="sm" color="black" mr={1}>
+                            {formData.attachment.name}
+                          </Text>
+                          {showRemove && (
+                            <IconButton
+                              aria-label="Remove attachment"
+                              icon={<CloseIcon boxSize={3} />}
+                              size="xs"
+                              variant="ghost"
+                              colorScheme="red"
+                              onClick={handleRemoveAttachment}
+                            />
+                          )}
+                        </Box>
+                      ) : (
+                        <Text fontSize="sm" color="black">
+                          Add attachment
+                        </Text>
+                      )}
                     </label>
                   </Box>
                   <Input
@@ -289,6 +317,7 @@ const CreateAnnouncement = () => {
                     display="none"
                     onChange={handleFileChange}
                     data-testid="file-upload"
+                    ref={fileInputRef}
                   />
                 </FormControl>
                 <HStack spacing={5}>
@@ -427,8 +456,8 @@ const CreateAnnouncement = () => {
                     value={formData.message}
                     onChange={handleChange}
                     {...InputStyleAnnouncement}
-                    h="250px"
-                    pr="40px" // Space for icon
+                    h="150px"
+                    pr="40px"
                   />
                   <Box position="absolute" bottom="15px" left="10px" display="flex" alignItems="center">
                     <label
@@ -446,9 +475,34 @@ const CreateAnnouncement = () => {
                         mr="-6px"
                         size="sm"
                       />
-                      <Text fontSize="xs" color="black">
-                        {formData.attachment ? formData.attachment.name : "Add attachment"}
-                      </Text>
+                      {formData.attachment ? (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          ml={2}
+                          position="relative"
+                          onMouseEnter={() => setShowRemoveMobile(true)}
+                          onMouseLeave={() => setShowRemoveMobile(false)}
+                        >
+                          <Text fontSize="xs" color="black" mr={1}>
+                            {formData.attachment.name}
+                          </Text>
+                          {(isMobile || showRemoveMobile) && (
+                            <IconButton
+                              aria-label="Remove attachment"
+                              icon={<CloseIcon boxSize={2.5} />}
+                              size="xs"
+                              variant="ghost"
+                              colorScheme="red"
+                              onClick={handleRemoveAttachment}
+                            />
+                          )}
+                        </Box>
+                      ) : (
+                        <Text fontSize="xs" color="black">
+                          Add attachment
+                        </Text>
+                      )}
                     </label>
                   </Box>
                   <Input type="file" id="file-upload-mobile" display="none" onChange={handleFileChange} />
