@@ -197,7 +197,6 @@ export default function TreeTable() {
     // retreive ALL volunteers data
     const dataSheet = XLSX.utils.json_to_sheet(
       trees.map((tree: ITree, index) => ({
-        Index: index,
         "Tree Id": getTreeId(tree.treeId),
         "Collector Name": tree.collectorName,
         "Date Collected": new Date(tree.dateCollected).toLocaleDateString(),
