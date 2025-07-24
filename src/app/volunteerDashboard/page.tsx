@@ -294,15 +294,22 @@ export default function VolunteerDashboard() {
             <Box mt={"58px"}>
               <VStack spacing={"32px"}>
                 <Grid
-                  h="100%"
+                  minHeight="100%"
                   w="85%"
                   templateRows={{ base: "auto auto auto auto", md: "repeat(8, 1fr)" }}
                   templateColumns={{ base: "1fr", md: "repeat(7, 1fr)" }}
-                  gap={25}
+                  gap="25px" // Make sure this is a string with units
                 >
-                  <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 3 }} minHeight="265px">
-                    <VStack w="100%" h="100%" borderRadius="16px" bg="white" p="20px" flexDir="column" gap="15px">
-                      <HStack position="relative">
+                  <GridItem rowSpan={{ base: 1, md: 3 }} colSpan={{ base: 1, md: 3 }} minHeight="300px">
+                    <VStack
+                      w="100%"
+                      h="100%"
+                      borderRadius="16px"
+                      bg="white"
+                      p="20px"
+                      spacing="15px" // Use spacing instead of gap for VStack
+                    >
+                      <HStack position="relative" w="100%">
                         <Button
                           bg="#AE5700"
                           px="14px"
@@ -320,77 +327,97 @@ export default function VolunteerDashboard() {
                           </Text>
                         </Button>
                       </HStack>
-                      <HStack gap="10px" minHeight="0">
+                      <HStack
+                        gap="10px"
+                        flex="1" // Take up remaining space
+                        w="100%"
+                      >
                         <Box
                           bg="#DFED98"
                           borderRadius="12px"
-                          padding="10px"
+                          padding="15px"
                           w="50%"
-                          flexGrow={1}
+                          h="100%" // Ensure both boxes take full available height
                           display="flex"
                           flexDir="column"
+                          justifyContent="center" // Center content vertically
                         >
-                          <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
-                            You&#39;ve logged
+                          <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
+                            {treeData.filter((tree) => tree.collectorName == user?.fullName).length}
                           </Text>
-                          <HStack flexGrow={1} {...CenterStyle}>
-                            <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                              {treeData.filter((tree) => tree.collectorName == user?.fullName).length}
-                            </Text>
-                            <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                              tree
-                              {treeData.filter((tree) => tree.collectorName == user?.fullName).length == 1 ? "" : "s"}
-                            </Text>
-                          </HStack>
+                          <Text
+                            w="100%"
+                            {...TextWeightStyle}
+                            fontWeight="normal"
+                            fontSize={{ base: "20px", md: "1vw" }}
+                          >
+                            Trees logged by you
+                          </Text>
                         </Box>
                         <Box
                           borderRadius="12px"
                           border="1px solid #647038"
-                          padding="10px"
+                          padding="15px" // Made padding consistent
                           w="50%"
-                          flexGrow={1}
+                          h="100%" // Ensure both boxes take full available height
                           display="flex"
                           flexDir="column"
+                          justifyContent="center" // Center content vertically
                         >
-                          <Text w="100%" {...TextWeightStyle} fontSize={{ base: "20px", md: "1vw" }}>
-                            Total logged
+                          <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
+                            {treeData ? treeData.length : "0"}
                           </Text>
-                          <HStack flexGrow={1} alignItems="center" justifyContent="center">
-                            <Text fontSize={{ base: "50px", md: "2.5vw" }} {...TextWeightStyle}>
-                              {treeData ? treeData.length : "0"}
-                            </Text>
-                            <Text fontSize={{ base: "20px", md: "1vw" }} {...TextWeightStyle}>
-                              tree
-                              {treeData?.length == 1 ? "" : "s"}
-                            </Text>
-                          </HStack>
+                          <Text
+                            w="100%"
+                            {...TextWeightStyle}
+                            fontWeight="normal"
+                            fontSize={{ base: "20px", md: "1vw" }}
+                          >
+                            Total trees logged
+                          </Text>
                         </Box>
                       </HStack>
                     </VStack>
                   </GridItem>
-                  <GridItem
-                    rowSpan={{ base: 1, md: 4 }}
-                    colSpan={{ base: 1, md: 3 }}
-                    borderRadius="16px"
-                    bg="#596334"
-                    p="24px"
-                    minHeight="400px"
-                  >
-                    <VStack spacing={15} maxHeight="100%" overflowY="scroll">
+
+                  <GridItem rowSpan={{ base: 1, md: 4 }} colSpan={{ base: 1, md: 3 }} minHeight="400px">
+                    <VStack
+                      h="100%" // Full height container
+                      borderRadius="16px"
+                      bg="#596334"
+                      p="24px"
+                      spacing="15px"
+                    >
                       <HStack position={"relative"} w="100%">
                         <Text color="#F4F1E8" fontSize="24px" fontWeight="600">
                           Announcements
                         </Text>
                       </HStack>
-                      <VStack scrollBehavior="smooth" width="100%" gap="10px">
+                      <VStack
+                        scrollBehavior="smooth"
+                        width="100%"
+                        spacing="10px"
+                        flex="1" // Take remaining space
+                        overflowY="auto" // Changed from scroll to auto
+                      >
                         {filteredAnnouncements.map((announcement) => (
-                          <Box {...Box1AnnStyle} key={announcement._id}>
+                          <Box
+                            {...Box1AnnStyle}
+                            key={announcement._id}
+                            onClick={() => router.push(`/messages?id=${announcement._id}`)}
+                          >
                             <HStack position={"relative"} w="100%">
-                              <Box {...Box2AnnStyle}></Box>
+                              <Image
+                                {...Box2AnnStyle}
+                                fit="cover"
+                                alt="Profile Picture Not Appearing"
+                                src={
+                                  userData?.profileURL && announcement.from === userData.name
+                                    ? userData.profileURL
+                                    : "/pfp.png"
+                                }
+                              />
                               <Text {...TextAnnStyle}> {announcement.subject} </Text>
-                              <IconButton aria-label="More options" position={"absolute"} {...IconButtonStyle}>
-                                <EllipsisVertical color="#333333" />
-                              </IconButton>
                             </HStack>
                           </Box>
                         ))}
