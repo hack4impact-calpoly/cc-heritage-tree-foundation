@@ -227,7 +227,7 @@ export default function TreeTable() {
     console.log(treeData);
   };
 
-  const [sortOrder, setSortOrder] = useState<"" | "asc" | "desc">("");
+  const [sortOrder, setSortOrder] = useState<"" | "ascCondition" | "descCondition" | "ascDate" | "descDate">("");
 
   useEffect(() => {
     let filtered = [...trees];
@@ -262,9 +262,15 @@ export default function TreeTable() {
           return first !== undefined && !isNaN(Number(first));
         })
         .sort((a, b) => {
-          const aVal = Number(a.treeQuality.toString());
-          const bVal = Number(b.treeQuality.toString());
-          return sortOrder === "asc" ? bVal - aVal : aVal - bVal;
+          if (sortOrder === "ascCondition" || sortOrder === "descCondition") {
+            const aVal = Number(a.treeQuality.toString());
+            const bVal = Number(b.treeQuality.toString());
+            return sortOrder === "ascCondition" ? bVal - aVal : aVal - bVal;
+          } else {
+            const aVal = new Date(a.dateCollected).getTime();
+            const bVal = new Date(b.dateCollected).getTime();
+            return sortOrder === "ascDate" ? aVal - bVal : bVal - aVal;
+          }
         });
     }
 
@@ -346,12 +352,16 @@ export default function TreeTable() {
                     width={["100%", "225px"]}
                     borderRadius="24px"
                     placeholder="Sort"
-                    onChange={(e) => setSortOrder(e.target.value as "" | "asc" | "desc")}
+                    onChange={(e) =>
+                      setSortOrder(e.target.value as "" | "ascCondition" | "descCondition" | "descDate" | "ascDate")
+                    }
                     bg="white"
                   >
                     {/* <option value="">None</option> */}
-                    <option value="asc">Condition best to worst</option>
-                    <option value="desc">Condition worst to best</option>
+                    <option value="ascCondition">Condition best to worst</option>
+                    <option value="descCondition">Condition worst to best</option>
+                    <option value="ascDate">Oldest to newest</option>
+                    <option value="descDate">Newest to oldest</option>
                   </Select>
                 </HStack>
 
