@@ -280,7 +280,7 @@ export default function TreeTable() {
 
   useEffect(() => {
     if (defaultSetting === "decreasingCondition") {
-      setSortOrder("desc");
+      setSortOrder("descCondition");
     }
   }, []);
 

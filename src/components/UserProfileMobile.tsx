@@ -126,7 +126,7 @@ export default function UserProfileMobile() {
               </GridItem>
               <GridItem colSpan={1}>
                 <Flex justifyContent="flex-end">
-                  <Box onClick={() => router.push("/")}>
+                  <Box onClick={() => router.push("/changePassword")}>
                     <Button mt={5} borderRadius={20} backgroundColor="white" borderColor="#596334" borderWidth={1}>
                       <Text fontSize="xs" color="#596334">
                         Change Password
