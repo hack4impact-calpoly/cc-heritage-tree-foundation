@@ -31,6 +31,7 @@ import "./treetable.css";
 import { useState, useEffect } from "react";
 import { ITree } from "@/database/treeSchema";
 import { FileDown, Menu, SearchIcon, ChevronLeft, ChevronRight, TreePine, Edit } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -41,6 +42,9 @@ export default function TreeTable() {
   const [filteredTrees, setFilteredTrees] = useState<ITree[]>([]);
   const [trees, setTrees] = useState<ITree[]>([]);
   const { user } = useUser();
+
+  const searchParams = useSearchParams();
+  const defaultSetting = searchParams.get("sorted");
 
   // tree table structure
   const treesPerPage = 8;
@@ -267,6 +271,12 @@ export default function TreeTable() {
     setFilteredTrees(filtered);
     setCurrentPage(1);
   }, [sortOrder, searchTerm, trees]);
+
+  useEffect(() => {
+    if (defaultSetting === "decreasingCondition") {
+      setSortOrder("desc");
+    }
+  }, []);
 
   return (
     <div>

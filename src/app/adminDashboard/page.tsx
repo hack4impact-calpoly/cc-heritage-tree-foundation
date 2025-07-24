@@ -216,7 +216,7 @@ function AdminDashboard() {
                       <Text color="#333333" fontSize="1.25rem">
                         Trees in Poor Condition
                       </Text>
-                      <Link href="/treeTable" ml="auto">
+                      <Link href="/treeTable?sorted=decreasingCondition" ml="auto">
                         <ArrowUpRight />
                       </Link>
                     </HStack>
