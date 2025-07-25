@@ -29,7 +29,7 @@ import { CenterStyle } from "@/styles/AllStyle";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { BrowserView, MobileView } from "react-device-detect";
 import MessagePopUp from "@/components/MessagePopUp";
-import DeleteMessagePopUp from "@/components/DeleteMessagePopUp";
+import DeletePopUp from "@/components/DeletePopUp";
 
 interface UserData {
   name: string;
@@ -346,12 +346,12 @@ function Messages() {
                 alignItems={"center"}
                 position="absolute"
               >
-                <DeleteMessagePopUp
+                <DeletePopUp
                   closePopup={() => {
                     setOpenDeletePopUp(false);
                     setBlurAmount("0px");
                   }}
-                  deleteMessage={() => {
+                  deleteFunction={() => {
                     deleteMessageFromTable();
                     setOpenDeletePopUp(false);
                     setBlurAmount("0px");
@@ -370,6 +370,7 @@ function Messages() {
                       ),
                     });
                   }}
+                  bodyText="Do you really want to delete this message? This process can not be undone."
                 />
               </Flex>
             )}
