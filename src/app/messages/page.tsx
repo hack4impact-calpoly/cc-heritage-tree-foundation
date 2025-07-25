@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { AlignJustify, ChevronRight, Trash2 } from "lucide-react";
+import { ChevronRight, Trash2 } from "lucide-react";
 import { MdClose } from "react-icons/md";
 import styles from "./messages.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,7 +26,6 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { CenterStyle } from "@/styles/AllStyle";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { BrowserView, MobileView } from "react-device-detect";
 import MessagePopUp from "@/components/MessagePopUp";
 import DeletePopUp from "@/components/DeletePopUp";

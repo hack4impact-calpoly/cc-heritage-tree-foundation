@@ -9,11 +9,9 @@ import "./globals.css";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { IUser } from "@/database/userSchema";
-import { OrganizationSwitcher } from "@clerk/nextjs";
 
 function LayoutInnerContent({ children }: { children: React.ReactNode }) {
   const pathName = usePathname();
-  const router = useRouter();
   const { user, isLoaded } = useUser();
 
   const [customUserData, setCustomUserData] = useState<IUser | null>(null);
@@ -56,21 +54,6 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
       setIsLoadingCustomUserData(false);
     }
   }, [user?.id, isLoaded]); // Changed from [user, isLoaded] to [user?.id, isLoaded]
-
-  // commented out for now
-  /*useEffect(() => {
-    if (
-      isLoaded &&
-      user &&
-      !isLoadingCustomUserData &&
-      !hasPhoneNumber &&
-      pathName !== "/editUserProfile" &&
-      pathName !== "/login" &&
-      pathName !== "/signup"
-    ) {
-      router.replace("/editUserProfile");
-    }
-  }, [isLoaded, user, isLoadingCustomUserData, hasPhoneNumber, pathName, router]);*/
 
   const showNavbar =
     user && !isLoadingCustomUserData && hasPhoneNumber && pathName !== "/login" && pathName !== "/signup";

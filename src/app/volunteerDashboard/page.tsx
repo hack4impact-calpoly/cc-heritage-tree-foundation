@@ -7,16 +7,8 @@ import Map from "@/components/Map";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { CenterStyle } from "@/styles/AllStyle";
-import UrlObject from "next/router";
-import {
-  Box1AnnStyle,
-  Box2AnnStyle,
-  IconButtonStyle,
-  TextAnnStyle,
-  TextWeightStyle,
-  BoxItem,
-} from "@/styles/VolunteerDashStyle";
-import { BrowserView, MobileView, isMobile } from "react-device-detect";
+import { Box1AnnStyle, Box2AnnStyle, TextAnnStyle, TextWeightStyle, BoxItem } from "@/styles/VolunteerDashStyle";
+import { BrowserView, MobileView } from "react-device-detect";
 import { IAnnouncement } from "@/database/announcementSchema";
 
 interface UserData {

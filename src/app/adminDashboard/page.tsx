@@ -1,8 +1,7 @@
 "use client";
-import { ArrowUpRight, NotebookPen, SquarePen } from "lucide-react";
+import { ArrowUpRight, SquarePen } from "lucide-react";
 import {
   Grid,
-  Image,
   GridItem,
   Text,
   Button,
@@ -20,12 +19,11 @@ import {
 import Map from "@/components/Map";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { IconStyle, BoxItem, VO, Condition, ConditionMobile } from "@/styles/AdminDashStyle";
-import { AlignJustify } from "lucide-react";
+import { IconStyle, BoxItem, ConditionMobile } from "@/styles/AdminDashStyle";
 import { BrowserView, MobileView } from "react-device-detect";
 import { useState, useEffect } from "react";
 import { COLORS } from "@/styles/color-styles-data";
-import Tree, { ITree } from "@/database/treeSchema";
+import { ITree } from "@/database/treeSchema";
 import { treeHealthColors } from "../newTreeForm/tree-form-data";
 
 interface Decimal128WithProperty {

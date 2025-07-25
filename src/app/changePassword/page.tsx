@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { InputUser, TextUser } from "@/styles/UserStyle";
 import { useUser } from "@clerk/nextjs";
 import { isMobile } from "react-device-detect";
-import { Router } from "express";
 import { useRouter } from "next/navigation";
 
 export default function ChangePassword() {
