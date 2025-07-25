@@ -23,7 +23,10 @@ import {
   GridItem,
   Tag,
   Select,
+  Icon,
+  useToast,
 } from "@chakra-ui/react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import * as XLSX from "xlsx";
 import { CenterStyle } from "@/styles/AllStyle";
 import "./treetable.css";
@@ -37,6 +40,7 @@ import Link from "next/link";
 import DeletePopUp from "@/components/DeletePopUp";
 
 export default function TreeTable() {
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTrees, setFilteredTrees] = useState<ITree[]>([]);
@@ -244,6 +248,19 @@ export default function TreeTable() {
         setFilteredTrees((prev) => prev.filter((t) => t._id !== treeToDelete._id));
         closeDeleteDialog();
         setSelectedTree(null);
+        toast({
+          render: () => (
+            <Box color="#596334" bg="white" p={5} borderRadius={20} boxShadow="md">
+              <Flex align="center">
+                <Icon as={CheckCircleIcon} color="#596334" boxSize={5} mr={4} />
+                <Flex direction={"column"}>
+                  <Text fontWeight={"bold"}>Deleted!</Text>
+                  <Text> Tree has been successfully removed.</Text>
+                </Flex>
+              </Flex>
+            </Box>
+          ),
+        });
       } else {
         closeDeleteDialog();
       }
