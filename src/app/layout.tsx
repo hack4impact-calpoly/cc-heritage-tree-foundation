@@ -9,6 +9,7 @@ import "./globals.css";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { IUser } from "@/database/userSchema";
+import { Box, Image } from "@chakra-ui/react";
 
 function LayoutInnerContent({ children }: { children: React.ReactNode }) {
   const pathName = usePathname();
@@ -87,7 +88,25 @@ function LayoutInnerContent({ children }: { children: React.ReactNode }) {
           minHeight: "100vh",
         }}
       >
-        {user && <div style={{ width: "100vw", height: "100px" }} />}
+        {isMobile && (
+          <Box display="flex" justifyContent="center" alignItems="center" width="100%" mt="48px" mb="8px">
+            <Box
+              borderRadius="full"
+              border="1px solid #596435"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              width="62px"
+              height="62px"
+              p="2px"
+              boxSizing="border-box"
+            >
+              <Image src="/logo1.png" alt="Logo" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
+            </Box>
+          </Box>
+        )}
+        {/* Only show user spacer on desktop/tablet */}
+        {!isMobile && user && <div style={{ width: "100vw", height: "100px" }} />}
         {children}
         <div style={{ position: "absolute", top: "0", zIndex: "1000" }}>{user && !isMobile && <ProfileCard />}</div>
       </main>
