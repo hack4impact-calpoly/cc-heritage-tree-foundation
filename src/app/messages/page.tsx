@@ -659,6 +659,7 @@ function Messages() {
                           adminName={messageProps.adminName}
                           messageContent={messageProps.messageContent}
                           id={messageProps.id}
+                          attachmentUrl={messageProps.attachmentUrl}
                         />
                       ) : (
                         <></>
