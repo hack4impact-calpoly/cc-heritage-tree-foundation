@@ -435,7 +435,7 @@ function Messages() {
                               </Td>
                             </Tr>
                           ) : (
-                            filteredMessages.map((msg) => (
+                            currentMessages.map((msg) => (
                               <Tr
                                 key={msg._id}
                                 className={
@@ -717,7 +717,7 @@ function Messages() {
                 {activeTab === "inbox" ? (
                   <>
                     <Stack backgroundColor={"white"} marginTop={7} borderRadius={10} padding={5} margin={3}>
-                      {currentMessages.map((msg) => (
+                      {filteredMessages.map((msg) => (
                         <div
                           key={msg.id}
                           className={
@@ -767,35 +767,6 @@ function Messages() {
                         </div>
                       ))}
                     </Stack>
-
-                    {/* Pagination Controls */}
-                    <Box className={styles.pageControls} style={{ marginBottom: "70px" }}>
-                      <Button
-                        className={styles.pageButton}
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                      >
-                        Previous
-                      </Button>
-
-                      {Array.from({ length: totalPages }, (_, index) => (
-                        <Button
-                          key={index + 1}
-                          className={currentPage === index + 1 ? styles.activePage : styles.pageButton}
-                          onClick={() => handlePageChange(index + 1)}
-                        >
-                          {index + 1}
-                        </Button>
-                      ))}
-
-                      <Button
-                        className={styles.pageButton}
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                      >
-                        Next
-                      </Button>
-                    </Box>
                   </>
                 ) : (
                   <p className={styles.sentMessage}>Sent messages here.</p>
