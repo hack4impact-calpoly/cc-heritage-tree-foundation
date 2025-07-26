@@ -707,11 +707,6 @@ function Messages() {
                       </button>
                     )}
                   </div>
-                  {isAdmin && localStorage.getItem("globalUserRole") == "Admin" && (
-                    <button className={styles.newMessageButton} onClick={() => router.push("/createAnnouncement")}>
-                      New Message +
-                    </button>
-                  )}
                 </div>
 
                 {activeTab === "inbox" ? (
@@ -772,6 +767,26 @@ function Messages() {
                   <p className={styles.sentMessage}>Sent messages here.</p>
                 )}
               </div>
+
+              {isAdmin && localStorage.getItem("globalUserRole") == "Admin" && (
+                <button
+                  className={styles.newMessageButton}
+                  onClick={() => router.push("/createAnnouncement")}
+                  style={{
+                    position: "fixed",
+                    bottom: "20px",
+                    right: "20px",
+                    zIndex: 1000,
+                    borderRadius: "50px",
+                    padding: "15px 20px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  New Message +
+                </button>
+              )}
               {openMessagePopUp === true ? (
                 <div style={{ position: "absolute", left: "0", top: "200px", width: "100%", height: "95vh" }}>
                   <MessagePopUp
