@@ -41,7 +41,7 @@ interface UserData {
 function Messages() {
   const toast = useToast();
   const { isLoaded, isSignedIn, user } = useUser();
-  const messagesPerPage = 7;
+  const messagesPerPage = 9;
   const [currentPage, setCurrentPage] = useState(1);
   const [currentAdminPage, setCurrentAdminPage] = useState(1);
   const [messageID, setMessageID] = useState(-1);
@@ -487,7 +487,7 @@ function Messages() {
                           )}
 
                           {/* Used to create whitespace on the last  */}
-                          {Array.from({ length: 7 - currentMessages.length }).map((_, i) => (
+                          {Array.from({ length: 9 - currentMessages.length }).map((_, i) => (
                             <tr key={`empty-${i}`} style={{ height: "55px" }}>
                               <td colSpan={5} />
                             </tr>
@@ -610,7 +610,7 @@ function Messages() {
                           )}
 
                           {/* Used to create whitespace on the last  */}
-                          {Array.from({ length: 7 - currentAdminMessages.length }).map((_, i) => (
+                          {Array.from({ length: 9 - currentAdminMessages.length }).map((_, i) => (
                             <tr key={`empty-${i}`} style={{ height: "55px" }}>
                               <td colSpan={5} />
                             </tr>
@@ -764,7 +764,59 @@ function Messages() {
                     </Stack>
                   </>
                 ) : (
-                  <p className={styles.sentMessage}>Sent messages here.</p>
+                  <>
+                    <Stack backgroundColor={"white"} marginTop={7} borderRadius={10} padding={5} margin={3}>
+                      {adminMessages.map((msg) => (
+                        <div
+                          key={msg.id}
+                          className={
+                            checkIfRead(msg) || user?.fullName === msg.from
+                              ? styles.clickableRowIsRead
+                              : styles.clickableRowNotRead
+                          }
+                          onClick={() => {
+                            setOpenMessagePopUp(!openMessagePopUp);
+                            setMessageProps({
+                              date: new Date(msg.time).toLocaleDateString(),
+                              adminName: msg.from,
+                              messageContent: msg.message,
+                              messageTitle: msg.subject,
+                              id: msg._id,
+                              attachmentUrl: msg.attachmentUrl || "",
+                            });
+                            updateReadStatus(msg._id);
+                          }}
+                          style={{ overflow: "hidden" }}
+                        >
+                          <div className={msg.selected ? styles.fadedText : ""}>
+                            <Flex alignItems={"center"}>
+                              <Avatar name={msg.sender} size="md" bg="#596334" color="white" />
+                              <div style={{ padding: "10px" }}>
+                                <Flex justify="space-between">
+                                  {msg.sender}
+                                  <Text className={msg.selected ? styles.fadedText : ""}>{msg.date}</Text>
+                                </Flex>
+                                <Text
+                                  style={{
+                                    overflow: "hidden",
+                                    whiteSpace: "nowrap",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "100%",
+                                  }}
+                                  className={msg.selected ? styles.fadedText : ""}
+                                >
+                                  {msg.subject}
+                                </Text>
+                              </div>
+                            </Flex>
+                          </div>
+                          <div style={{ marginTop: "5px" }}>
+                            <Divider />
+                          </div>
+                        </div>
+                      ))}
+                    </Stack>
+                  </>
                 )}
               </div>
 
