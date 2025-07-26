@@ -40,7 +40,7 @@ function Volunteers() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
 
-  const rowsPerPage = 7;
+  const rowsPerPage = 8;
 
   const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
   const idxLastUser = currentPage * rowsPerPage;
