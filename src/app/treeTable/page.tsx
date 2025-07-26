@@ -76,6 +76,21 @@ export default function TreeTable() {
     return "N/A";
   };
 
+  type TreeQuality = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
+
+  const color: Record<TreeQuality, string> = {
+    "10": "#596334",
+    "9": "#9AAD48",
+    "8": "#BDCD69",
+    "7": "#E3E162",
+    "6": "#FFE327",
+    "5": "#F9C100",
+    "4": "#F9A213",
+    "3": "#ED8426",
+    "2": "#BC4201",
+    "1": "#A41D00",
+  };
+
   const getRedOrangeColor = (value: string | number): string => {
     const num = typeof value === "string" ? Number(value) : value;
     if (isNaN(num)) return "#B6E1EF"; // fallback
@@ -448,11 +463,15 @@ export default function TreeTable() {
                                       <Tag
                                         size="md"
                                         // bg="#B6E1EF"
-                                        color="gray.700"
+                                        color={
+                                          tree.treeQuality.toString() == "10" || tree.treeQuality.toString() == "1"
+                                            ? "white"
+                                            : "gray.700"
+                                        }
                                         borderRadius={5}
                                         px={2}
                                         py={1}
-                                        bg={getRedOrangeColor(tree.treeQuality.toString())}
+                                        bg={color[tree.treeQuality.toString() as TreeQuality]}
                                       >
                                         {tree.treeQuality.toString()}
                                       </Tag>
