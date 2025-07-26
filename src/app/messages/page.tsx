@@ -566,7 +566,7 @@ function Messages() {
                               </Td>
                             </Tr>
                           ) : (
-                            adminMessages.map((msg) => (
+                            currentAdminMessages.map((msg) => (
                               <Tr key={msg._id} className={styles.clickableRowNotRead}>
                                 <Td
                                   className={`${msg.selected ? styles.fadedText : ""}`}
