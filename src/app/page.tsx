@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     let role = null;

@@ -1,20 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import {
-  Grid,
-  HStack,
-  GridItem,
-  Image,
-  Text,
-  Button,
-  Flex,
-  Link,
-  Box,
-  Center,
-  FormControl,
-  Spinner,
-} from "@chakra-ui/react";
+import { Grid, GridItem, Image, Text, Button, Flex, Box, Center, FormControl, Spinner } from "@chakra-ui/react";
 import { LeftUser, TextUser } from "@/styles/UserStyle";
 import { CenterStyle } from "@/styles/AllStyle";
 import { ITree } from "@/database/treeSchema";

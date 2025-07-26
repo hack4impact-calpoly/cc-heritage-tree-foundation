@@ -18,25 +18,29 @@ import {
   Image,
   Spinner,
   VStack,
-  IconButton,
   Flex,
   Grid,
   GridItem,
   Tag,
   Select,
+  Icon,
+  useToast,
 } from "@chakra-ui/react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import * as XLSX from "xlsx";
 import { CenterStyle } from "@/styles/AllStyle";
 import "./treetable.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ITree } from "@/database/treeSchema";
-import { FileDown, Menu, SearchIcon, ChevronLeft, ChevronRight, TreePine, Edit } from "lucide-react";
+import { FileDown, Menu, SearchIcon, ChevronLeft, ChevronRight, TreePine, Edit, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { BrowserView, MobileView, isMobile } from "react-device-detect";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import DeletePopUp from "@/components/DeletePopUp";
 
 export default function TreeTable() {
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTrees, setFilteredTrees] = useState<ITree[]>([]);
@@ -236,6 +240,49 @@ export default function TreeTable() {
   };
 
   const [selectedTree, setSelectedTree] = useState<ITree | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [treeToDelete, setTreeToDelete] = useState<ITree | null>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
+  const openDeleteDialog = (tree: ITree) => {
+    setTreeToDelete(tree);
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setTreeToDelete(null);
+  };
+
+  const handleDeleteTree = async () => {
+    if (!treeToDelete) return;
+    try {
+      const res = await fetch(`/api/tree/${treeToDelete._id}`, { method: "DELETE" });
+      if (res.ok) {
+        setTrees((prev) => prev.filter((t) => t._id !== treeToDelete._id));
+        setFilteredTrees((prev) => prev.filter((t) => t._id !== treeToDelete._id));
+        closeDeleteDialog();
+        setSelectedTree(null);
+        toast({
+          render: () => (
+            <Box color="#596334" bg="white" p={5} borderRadius={20} boxShadow="md">
+              <Flex align="center">
+                <Icon as={CheckCircleIcon} color="#596334" boxSize={5} mr={4} />
+                <Flex direction={"column"}>
+                  <Text fontWeight={"bold"}>Deleted!</Text>
+                  <Text> Tree has been successfully removed.</Text>
+                </Flex>
+              </Flex>
+            </Box>
+          ),
+        });
+      } else {
+        closeDeleteDialog();
+      }
+    } catch (err) {
+      closeDeleteDialog();
+    }
+  };
 
   const handleArrowClick = (treeData: ITree) => {
     setSelectedTree(treeData);
@@ -477,9 +524,15 @@ export default function TreeTable() {
                                       </Tag>
                                     </Td>
                                     <Td>
-                                      <Button bg="" _hover={{ bg: "gray.100" }} onClick={() => handleArrowClick(tree)}>
-                                        <ChevronRight />
-                                      </Button>
+                                      <HStack>
+                                        <Button
+                                          bg=""
+                                          _hover={{ bg: "gray.100" }}
+                                          onClick={() => handleArrowClick(tree)}
+                                        >
+                                          <ChevronRight />
+                                        </Button>
+                                      </HStack>
                                     </Td>
                                   </Tr>
                                 ))
@@ -560,15 +613,21 @@ export default function TreeTable() {
                       transition="all 0.3s ease-in-out"
                       overflowX={"auto"}
                       height="100%"
+                      position="relative"
+                      zIndex={2}
                     >
                       <Box bg="#596334" color="white" p={5} borderTopLeftRadius={20} borderTopRightRadius={20}>
                         <VStack gap={3} align="stretch">
                           {/* Top row */}
-                          <Flex justifyContent="flex-end">
-                            {/* Notes icon on the right */}
+                          <Flex justifyContent="flex-end" alignItems="center" gap={2}>
                             <Link href={`/editTreeForm/${selectedTree._id}`}>
                               <Edit size={20} cursor="pointer" />
                             </Link>
+                            <Trash2
+                              size={20}
+                              style={{ cursor: "pointer", marginLeft: 4, color: "white" }}
+                              onClick={() => openDeleteDialog(selectedTree)}
+                            />
                           </Flex>
                           <Flex justifyContent="space-between" alignItems="center">
                             <Flex alignItems="center" gap={3}>
@@ -806,6 +865,25 @@ export default function TreeTable() {
         </div>
       ) : (
         <div></div>
+      )}
+      {deleteDialogOpen && (
+        <Flex
+          zIndex="1000"
+          w={"100vw"}
+          h={"100vh"}
+          left={0}
+          top={0}
+          justifyContent={"center"}
+          alignItems={"center"}
+          position="fixed"
+          style={{ backdropFilter: "blur(3px)" }}
+        >
+          <DeletePopUp
+            closePopup={closeDeleteDialog}
+            deleteFunction={handleDeleteTree}
+            bodyText="Do you really want to delete this tree? This process can not be undone."
+          />
+        </Flex>
       )}
     </div>
   );

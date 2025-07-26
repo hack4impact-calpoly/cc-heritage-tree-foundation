@@ -2,12 +2,14 @@
 import { Box, Flex, Text, Button } from "@chakra-ui/react";
 import { Trash2, X } from "lucide-react";
 
-export default function DeleteMessagePopUp({
+export default function DeletePopUp({
   closePopup,
-  deleteMessage,
+  deleteFunction,
+  bodyText,
 }: {
   closePopup: () => void;
-  deleteMessage: () => void;
+  deleteFunction: () => void;
+  bodyText?: string;
 }) {
   return (
     <>
@@ -22,7 +24,7 @@ export default function DeleteMessagePopUp({
           <Text fontWeight={"bold"} mt={5}>
             Are you sure?
           </Text>
-          <Text>Do you really want to delete this message? This process can not be undone.</Text>
+          <Text>{bodyText}</Text>
           <Flex gap={5} mt={5}>
             <Button
               onClick={closePopup}
@@ -35,7 +37,7 @@ export default function DeleteMessagePopUp({
               Cancel
             </Button>
             <Button
-              onClick={deleteMessage}
+              onClick={deleteFunction}
               borderRadius={20}
               color="white"
               bg="#556b2f"
