@@ -42,7 +42,7 @@ const NAV_ITEMS: Array<NavItem> = [
     id: 1,
     text: "Dashboard",
     icon: MdOutlineDashboard,
-    path: "/adminDashboard",
+    path: "/dashboard",
   },
   {
     id: 2,
@@ -99,7 +99,13 @@ export default function Navbar() {
   const isAdmin = role === "org:admin";
 
   const handleNavigation = (path: string) => {
-    router.push(path);
+    if (path === "/dashboard" && (localStorage.getItem("globalUserRole") == "Volunteer" || !isAdmin)) {
+      router.push("/volunteerDashboard");
+    } else if (path === "/dashboard" && isAdmin) {
+      router.push("/adminDashboard");
+    } else {
+      router.push(path);
+    }
     if (showMobileNav) {
       onClose();
     }
